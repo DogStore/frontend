@@ -6,11 +6,11 @@
         v-model="coupon"
         type="text"
         placeholder="Enter coupon code here"
-        class="flex-1 border border-[#FF6600] border-2 rounded-[10px] px-3 py-2"
+        class="flex-1 border-2 border-[#FF6600] focus:ring-1 focus:ring-[#FF6600] outline-none rounded-[10px] px-3 py-2"
       />
       <button
         @click="applyCoupon"
-        class="bg-[#FF6600] hover:bg-orange-600 text-white px-3 py-2 rounded-[10px] whitespace-nowrap"
+        class="bg-[#FF6600] hover:bg-orange-600 text-white px-3 py-2 rounded-[10px] hover:cursor-pointer whitespace-nowrap"
       >
         Apply Coupon
       </button>

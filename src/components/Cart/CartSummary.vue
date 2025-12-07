@@ -8,7 +8,7 @@
       <div class="flex justify-between"><span>Sub Total</span><span>${{ subtotal.toFixed(2) }}</span></div>
       <div class="flex justify-between"><span>Delivery</span><span>${{ delivery.toFixed(2) }}</span></div>
       <div class="flex justify-between"><span>Taxes</span><span>${{ taxes.toFixed(2) }}</span></div>
-      <div class="flex justify-between"><span>Coupon Discount</span><span>${{ discount.toFixed(2) }}</span></div>
+      <div class="flex justify-between"><span>Coupon Discount</span><span>-${{ discount.toFixed(2) }}</span></div>
     </div>
 
     <div class="border-t my-4"></div>
@@ -19,7 +19,8 @@
     </div>
 
     <button
-      class="w-full mt-5 bg-[#FFAA0C] hover:bg-[#FF6600]/80 text-white py-2 rounded-lg font-medium"
+      class="w-full mt-5 bg-[#FFAA0C] hover:bg-[#FF6600]/80 hover:cursor-pointer text-white py-2 rounded-lg font-medium"
+      @click="goToCheckout"
     >
     <img src="/src/assets/Hand Right.png" alt="proceed icon" class="inline-block mr-2" />
       Proceed to Checkout
@@ -29,6 +30,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface CartItem {
   id: number
@@ -39,20 +41,44 @@ interface CartItem {
 }
 
 const props = defineProps<{ cartItems: CartItem[] }>()
+const router = useRouter()
 
-const subtotal = computed(() =>
-  props.cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
-)
+// --- Computed Totals ---
+const subtotal = computed(() => {
+  if (!props.cartItems.length) return 0
+  return props.cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
+})
 
-const totalItems = computed(() =>
-  props.cartItems.reduce((count, i) => count + i.quantity, 0)
-)
+const totalItems = computed(() => {
+  if (!props.cartItems.length) return 0
+  return props.cartItems.reduce((count, i) => count + i.quantity, 0)
+})
 
-const delivery = computed(() => (subtotal.value > 50 ? 0 : 0))
-const taxes = computed(() => subtotal.value * 0.0) //0.05
-const discount = computed(() => 10) // You can connect this later to coupon logic
+const delivery = computed(() => {
+  if (!props.cartItems.length) return 0
+  return subtotal.value > 50 ? 0 : 5
+})
 
-const total = computed(() =>
-  subtotal.value + delivery.value + taxes.value - discount.value
-)
+const taxes = computed(() => {
+  if (!props.cartItems.length) return 0
+  return subtotal.value * 0.05
+})
+
+const discount = computed(() => {
+  if (!props.cartItems.length) return 0
+  return 0 // integrate later with coupon logic
+})
+
+const total = computed(() => {
+  if (!props.cartItems.length) return 0
+  return subtotal.value + delivery.value + taxes.value - discount.value
+})
+
+function goToCheckout() {
+  if (!props.cartItems.length) return // prevent navigating if empty
+  router.push({
+    path: '/checkout',
+    query: { cart: JSON.stringify(props.cartItems) },
+  })
+}
 </script>

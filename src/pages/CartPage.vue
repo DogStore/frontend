@@ -19,11 +19,11 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import CartHeader from '@/components/home/CartHeader.vue'
-import CartTable from '@/components/home/CartTable.vue'
-import CartSummary from '@/components/home/CartSummary.vue'
-import CartCoupon from '@/components/home/CartCoupon.vue'
-import CartServiceInfo from '@/components/home/CartServiceInfo.vue'
+import CartHeader from '@/components/Cart/CartHeader.vue'
+import CartTable from '@/components/Cart/CartTable.vue'
+import CartSummary from '@/components/Cart/CartSummary.vue'
+import CartCoupon from '@/components/Cart/CartCoupon.vue'
+import CartServiceInfo from '@/components/Cart/CartServiceInfo.vue'
 
 interface CartItem {
   id: number
