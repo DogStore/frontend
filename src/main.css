@@ -6,12 +6,6 @@
 
 /* Define Nunito as your Tailwind font */
 @theme {
-  --font-display: "Nunito, sans-serif";
+  --font-Nunito: "Nunito";
 }
 
-/* Apply Nunito globally */
-@layer base {
-  html {
-    font-family: var(--font-display);
-  }
-}

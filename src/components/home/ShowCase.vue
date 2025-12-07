@@ -1,0 +1,79 @@
+<template>
+  <div class="bg-orange-50 border border-gray-300 py-6 mt-0 sm:mt-[-12.5rem] lg:py-3.5 lg:mt-[-12.5rem]">
+    <div class="mx-auto max-w-[1700px] px-4 lg:px-10">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-14 overflow-hidden">
+
+        <!-- DOG IMAGE -->
+        <div class="flex-shrink-0 w-full flex justify-center lg:block lg:w-100 lg:h-120 lg:ml-[-1rem]">
+          <img :src="dogImage" :alt="title" class="w-[260px] sm:w-[340px] md:w-[420px] lg:w-auto" />
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div class="w-full lg:flex-grow lg:mt-[-4rem]">
+
+          <!-- DISCOUNT + TITLE -->
+          <div class="flex flex-col items-center lg:flex-row lg:items-end gap-6 mb-4 mt-6 lg:mt-35">
+
+            <!-- DISCOUNT -->
+            <img
+              src="@/assets/ShowcaseImages/discount.png"
+              class="w-20 sm:w-28 md:w-70 lg:h-50 lg:mb-15 lg:ml-[-4rem] lg:mt-[-10rem]"
+            />
+
+            <!-- TITLE -->
+            <h2
+              v-html="title"
+              class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-gray-800 font-Nunito
+                     text-center lg:text-left lg:mt-5rem"
+            ></h2>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <p class="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed max-w-[500px]
+                    text-center lg:text-justify mx-auto lg:mx-0 lg:ml-64 font-Nunito mb-6">
+            {{ description }}
+          </p>
+
+          <!-- BUTTON + PAW -->
+          <div
+            class="flex flex-col items-center mt-6
+                   lg:ml-[-38rem] lg:mt-[-6.5rem]"
+          >
+            <button
+              @click="$emit('shopNow')"
+              class="px-8 py-3 bg-[#FFAA0C] text-white font-Nunito rounded-md
+                 text-xl sm:text-2xl hover:bg-orange-500 transition mb-4"
+            >
+              {{ buttonText }}
+            </button>
+
+            <div v-if="pawImage" class="w-10 h-10 sm:w-12 sm:h-12">
+              <img :src="pawImage" class="w-full h-full object-contain" />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BONES (DESKTOP ONLY) -->
+        <div class="hidden lg:flex flex-col items-end space-y-[-10px] mt-10 pr-35">
+          <img :src="boneImage" alt="bone" class="w-30 object-contain" />
+          <img :src="boneImage" alt="bone" class="w-30 object-contain mr-[-40px]" />
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+defineProps<{
+  title: string;
+  description: string;
+  buttonText: string;
+  dogImage: string;
+  boneImage: string;
+  pawImage: string;
+}>();
+
+defineEmits(['shopNow']);
+</script>
