@@ -2,29 +2,44 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Product } from "@/types/Product";
 
+export type FavoriteProduct = Product & {
+  addedAt: number; // ⭐ timestamp
+};
+
 export const useFavoriteStore = defineStore("favorite", () => {
-  const favorites = ref<Product[]>([]);
+  const favorites = ref<FavoriteProduct[]>([]);
 
   function loadFromStorage() {
-    favorites.value = JSON.parse(localStorage.getItem("favorites") || "[]");
+    favorites.value = JSON.parse(
+      localStorage.getItem("favorites") || "[]"
+    );
   }
 
   function save() {
     localStorage.setItem("favorites", JSON.stringify(favorites.value));
   }
 
-  function toggleFavorite(product: Product) {
-    const exists = favorites.value.some((p) => p.id === product.id);
+function toggleFavorite(product: Product) {
+  const index = favorites.value.findIndex(p => p.id === product.id);
 
-    if (exists) {
-      favorites.value = favorites.value.filter((p) => p.id !== product.id);
-    } else {
-      favorites.value.push(product);
-    }
-    save();
+  if (index >= 0) {
+    favorites.value.splice(index, 1);
+  } else {
+    favorites.value.unshift({
+      ...product,
+      addedAt: Date.now(), // REQUIRED
+    });
   }
+
+  save();
+}
+
 
   loadFromStorage();
 
-  return { favorites, toggleFavorite, loadFromStorage };
+  return {
+    favorites,
+    toggleFavorite,
+    loadFromStorage,
+  };
 });

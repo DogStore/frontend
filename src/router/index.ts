@@ -8,6 +8,16 @@ const router = createRouter({
       name: "Home",
       component: HomePage
     },
+    {
+      path: "/search",
+      name: "Search",
+      component: () => import("@/pages/SearchResultPage.vue"),
+    },
+    {
+      path: "/wishlist",
+      name: "wishlist",
+      component: () => import("@/pages/WhishlistPage.vue"),
+    },
   ],
 })
 

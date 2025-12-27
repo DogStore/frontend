@@ -1,10 +1,13 @@
 export interface Product {
-  id: number;
+  id: string;      // mapped from _id
   name: string;
   image: string;
   price: number;
-  originalPrice: number;
+  originalPrice?: number;
   rating: number;
+  countryFlag?: string | null;
+
   isFavorite: boolean;
-  inCart:boolean
+  inCart: boolean;
+  addedAt?: number; // timestamp
 }

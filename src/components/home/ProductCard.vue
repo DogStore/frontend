@@ -1,15 +1,15 @@
 <template>
-  <div
-    class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-xl p-4 shadow-sm w-full mx-auto cursor-pointer
+  <div class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-60 md:w-full mx-auto cursor-pointer
     transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
     @click="openDetail">
 
-    <!-- FLAG BADGE (Optional) -->
-    <div
-      v-if="flag"
-      class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-semibold">
-      {{ flag }}
-    </div>
+    <!-- County Flag -->
+    <img
+      v-if="product.countryFlag"
+      :src="product.countryFlag"
+      alt="Country flag"
+      class="absolute w-8.5 h-6 object-cover ml-[10.5rem] md:ml-[9.5rem] mt-[14.5rem] shadow border border-white"
+    />
 
     <!-- IMAGE -->
     <div class="relative flex items-center justify-center h-[150px] w-full">
@@ -27,12 +27,12 @@
     </div>
 
     <!-- PRODUCT NAME -->
-    <h4 class="text-base font-Nunito font-bold text-gray-800 mt-1 mb-2 text-center h-[38px]">
+    <h4 class="text-base font-Nunito font-bold text-gray-800 mb-2 text-center h-[38px]">
       {{ product.name }}
     </h4>
 
     <!-- STARS -->
-    <div class="flex gap-2 mt-2 mb-2">
+    <div class="flex mr-10 gap-4 mt-1 mb-2">
       <img
         v-for="(type, index) in starArray"
         :key="index"
@@ -43,15 +43,14 @@
 
     <!-- PRICE -->
     <div class="mb-3 text-center font-Nunito">
-      <span class="text-lg font-bold">Price: ${{ product.price.toFixed(2) }}</span>
+      <span class="text-base text-orange-500 font-bold mr-25 md:mr-24 lg:mr-22">Price: ${{ product.price.toFixed(2) }}</span>
     </div>
 
     <!-- ADD TO CART -->
     <button
       @click.stop="addCart"
       class="w-full px-4 py-2 rounded-md transition font-Nunito flex items-center justify-center gap-2 mt-auto"
-      :class="isInCart ? 'bg-gray-400 text-white cursor-pointer' : 'bg-[#FFAA0C] text-white hover:bg-orange-500 cursor-pointer'"
-    >
+      :class="isInCart ? 'bg-gray-400 text-white cursor-pointer' : 'bg-[#FFAA0C] text-white hover:bg-orange-500 cursor-pointer'">
       <template v-if="isInCart">
         ✔ Added to Cart
       </template>
@@ -80,7 +79,6 @@ import type { Product } from "@/types/Product";
 // PROPS
 const props = defineProps<{
   product: Product;
-  flag?: string;
 }>();
 
 // STORES

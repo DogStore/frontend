@@ -15,14 +15,14 @@
     <!-- FEATURE PRODUCTS -->
     <div class="w-full px-10 py-10">
       <div class="flex items-center justify-between mb-8">
-        <h3 class="text-2xl font-bold text-gray-800">Feature Products</h3>
+        <h3 class="text-lg md:text-2xl font-bold text-gray-800">Feature Products</h3>
         <button class="px-6 py-2 bg-[#FFAA0C] cursor-pointer text-white font-semibold rounded-md hover:bg-orange-500 transition">
           View All
         </button>
       </div>
 
       <!-- Products Carousel -->
-      <div class="overflow-hidden relative py-1">
+      <div class="overflow-hidden relative py-1 ">
         <div
           class="flex transition-transform duration-500 ease-out"
           :style="{ transform: `translateX(-${currentPage * 100}%)` }">
@@ -30,13 +30,15 @@
           <div
             v-for="pageIndex in totalPages"
             :key="pageIndex"
-            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0">
+            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0">
             <ProductCard
-              v-for="product in featureProducts.slice((pageIndex - 1) * itemsPerPage, pageIndex * itemsPerPage)"
-              :key="product.id"
-              :product="product"
-              @click="openProductDetail(product)"
-            />
+              v-for="product in productStore.products.slice(
+                (pageIndex - 1) * itemsPerPage,
+                pageIndex * itemsPerPage)"
+                :key="product.id"
+                :product="product"
+                @click="openProductDetail(product)"
+              />
           </div>
         </div>
       </div>
@@ -63,7 +65,7 @@
 
     <!-- RECENTLY VIEWED -->
     <div v-if="recent.recent.length > 0" class="w-full px-10 py-10">
-      <h3 class="text-2xl mr-[87%] font-bold text-gray-800 mb-8">Recently Viewed</h3>
+      <h3 class="flex md:text-start text-center text-lg md:text-2xl font-bold text-gray-800 mb-8">Recently Viewed</h3>
 
       <div class="overflow-hidden relative py-1">
         <div
@@ -72,11 +74,12 @@
           <div
             v-for="pageIndex in recentTotalPages"
             :key="pageIndex"
-            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full flex-shrink-0">
+            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0">
             <ProductCard
               v-for="product in recent.recent.slice((pageIndex - 1) * recentItemsPerPage, pageIndex * recentItemsPerPage)"
               :key="product.id"
               :product="product"
+
             />
           </div>
         </div>
@@ -88,8 +91,7 @@
         <button
           @click="prevRecent"
           :disabled="recentPage === 0"
-          class="text-2xl text-orange-400 hover:text-orange-600 disabled:opacity-20"
-        >
+          class="text-2xl text-orange-400 hover:text-orange-600 disabled:opacity-20">
           ❮
         </button>
 
@@ -100,8 +102,7 @@
         <button
           @click="nextRecent"
           :disabled="recentPage + 1 === recentTotalPages"
-          class="text-2xl text-orange-400 hover:text-orange-600 disabled:opacity-20"
-        >
+          class="text-2xl text-orange-400 hover:text-orange-600 disabled:opacity-20">
           ❯
         </button>
       </div>
@@ -111,14 +112,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import ShowCase from "@/components/home/ShowCase.vue";
 import ProductCard from "@/components/home/ProductCard.vue";
 
+//Show case images
 import Dog from "@/assets/ShowcaseImages/Dog.png";
 import Bone from "@/assets/ShowcaseImages/Bone.png";
 import Paw from "@/assets/ShowcaseImages/Pawprint.png";
-import Coat from "@/assets/ProductImages/Soft Shell Dog Coat.png";
 
 import type { Product } from "@/types/Product";
 
@@ -126,6 +127,7 @@ import type { Product } from "@/types/Product";
 import { useCartStore } from "@/stores/cartStore";
 import { useFavoriteStore } from "@/stores/favoriteStore";
 import { useRecentStore } from "@/stores/recentStore";
+import { useProductStore } from "@/stores/productStore";
 
 const cart = useCartStore();
 const favorite = useFavoriteStore();
@@ -139,8 +141,7 @@ favorite.loadFromStorage();
 // Showcase
 const showcase = ref({
   title: "Your dog, <br> Our priority",
-  description:
-    "your dog deserve the best quality and healthy food and snacks, and accessories which is what we have to offer at the best, most affordable price",
+  description:"your dog deserve the best quality and healthy food and snacks, and accessories which is what we have to offer at the best, most affordable price",
   discount: "30%",
   buttonText: "Shop now",
   dogImage: Dog,
@@ -148,87 +149,39 @@ const showcase = ref({
   pawImage: Paw,
 });
 
-// Feature Products (Mock Data)
-const featureProducts = ref<Product[]>([
-  {
-    id: 1,
-    name: "Soft Stud Dog Food",
-    image: Coat,
-    price: 23.9,
-    originalPrice: 28.9,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-  {
-    id: 2,
-    name: "Named Tuna Bacon Dog Coat",
-    image: Coat,
-    price: 18.0,
-    originalPrice: 22.0,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-  {
-    id: 3,
-    name: "Cozy Egyptian Straight Bed",
-    image: Coat,
-    price: 32.0,
-    originalPrice: 38.0,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-  {
-    id: 4,
-    name: "Dog Shady Vest",
-    image: Coat,
-    price: 16.9,
-    originalPrice: 19.9,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-  {
-    id: 5,
-    name: "Dog Raincoat",
-    image: Coat,
-    price: 27.9,
-    originalPrice: 32.9,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-  {
-    id: 6,
-    name: "Wool & Waterproof Dog Sweater",
-    image: Coat,
-    price: 23.9,
-    originalPrice: 29.0,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-    {
-    id: 7,
-    name: "Wool & Waterproof Dog Sweater",
-    image: Coat,
-    price: 23.9,
-    originalPrice: 29.0,
-    rating: 4.5,
-    isFavorite: false,
-    inCart: false
-  },
-]);
+const productStore = useProductStore();
 
+onMounted(() => {
+  productStore.fetchProducts();
+});
 
 // Pagination for Feature
 const currentPage = ref(0);
-const itemsPerPage = 6;
+const getItemsPerPage = () => {
+  const width = window.innerWidth;
+
+  if (width < 640) return 1;      // mobile
+  if (width < 1024) return 3;     // tablet
+  return 6;                       // desktop
+};
+
+const itemsPerPage = ref(getItemsPerPage());
+
+const updateItemsPerPage = () => {
+  itemsPerPage.value = getItemsPerPage();
+  currentPage.value = 0;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", updateItemsPerPage);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateItemsPerPage);
+});
 
 const totalPages = computed(() =>
-  Math.ceil(featureProducts.value.length / itemsPerPage)
+  Math.ceil(productStore.products.length / itemsPerPage.value)
 );
 
 const nextPage = () => {
@@ -246,10 +199,11 @@ const openProductDetail = (product: Product) => {
 
 // Pagination for Recently Viewed
 const recentPage = ref(0);
-const recentItemsPerPage = 6;
+const recentItemsPerPage = ref(getItemsPerPage());
+
 
 const recentTotalPages = computed(() =>
-  Math.ceil(recent.recent.length / recentItemsPerPage)
+  Math.ceil(recent.recent.length / recentItemsPerPage.value)
 );
 
 const nextRecent = () => {

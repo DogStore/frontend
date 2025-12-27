@@ -14,12 +14,15 @@ export const useRecentStore = defineStore("recent", () => {
   }
 
   function addRecent(product: Product) {
-    recent.value = recent.value.filter((p) => p.id !== product.id);
+    if (recent.value.some((p) => p.id === product.id)) {
+      return;
+    }
     recent.value.unshift(product);
 
     if (recent.value.length > 20) {
       recent.value.pop();
     }
+
     save();
   }
 
