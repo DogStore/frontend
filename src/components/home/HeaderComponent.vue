@@ -150,11 +150,15 @@
       <nav class="flex items-center flex-wrap gap-6 lg:gap-8 text-base lg:text-lg">
 
         <!-- Home -->
-        <a href="#" class="flex items-center font-bold hover:text-orange-500">
+        <button
+          type="button"
+          @click="goToHome"
+          class="flex items-center font-bold hover:text-orange-500 cursor-pointer bg-transparent border-none"
+        >
           <img src="@/assets/HeaderImages/Home.png" class="w-5 lg:w-6 mr-2" />
           <span class="hidden md:inline">Home</span>
           <span class="md:hidden">Home</span>
-        </a>
+        </button>
 
         <!-- Dropdown -->
         <div class="relative">
@@ -198,9 +202,15 @@
     <div v-if="isMobileMenuOpen" class="sm:hidden border-t border-gray-200 bg-white shadow-lg">
       <div class="px-4 py-3 space-y-4">
         <!-- Navigation Links -->
-        <a href="#" class="flex items-center font-bold text-lg py-2 hover:text-orange-500" @click="closeMobileMenu">
-          <img src="@/assets/HeaderImages/Home.png" class="w-6 mr-3" /> Home
-        </a>
+        <button
+          type="button"
+          class="flex items-center font-bold text-lg py-2 hover:text-orange-500 w-full bg-transparent border-none"
+          @click="goToHome"
+        >
+          <img src="@/assets/HeaderImages/Home.png" class="w-6 mr-3" />
+          Home
+        </button>
+
 
         <!-- Products Dropdown in Mobile -->
         <div>
@@ -294,24 +304,24 @@
   const productStore = useProductStore();
 
   // Search function
-const onSearch = async () => {
-  if (!searchQuery.value.trim()) return;
+  const onSearch = async () => {
+    if (!searchQuery.value.trim()) return;
 
-  // 🚀 Navigate FIRST
-  if (router.currentRoute.value.name !== "search") {
-    await router.push("/search");
-  }
+    //  Navigate FIRST
+    if (router.currentRoute.value.name !== "search") {
+      await router.push("/search");
+    }
 
-  // 🔍 Then search
-  productStore.searchProducts(searchQuery.value);
-};
+    //  Then search
+    productStore.searchProducts(searchQuery.value);
+  };
 
-  // Clear search results when query is cleared
- watch(searchQuery, (q) => {
-  if (q === "") {
-    productStore.clearSearch();
-  }
-});
+    // Clear search results when query is cleared
+  watch(searchQuery, (q) => {
+    if (q === "") {
+      productStore.clearSearch();
+    }
+  });
 
   const isDropdownOpen = ref(false);
   const isMobileMenuOpen = ref(false);
@@ -355,6 +365,11 @@ const onSearch = async () => {
     isMobileDropdownOpen.value = false;
     isDropdownOpen.value = false;
   };
+
+  function goToHome() {
+    router.push("/");
+    closeAll();
+  }
 
   function goToWishlist() {
     router.push("/wishlist");
