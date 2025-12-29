@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import NavBar from './NavBar.vue'
-import SideBar from './SideBar.vue'
+import NavBar from '../components/admin/layout/NavBar.vue'
+import SideBar from '../components/admin/layout/SideBar.vue'
 import { ref } from 'vue'
 
 const isSidebarOpened = ref(true)
@@ -8,7 +8,7 @@ const isSidebarOpened = ref(true)
 
 <template>
   <div class="flex h-screen">
-    <aside class="bg-slate-100   ">
+    <aside class="bg-slate-100">
       <SideBar
         :isSidebarOpened="isSidebarOpened"
         @update:isSidebarOpened="isSidebarOpened = $event"

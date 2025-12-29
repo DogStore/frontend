@@ -1,6 +1,6 @@
 // src/router/admin.routes.ts
 import type { RouteRecordRaw } from 'vue-router'
-import AdminLayout from '../components/admin/layout/AdminLayout.vue'
+import AdminLayout from '../layouts/AdminLayout.vue'
 
 // Admin views
 import DashboardPageAdmin from '@/pages/admin/DashboardPage.admin.vue'
