@@ -4,18 +4,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-<<<<<<< HEAD
-    {
-      path: '/',
-      name: 'cart',
-      component: () => import('@/pages/CartPage.vue'),
-    },
     {
       path: '/checkout',
       name: 'checkout',
       component: () => import('@/pages/CheckoutPage.vue'),
-    }
-=======
+    },
     { path: "/",
       name: "Home",
       component: HomePage
@@ -30,11 +23,11 @@ const router = createRouter({
       name: "wishlist",
       component: () => import("@/pages/WhishlistPage.vue"),
     },
-    // {
-    //   path: "/cart",
-    //   name: "cart",
-    //   component: () => import("@/pages/CartPage.vue"),
-    // },
+    {
+      path: "/cart",
+      name: "cart",
+      component: () => import("@/pages/CartPage.vue"),
+    },
     // {
     //   path: "/products/foods",
     //   name: "foods",
@@ -60,8 +53,6 @@ const router = createRouter({
     //   name: "bestSelling",
     //   component: () => import("@/pages/BestSellingPage.vue"),
     // },
-
->>>>>>> origin/main
   ],
 })
 
