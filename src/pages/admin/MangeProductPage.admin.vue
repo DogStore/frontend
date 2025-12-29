@@ -3,7 +3,7 @@ import ProductTable from '@/components/admin/products/ProductTable.vue'
 import ProductEditModal from '@/components/admin/products/ProductEditModal.vue'
 import ProductAddModal from '@/components/admin/products/ProductAddModal.vue'
 import ProductDeleteModal from '@/components/admin/products/ProductDeleteModal.vue'
-import { useProductStore } from '@/stores/tempproductStore'
+import { useProductStore } from '@/stores/productStore'
 import type { Product } from '@/types/product'
 import { computed, onMounted, ref } from 'vue'
 

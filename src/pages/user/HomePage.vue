@@ -137,7 +137,7 @@ import type { Product } from '@/types/product'
 import { useCartStore } from '@/stores/cartStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useRecentStore } from '@/stores/recentStore'
-import { useProductStore } from '@/stores/tempproductStore'
+import { useProductStore } from '@/stores/productStore'
 
 const cart = useCartStore()
 const favorite = useFavoriteStore()

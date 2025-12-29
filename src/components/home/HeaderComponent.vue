@@ -351,7 +351,7 @@ import clothesIcon from '@/assets/HeaderImages/Clothes.png'
 import toyIcon from '@/assets/HeaderImages/Toy.png'
 import moreIcon from '@/assets/HeaderImages/More.png'
 import { useRouter } from 'vue-router'
-import { useProductStore } from '@/stores/tempproductStore'
+import { useProductStore } from '@/stores/productStore'
 
 const cart = useCartStore()
 

@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { useProductStore } from '@/stores/tempproductStore'
+import { useProductStore } from '@/stores/productStore'
 import ProductCard from '@/components/home/ProductCard.vue'
 
 const productStore = useProductStore()
