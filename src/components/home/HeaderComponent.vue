@@ -117,7 +117,9 @@
         </button>
 
         <!-- CART -->
-        <button class="relative flex items-center px-4 lg:px-5 py-2 bg-[#FFAA0C] text-white rounded-lg hover:bg-orange-500 transition shadow-sm">
+        <button
+          class="relative flex items-center px-4 lg:px-5 py-2 bg-[#FFAA0C] text-white rounded-lg hover:bg-orange-500 transition shadow-sm"
+          @click="goTOcart">
           <img src="@/assets/HeaderImages/Shopping Cart.png" class="h-5 mr-2" />
           <span class="hidden lg:inline font-bold">CARTS</span>
           <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold
@@ -177,24 +179,26 @@
             v-if="isDropdownOpen"
             class="absolute top-full left-0 mt-2 w-48 bg-white border border-orange-300
                    shadow-xl rounded-lg z-50 divide-y divide-orange-300">
-            <a v-for="item in dropdownItems"
-               :key="item.name"
-               href="#"
-               @click.prevent="closeDropdown"
-               class="flex items-center px-4 py-3 hover:bg-orange-50 transition text-gray-800">
-              <img :src="item.icon" class="w-6 mr-3" />
-              {{ item.name }}
-            </a>
+              <div
+                v-for="item in dropdownItems"
+                :key="item.name"
+                @click="goToCategory(item.route)"
+                class="flex items-center px-4 py-3 hover:bg-orange-50 transition text-gray-800 cursor-pointer">
+                <img :src="item.icon" class="w-6 mr-3" />
+                {{ item.name }}
+              </div>
+
           </div>
         </div>
 
         <!-- Best Selling -->
-        <a href="#" class="flex items-center font-bold hover:text-orange-500">
+        <div
+          class="flex items-center font-bold hover:text-orange-500"
+          @click="goToBestSelling">
           <img src="@/assets/HeaderImages/Fire.png" class="w-5 lg:w-6 mr-2" />
           <span class="hidden lg:inline">Best Selling Products</span>
           <span class="lg:hidden">Best Selling</span>
-        </a>
-
+        </div>
       </nav>
     </div>
 
@@ -329,11 +333,12 @@
 
   // Dropdown items
   const dropdownItems = [
-    { name: "Foods", icon: foodIcon },
-    { name: "Clothes", icon: clothesIcon },
-    { name: "Toys", icon: toyIcon },
-    { name: "Others", icon: moreIcon },
+    { name: "Foods", icon: foodIcon, route: "/products/foods" },
+    { name: "Clothes", icon: clothesIcon, route: "/products/clothes" },
+    { name: "Toys", icon: toyIcon, route: "/products/toys" },
+    { name: "Others", icon: moreIcon, route: "/products/others" },
   ];
+
 
   const toggleDropdown = () => (isDropdownOpen.value = !isDropdownOpen.value);
   const closeDropdown = () => (isDropdownOpen.value = false);
@@ -345,34 +350,58 @@
     }
   };
 
+  // Close all menus
   const closeAll = () => {
-  isDropdownOpen.value = false;
-  isMobileMenuOpen.value = false;
-  isMobileDropdownOpen.value = false;
-};
+    isDropdownOpen.value = false;
+    isMobileMenuOpen.value = false;
+    isMobileDropdownOpen.value = false;
+  };
 
+  // Close mobile menu
   const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
     isMobileDropdownOpen.value = false;
   };
 
+  // Toggle mobile dropdown
   const toggleMobileDropdown = () => {
     isMobileDropdownOpen.value = !isMobileDropdownOpen.value;
   };
 
+  // Close all dropdowns
   const closeAllDropdowns = () => {
     isMobileMenuOpen.value = false;
     isMobileDropdownOpen.value = false;
     isDropdownOpen.value = false;
   };
 
+  // Navigation functions
   function goToHome() {
     router.push("/");
     closeAll();
   }
 
+  // Navigate to Wish List
   function goToWishlist() {
     router.push("/wishlist");
+    closeAll();
+  }
+
+  // Navigate to Cart
+  function goTOcart() {
+    router.push("/cart");
+    closeAll();
+  }
+
+  // Navigate to Category
+  function goToCategory(route: string) {
+    router.push(route);
+    closeDropdown();
+  }
+
+  // Navigate to Best Selling
+  function goToBestSelling() {
+    router.push("/products/bestSelling");
     closeAll();
   }
 </script>

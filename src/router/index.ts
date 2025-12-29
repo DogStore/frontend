@@ -18,6 +18,37 @@ const router = createRouter({
       name: "wishlist",
       component: () => import("@/pages/WhishlistPage.vue"),
     },
+    // {
+    //   path: "/cart",
+    //   name: "cart",
+    //   component: () => import("@/pages/CartPage.vue"),
+    // },
+    // {
+    //   path: "/products/foods",
+    //   name: "foods",
+    //   component: () => import("@/pages/ProductsByCategory.vue"),
+    // },
+    // {
+    //   path: "/products/clothes",
+    //   name: "clothes",
+    //   component: () => import("@/pages/ProductsByCategory.vue"),
+    // },
+    // {
+    //   path: "/products/toys",
+    //   name: "toys",
+    //   component: () => import("@/pages/ProductsByCategory.vue"),
+    // },
+    // {
+    //   path: "/products/others",
+    //   name: "others",
+    //   component: () => import("@/pages/ProductsByCategory.vue"),
+    // },
+    // {
+    //   path: "/products/bestSelling",
+    //   name: "bestSelling",
+    //   component: () => import("@/pages/BestSellingPage.vue"),
+    // },
+
   ],
 })
 
