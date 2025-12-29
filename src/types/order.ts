@@ -2,13 +2,7 @@
 import type { BaseEntity, ID } from './common'
 import type { Product } from './product'
 
-export type OrderStatus =
-  | 'pending'
-  | 'paid'
-  | 'processing'
-  | 'shipped'
-  | 'delivered'
-  | 'canceled'
+export type OrderStatus = 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'canceled'
 
 export interface OrderItem {
   product: ID | Product

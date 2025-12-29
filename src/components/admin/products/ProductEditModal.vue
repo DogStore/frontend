@@ -5,25 +5,17 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   >
     <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden">
-
       <!-- Header -->
       <div class="bg-orange-500 px-6 py-4 text-white">
-        <h2 class="text-xl font-semibold flex items-center gap-2">
-          ✏️ Edit Product
-        </h2>
-        <p class="text-sm opacity-90">
-          Update product information and media
-        </p>
+        <h2 class="text-xl font-semibold flex items-center gap-2">✏️ Edit Product</h2>
+        <p class="text-sm opacity-90">Update product information and media</p>
       </div>
 
       <!-- Content -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-
         <!-- LEFT : Product Info -->
         <div class="space-y-5">
-          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">
-            Product Information
-          </h3>
+          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">Product Information</h3>
 
           <!-- Name -->
           <div>
@@ -54,7 +46,7 @@
                 Regular Price <span class="text-red-500">*</span>
               </label>
               <input
-                v-model.number="form.regularPrice"
+                v-model.number="form.originalPrice"
                 type="number"
                 min="0"
                 step="0.01"
@@ -84,11 +76,7 @@
               class="w-full rounded-lg border border-orange-300 px-4 py-2 outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400 transition"
             >
               <option value="" disabled>Select category</option>
-              <option
-                v-for="cat in categories"
-                :key="cat._id"
-                :value="cat._id"
-              >
+              <option v-for="cat in categories" :key="cat._id" :value="cat._id">
                 {{ cat.name }} ({{ cat.slug }})
               </option>
             </select>
@@ -142,23 +130,14 @@
 
         <!-- RIGHT : Media -->
         <div class="space-y-6">
-          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">
-            Media
-          </h3>
+          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">Media</h3>
 
           <!-- Existing Images -->
           <div>
             <div class="text-sm font-medium mb-2">Current Images</div>
             <div class="flex flex-wrap gap-3">
-              <div
-                v-for="(url, index) in editImages"
-                :key="index"
-                class="relative group"
-              >
-                <img
-                  :src="url"
-                  class="w-20 h-20 object-cover rounded-lg shadow"
-                />
+              <div v-for="(url, index) in editImages" :key="index" class="relative group">
+                <img :src="url" class="w-20 h-20 object-cover rounded-lg shadow" />
                 <button
                   type="button"
                   @click="removeImage(url)"
@@ -176,9 +155,7 @@
             <label
               class="flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl p-6 cursor-pointer hover:bg-orange-50 transition"
             >
-              <span class="text-sm font-medium text-orange-500">
-                Click to upload images
-              </span>
+              <span class="text-sm font-medium text-orange-500"> Click to upload images </span>
               <input
                 type="file"
                 multiple
@@ -189,15 +166,8 @@
             </label>
 
             <div v-if="newImagePreviews.length" class="flex flex-wrap gap-3 mt-4">
-              <div
-                v-for="(preview, index) in newImagePreviews"
-                :key="index"
-                class="relative group"
-              >
-                <img
-                  :src="preview"
-                  class="w-20 h-20 object-cover rounded-lg shadow"
-                />
+              <div v-for="(preview, index) in newImagePreviews" :key="index" class="relative group">
+                <img :src="preview" class="w-20 h-20 object-cover rounded-lg shadow" />
                 <button
                   type="button"
                   @click="removeNewImage(index)"
@@ -214,10 +184,7 @@
             <div class="text-sm font-medium mb-2">Country Flag</div>
 
             <div v-if="oldFlagUrl" class="relative w-20 mb-3 group">
-              <img
-                :src="oldFlagUrl"
-                class="w-20 h-20 object-cover rounded-lg shadow"
-              />
+              <img :src="oldFlagUrl" class="w-20 h-20 object-cover rounded-lg shadow" />
               <button
                 type="button"
                 @click="removeOldFlag"
@@ -228,10 +195,7 @@
             </div>
 
             <div v-if="flagPreview" class="relative w-20 mb-3 group">
-              <img
-                :src="flagPreview"
-                class="w-20 h-20 object-cover rounded-lg shadow"
-              />
+              <img :src="flagPreview" class="w-20 h-20 object-cover rounded-lg shadow" />
               <button
                 type="button"
                 @click="removeFlag"
@@ -244,15 +208,8 @@
             <label
               class="flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl p-6 cursor-pointer hover:bg-orange-50 transition"
             >
-              <span class="text-sm font-medium text-orange-500">
-                Upload new flag
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                @change="handleFlagUpload"
-                class="hidden"
-              />
+              <span class="text-sm font-medium text-orange-500"> Upload new flag </span>
+              <input type="file" accept="image/*" @change="handleFlagUpload" class="hidden" />
             </label>
           </div>
         </div>
@@ -260,10 +217,7 @@
 
       <!-- Footer -->
       <div class="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
-        <button
-          @click="close"
-          class="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
-        >
+        <button @click="close" class="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100">
           Cancel
         </button>
         <button
@@ -276,7 +230,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
@@ -291,17 +244,28 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'save', data: Partial<Product>): void
+  (e: 'save', data: FormData): void
 }>()
 
 // preview image
 const newImagePreviews = ref<string[]>([])
 
+type ProductForm = {
+  name: string
+  description: string
+  originalPrice: number
+  discount: number
+  category: string
+  stock: number
+  size: string
+  isPromoted: boolean
+  isActive: boolean
+}
 // State
-const form = ref<Partial<Product>>({
+const form = ref<ProductForm>({
   name: '',
   description: '',
-  regularPrice: 0,
+  originalPrice: 0,
   discount: 0,
   category: '',
   stock: 0,
@@ -314,9 +278,9 @@ const editImages = ref<string[]>([])
 const newImageFiles = ref<File[]>([])
 const imagesToDelete = ref<string[]>([])
 
-const flagFile = ref<File | null>(null)      // New flag file
+const flagFile = ref<File | null>(null) // New flag file
 const flagPreview = ref<string | null>(null) // Preview URL
-const oldFlagUrl = ref<string | null>(null)  // Current flag from product
+const oldFlagUrl = ref<string | null>(null) // Current flag from product
 
 // Use category store
 const categoryStore = useCategoryStore()
@@ -330,7 +294,7 @@ watch(
       form.value = {
         name: newProduct.name || '',
         description: newProduct.description || '',
-        regularPrice: newProduct.regularPrice,
+        originalPrice: newProduct.originalPrice,
         discount: newProduct.discount,
         category:
           typeof newProduct.category === 'string' ? newProduct.category : newProduct.category._id,
@@ -402,7 +366,6 @@ const close = () => {
   clearNewImages()
 }
 
-
 // Handle flag upload
 const handleFlagUpload = (e: Event) => {
   const files = (e.target as HTMLInputElement).files
@@ -426,24 +389,39 @@ const removeOldFlag = () => {
   // We'll send this in FormData later
 }
 
-
 const save = () => {
   if (!props.product) return
 
-  // ✅ Prepare data to send to parent
-  const data = {
-    ...form.value,
-    imagesToDelete: imagesToDelete.value,
-    newImageFiles: newImageFiles.value,
+  const formData = new FormData()
 
-    oldFlagUrl: oldFlagUrl.value,
-    flagFile: flagFile.value
+  // Text fields — safe because form.value is initialized
+  formData.append('name', form.value.name.trim())
+  formData.append('description', form.value.description.trim())
+  formData.append('originalPrice', form.value.originalPrice.toString())
+  formData.append('discount', form.value.discount.toString())
+  formData.append('category', form.value.category.trim())
+  formData.append('stock', form.value.stock.toString())
+  formData.append('size', form.value.size.trim())
+  formData.append('isPromoted', String(form.value.isPromoted))
+  formData.append('isActive', String(form.value.isActive))
+
+  // Images
+  imagesToDelete.value.forEach((url) => {
+    formData.append('imagesToDelete', url)
+  })
+
+  newImageFiles.value.forEach((file) => {
+    formData.append('images', file)
+  })
+
+  // Flag
+  if (flagFile.value instanceof File) {
+    formData.append('countryFlag', flagFile.value)
+  } else if (oldFlagUrl.value === null) {
+    formData.append('deleteFlag', 'true')
   }
 
-  // ✅ Emit data → parent will handle FormData + API call
-  emit('save', data as Partial<Product>)
-
-  // ✅ Clear new image previews
+  emit('save', formData)
   clearNewImages()
 }
 </script>

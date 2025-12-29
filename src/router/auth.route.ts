@@ -1,6 +1,6 @@
 // src/router/auth.routes.ts
 import type { RouteRecordRaw } from 'vue-router'
-import Authenication from '@/views/auth/Authentication.vue'
+import Authenication from '@/pages/auth/Authentication.vue'
 
 const authRoutes: RouteRecordRaw[] = [
   {

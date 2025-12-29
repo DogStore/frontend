@@ -4,7 +4,7 @@ import adminRoutes from './admin.route'
 import userRoutes from './user.route'
 import authRoutes from './auth.route'
 import publicRoutes from './public.route'
-import {useUserStore} from '../stores/userStore'
+import { useUserStore } from '../stores/userStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

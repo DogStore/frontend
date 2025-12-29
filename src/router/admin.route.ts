@@ -3,10 +3,10 @@ import type { RouteRecordRaw } from 'vue-router'
 import AdminLayout from '../components/admin/layout/AdminLayout.vue'
 
 // Admin views
-import DashboardViewAdmin from '@/views/admin/DashboardView.admin.vue'
-import ManageProductViewAdmin from '@/views/admin/MangeProductView.admin.vue' // keep name if intentional
-import PromotionViewAdmin from '@/views/admin/PromotionView.admin.vue'
-import ViewOrderViewAdmin from '@/views/admin/ViewOrderView.admin.vue'
+import DashboardPageAdmin from '@/pages/admin/DashboardPage.admin.vue'
+import ManageProductPageAdmin from '@/pages/admin/MangeProductPage.admin.vue'
+import PromotionPageAdmin from '@/pages/admin/PromotionPage.admin.vue'
+import ViewOrderPageAdmin from '@/pages/admin/ViewOrderPage.admin.vue'
 
 const adminRoutes: RouteRecordRaw[] = [
   {
@@ -21,22 +21,22 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'dashboard',
         name: 'AdminDashboard',
-        component: DashboardViewAdmin,
+        component: DashboardPageAdmin,
       },
       {
         path: 'Manage-Product',
         name: 'ManageProduct',
-        component: ManageProductViewAdmin,
+        component: ManageProductPageAdmin,
       },
       {
         path: 'Promotion',
         name: 'Promotion',
-        component: PromotionViewAdmin,
+        component: PromotionPageAdmin,
       },
       {
         path: 'View-Order',
         name: 'View-Order',
-        component: ViewOrderViewAdmin,
+        component: ViewOrderPageAdmin,
       },
     ],
   },

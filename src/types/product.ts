@@ -1,20 +1,22 @@
-import type { Category } from './category'
-import type { BaseEntity, ID } from './common'
+// src/types/product.ts
 
-export interface Product extends BaseEntity {
+export interface Product {
+  id: string
   name: string
-  size?: string
-  slug: string
-  description?: string
-  rating: number
   images: string[]
-  regularPrice: number
+  price: number
+  originalPrice: number
   discount: number
-  salePrice?: number
-  category: ID | Category
-  stock: number
-  soldCount: number
-  isPromoted: boolean
-  isActive: boolean
+  rating: number
   countryFlag?: string | null
+  isActive: boolean
+  isFavorite: boolean
+  inCart: boolean
+  category: string | { _id: string; name: string; slug: string }
+  stock: number
+  description: string
+  size?: string
+  soldCount?: number
+  isPromoted?: boolean
+  addedAt?: number
 }

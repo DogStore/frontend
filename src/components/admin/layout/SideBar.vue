@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookDashedIcon, IdCard, Projector, SettingsIcon, UniversityIcon } from 'lucide-vue-next'
+import { BookDashedIcon, Projector, SettingsIcon, UniversityIcon } from 'lucide-vue-next'
 
 const props = defineProps<{ isSidebarOpened: boolean }>()
 

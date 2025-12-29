@@ -1,6 +1,5 @@
 // src/router/user.route.ts
 import UserLayout from '@/components/user/UserLayout.vue'
-import TestUser from '@/views/user/TestUser.vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 const userRoutes: RouteRecordRaw[] = [
@@ -13,7 +12,7 @@ const userRoutes: RouteRecordRaw[] = [
       {
         path: 'profile',
         name: 'UserProfile',
-        component: () => import('@/views/user/TestUser.vue'),
+        component: () => import('@/pages/user/ProfilePage.vue'),
       },
       { path: '', redirect: 'profile' },
     ],

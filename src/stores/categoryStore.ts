@@ -3,22 +3,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 import type { Category } from '@/types/category'
-
-const API_BASE = 'https://backend-kanu.onrender.com/api'
+import { adminApi } from '@/services/api'
 
 export const useCategoryStore = defineStore('category', () => {
   const categories = ref<Category[]>([])
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/admin/categories`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      })
-
-      console.log('API Response:', response.data)
-
+      const response = await adminApi.get('/admin/categories')
       if (Array.isArray(response.data)) {
         categories.value = response.data
       } else {

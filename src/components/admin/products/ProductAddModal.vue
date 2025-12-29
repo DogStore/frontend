@@ -4,30 +4,24 @@
     v-if="show"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   >
-    <div
-      class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden"
-    >
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden">
       <!-- Header -->
       <div class="bg-orange-500 px-6 py-4 text-white">
-        <h2 class="text-xl font-semibold flex items-center gap-2">
-          ➕ Add New Product
-        </h2>
-        <p class="text-sm opacity-90">
-          Create and publish a new product to your store
-        </p>
+        <h2 class="text-xl font-semibold flex items-center gap-2">➕ Add New Product</h2>
+        <p class="text-sm opacity-90">Create and publish a new product to your store</p>
       </div>
 
       <!-- Content -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
         <!-- LEFT : Product Info -->
         <div class="space-y-5">
-          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">
-            Product Information
-          </h3>
+          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">Product Information</h3>
 
           <!-- Name -->
           <div>
-            <label class="block text-sm font-medium mb-1">Product Name <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium mb-1"
+              >Product Name <span class="text-red-500">*</span></label
+            >
             <input
               v-model="form.name"
               type="text"
@@ -64,9 +58,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium mb-1">
-                Discount (%)
-              </label>
+              <label class="block text-sm font-medium mb-1"> Discount (%) </label>
               <input
                 v-model.number="form.discount"
                 type="number"
@@ -80,18 +72,16 @@
 
           <!-- Category -->
           <div>
-            <label class="block text-sm font-medium mb-1">Category <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium mb-1"
+              >Category <span class="text-red-500">*</span></label
+            >
             <div class="flex gap-2">
               <select
                 v-model="form.category"
                 class="flex-1 rounded-lg border outline-none border-orange-300 px-4 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
               >
                 <option value="" disabled>Select category</option>
-                <option
-                  v-for="cat in categories"
-                  :key="cat._id"
-                  :value="cat._id"
-                >
+                <option v-for="cat in categories" :key="cat._id" :value="cat._id">
                   {{ cat.name }}
                 </option>
               </select>
@@ -136,7 +126,9 @@
           <!-- Stock & Size -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium mb-1">Stock <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium mb-1"
+                >Stock <span class="text-red-500">*</span></label
+              >
               <input
                 v-model.number="form.stock"
                 type="number"
@@ -181,19 +173,17 @@
 
         <!-- RIGHT : Media -->
         <div class="space-y-6">
-          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">
-            Media
-          </h3>
+          <h3 class="text-[26px] font-semibold text-gray-800 border-b pb-2">Media</h3>
 
           <!-- Image Upload -->
           <div>
-            <div class="mb-3 text-sm font-medium ">Product Images <span class="text-red-500">*</span></div>
+            <div class="mb-3 text-sm font-medium">
+              Product Images <span class="text-red-500">*</span>
+            </div>
             <label
               class="flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl p-6 cursor-pointer hover:bg-orange-50 transition"
             >
-              <span class="text-sm font-medium text-orange-500">
-                Click to add images
-              </span>
+              <span class="text-sm font-medium text-orange-500"> Click to add images </span>
               <input
                 type="file"
                 multiple
@@ -204,16 +194,9 @@
             </label>
 
             <!-- Image Preview -->
-            <div class="flex flex-wrap gap-3 mt-4 ">
-              <div
-                v-for="(preview, index) in imagePreviews"
-                :key="index"
-                class="relative group"
-              >
-                <img
-                  :src="preview"
-                  class="w-20 h-20 object-cover rounded-lg shadow"
-                />
+            <div class="flex flex-wrap gap-3 mt-4">
+              <div v-for="(preview, index) in imagePreviews" :key="index" class="relative group">
+                <img :src="preview" class="w-20 h-20 object-cover rounded-lg shadow" />
                 <button
                   type="button"
                   @click="removeImage(index)"
@@ -227,15 +210,14 @@
 
           <!-- Country Flag -->
           <div>
-            <label class="block text-sm font-medium  mb-3 ">Country Flag <span class="text-red-500">*</span></label>
-
+            <label class="block text-sm font-medium mb-3"
+              >Country Flag <span class="text-red-500">*</span></label
+            >
 
             <label
               class="flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl p-6 cursor-pointer hover:bg-orange-50 transition"
             >
-              <span class="text-sm font-medium text-orange-500">
-                Click to upload Flag
-              </span>
+              <span class="text-sm font-medium text-orange-500"> Click to upload Flag </span>
               <input
                 type="file"
                 accept="image/*"
@@ -244,11 +226,8 @@
               />
             </label>
 
-            <div v-if="flagPreview" class="relative w-20 my-3 group ">
-              <img
-                :src="flagPreview"
-                class="w-20 h-20 object-cover rounded-lg shadow"
-              />
+            <div v-if="flagPreview" class="relative w-20 my-3 group">
+              <img :src="flagPreview" class="w-20 h-20 object-cover rounded-lg shadow" />
               <button
                 type="button"
                 @click="removeFlag"
@@ -263,10 +242,7 @@
 
       <!-- Footer -->
       <div class="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
-        <button
-          @click="close"
-          class="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
-        >
+        <button @click="close" class="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100">
           Cancel
         </button>
 
@@ -286,7 +262,6 @@
 import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { Product } from '@/types/product'
 import { useCategoryStore } from '@/stores/categoryStore'
 
 // Define ProductForm type
@@ -308,9 +283,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'save', data: ProductForm): void
+  (e: 'save', data: FormData): void
 }>()
-
 // State
 const form = ref<ProductForm>({
   name: '',
@@ -379,7 +353,7 @@ const addNewCategory = async () => {
 
     if (response.data) {
       await categoryStore.fetchCategories()
-      form.value.category = response.data._id // ← note direct access
+      form.value.category = response.data._id
       showNewCategoryInput.value = false
       newCategoryName.value = ''
     } else {
@@ -449,11 +423,29 @@ const removeFlag = () => {
 const save = () => {
   if (!canSave.value) return
 
-  const data = {
-    ...form.value,
-    imageFiles: imageFiles.value,
-    flagFile: flagFile.value,
+  const formData = new FormData()
+
+  // Text fields
+  formData.append('name', form.value.name)
+  formData.append('description', form.value.description)
+  formData.append('regularPrice', form.value.regularPrice.toString())
+  formData.append('discount', form.value.discount.toString())
+  formData.append('category', form.value.category)
+  formData.append('stock', form.value.stock.toString())
+  formData.append('size', form.value.size)
+  formData.append('isPromoted', form.value.isPromoted.toString())
+  formData.append('isActive', form.value.isActive.toString())
+
+  // Images
+  imageFiles.value.forEach((file) => {
+    formData.append('images', file)
+  })
+
+  // Flag
+  if (flagFile.value instanceof File) {
+    formData.append('countryFlag', flagFile.value)
   }
-  emit('save', data)
+
+  emit('save', formData)
 }
 </script>
