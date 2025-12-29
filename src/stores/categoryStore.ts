@@ -13,17 +13,26 @@ export const useCategoryStore = defineStore('category', () => {
     try {
       const response = await axios.get(`${API_BASE}/admin/categories`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
       })
-      categories.value = response.data.categories || []
+
+      console.log('API Response:', response.data)
+
+      if (Array.isArray(response.data)) {
+        categories.value = response.data
+      } else {
+        console.warn('Unexpected API response structure')
+        categories.value = []
+      }
     } catch (err: any) {
       console.error('Error fetching categories:', err)
+      categories.value = []
     }
   }
 
   return {
     categories,
-    fetchCategories
+    fetchCategories,
   }
 })

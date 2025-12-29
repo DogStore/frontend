@@ -35,13 +35,13 @@ const confirm = () => emit('confirm')
       <div class="flex justify-end space-x-3">
         <button
           @click="cancel"
-          class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+          class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 cursor-pointer"
         >
           Cancel
         </button>
         <button
           @click="confirm"
-          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer "
         >
           Delete
         </button>

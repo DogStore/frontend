@@ -1,7 +1,7 @@
-import type { Category } from "./category";
-import type { BaseEntity, ID } from "./common";
+import type { Category } from './category'
+import type { BaseEntity, ID } from './common'
 
-export interface Product extends BaseEntity{
+export interface Product extends BaseEntity {
   name: string
   size?: string
   slug: string

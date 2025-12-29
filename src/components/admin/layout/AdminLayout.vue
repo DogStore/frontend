@@ -8,7 +8,7 @@ const isSidebarOpened = ref(true)
 
 <template>
   <div class="flex h-screen">
-    <aside class="bg-sky-100">
+    <aside class="bg-slate-100   ">
       <SideBar
         :isSidebarOpened="isSidebarOpened"
         @update:isSidebarOpened="isSidebarOpened = $event"

@@ -71,7 +71,7 @@ const toggleSidebar = () => {
     <div class="mr-10">
       <button
         @click="toggleSidebar"
-        class="absolute top-1/2 z-10 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-sky-300 border border-black/20 rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+        class="absolute top-1/2 z-10 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-amber-600 border border-black/20 rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
       >
         <span v-if="isSidebarOpened">⮜</span>
         <span v-else>⮞</span>
