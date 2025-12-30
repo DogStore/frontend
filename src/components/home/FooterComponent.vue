@@ -12,7 +12,7 @@ interface Country {
 // Country options
 const countries: Country[] = [
   { img: CamFlag, name: 'Cambodia / Khmer' },
-  { img: FrenchFlag, name: 'Franch' },
+  { img: FrenchFlag, name: 'France' },
   { img: AustraliaFlag, name: 'Australia' }
 ];
 
@@ -256,7 +256,7 @@ const selectCountry = (country: Country): void => {
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3908.7412542918564!2d104.89551077466827!3d11.570397488630816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3109517388680e15%3A0x63057e6682968f5!2sInstitute%20of%20Technology%20of%20Cambodia!5e0!3m2!1sen!2skh!4v1764683440599!5m2!1sen!2skh"
                 class="w-full h-full border-0 rounded-md"
-                allowfullscreen=""
+                allowfullscreen
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 title="Google Maps Location">

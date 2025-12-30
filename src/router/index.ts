@@ -5,6 +5,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "/cart",
+      name: "cart",
+      component: () => import("@/pages/CartPage.vue"),
+    },
+    {
       path: '/checkout',
       name: 'checkout',
       component: () => import('@/pages/CheckoutPage.vue'),
@@ -23,11 +28,7 @@ const router = createRouter({
       name: "wishlist",
       component: () => import("@/pages/WhishlistPage.vue"),
     },
-    {
-      path: "/cart",
-      name: "cart",
-      component: () => import("@/pages/CartPage.vue"),
-    },
+    
     // {
     //   path: "/products/foods",
     //   name: "foods",

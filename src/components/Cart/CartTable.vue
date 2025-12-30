@@ -11,13 +11,11 @@
     </div>
 
     <!-- Cart Items -->
-    <div v-if="cartItems.length" class="divide-y mt-2">
+    <div v-if="cartStore.cartItems.length" class="divide-y mt-2">
       <CartItemRow
-        v-for="item in cartItems"
+        v-for="item in cartStore.cartItems"
         :key="item.id"
         :item="item"
-        @update-quantity="updateQuantity"
-        @remove-item="removeItem"
       />
     </div>
 
@@ -27,30 +25,9 @@
 </template>
 
 <script lang="ts" setup>
-//import { computed } from 'vue'
 import CartItemRow from './CartItemRow.vue'
 import EmptyCart from './EmptyCart.vue'
+import { useCartStore } from '@/stores/cartStore'
 
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  image: string
-}
-
-const props = defineProps<{ cartItems: CartItem[] }>()
-const emit = defineEmits(['update-cart'])
-
-function updateQuantity(id: number, qty: number) {
-  const updated = props.cartItems.map(i =>
-    i.id === id ? { ...i, quantity: qty } : i
-  )
-  emit('update-cart', updated)
-}
-
-function removeItem(id: number) {
-  const updated = props.cartItems.filter(i => i.id !== id)
-  emit('update-cart', updated)
-}
+const cartStore = useCartStore()
 </script>

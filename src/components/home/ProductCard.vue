@@ -48,7 +48,7 @@
 
     <!-- ADD TO CART -->
     <button
-      @click.stop="addCart"
+      @click.stop="handleAddtoCart(product)"
       class="w-full px-4 py-2 rounded-md transition font-Nunito flex items-center justify-center gap-2 mt-auto"
       :class="isInCart ? 'bg-gray-400 text-white cursor-pointer' : 'bg-[#FFAA0C] text-white hover:bg-orange-500 cursor-pointer'">
       <template v-if="isInCart">
@@ -100,13 +100,17 @@ function toggleFavorite() {
   favorite.toggleFavorite(props.product);
 }
 
-function addCart() {
-  cart.addToCart(props.product);
-}
+// function addCart() {
+//   cart.addToCart(props.product);
+// }
 
 function openDetail() {
   recent.addRecent(props.product);
   console.log("OPEN:", props.product.name);
+}
+
+function handleAddtoCart(product: Product){
+  cart.addToCart(product);
 }
 
 // STARS

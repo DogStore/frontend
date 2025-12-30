@@ -39,36 +39,56 @@
           ></div>
         </div>
       </div>
+
+      <p
+      v-if="!selectedPayment"
+      class="text-sm text-red-500 mt-2"
+      >
+      Please select a payment method
+      </p>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-const selectedPayment = ref<string>()
+const emit = defineEmits<{
+  (e: 'payment-valid', value: boolean): void
+}>()
+
+const selectedPayment = ref<string>('')
+
+watch(
+  selectedPayment,
+  (val) => {
+    emit('payment-valid', !!val)
+  },
+  { immediate: true }
+)
 
 const paymentMethods = [
   {
     id: 'paypal',
-    icon: '/src/assets/paypal.png',
+    icon: '/src/assets/CartImages/paypal.png',
     colorClass: 'text-blue-600',
   },
   {
     id: 'visa',
-    icon: '/src/assets/visa.png',
+    icon: '/src/assets/CartImages/visa.png',
     colorClass: 'text-blue-800',
   },
   {
     id: 'mastercard',
-    icon: '/src/assets/mastercard.png',
+    icon: '/src/assets/CartImages/mastercard.png',
     colorClass: 'text-red-500',
   },
   {
     id: 'cash',
     label: 'By cash',
-    icon: '/src/assets/Dollar.png',
+    icon: '/src/assets/CartImages/Dollar.png',
     colorClass: 'text-gray-700',
   },
 ]
 </script>
+

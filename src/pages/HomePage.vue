@@ -124,18 +124,15 @@ import Paw from "@/assets/ShowcaseImages/Pawprint.png";
 import type { Product } from "@/types/Product";
 
 // Pinia Stores
-import { useCartStore } from "@/stores/cartStore";
 import { useFavoriteStore } from "@/stores/favoriteStore";
 import { useRecentStore } from "@/stores/recentStore";
 import { useProductStore } from "@/stores/productStore";
 
-const cart = useCartStore();
 const favorite = useFavoriteStore();
 const recent = useRecentStore();
 
 // Load recent items on page load
 recent.loadFromStorage();
-cart.loadFromStorage();
 favorite.loadFromStorage();
 
 // Showcase
