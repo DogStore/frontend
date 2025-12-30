@@ -5,9 +5,16 @@ import Authenication from '@/pages/auth/Authentication.vue'
 const authRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
-    name: 'Login',
+    name: 'login',
     component: Authenication,
-    meta: { guestOnly: true },
+   children: [
+      {
+        path: '',
+        name: 'login/register',
+        component: Authenication,
+        meta: {guestOnly: true},
+    }
+   ]
   },
 ]
 

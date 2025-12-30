@@ -14,6 +14,7 @@ import { ref } from 'vue'
 import HeaderComponent from '@/components/home/HeaderComponent.vue'
 import FooterComponent from '@/components/home/FooterComponent.vue'
 
+
 const cartCount = ref(0)
 
 const handleCartUpdate = (newValue: number) => {

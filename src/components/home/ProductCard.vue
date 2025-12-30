@@ -13,7 +13,7 @@
 
     <!-- IMAGE -->
     <div class="relative flex items-center justify-center h-[150px] w-full">
-      <img :src="product.image" :alt="product.name" class="h-[120px] object-contain" />
+      <img :src="product.images[0]" :alt="product.name" class="h-[120px] object-contain" />
 
       <!-- Favorite Button -->
       <button

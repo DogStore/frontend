@@ -1,5 +1,5 @@
 // src/router/user.route.ts
-import UserLayout from '@/components/user/UserLayout.vue'
+import UserLayout from '../layouts/UserLayout.vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 const userRoutes: RouteRecordRaw[] = [

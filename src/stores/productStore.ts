@@ -53,9 +53,7 @@ export const useProductStore = defineStore('product', () => {
   // Create Product
   const createProduct = async (productData: FormData) => {
     const response = await adminApi.post('/admin/products', productData)
-    console.log('✅ CREATE RESPONSE:', JSON.stringify(response.data, null, 2))
     const mappedProduct = mapBackendProduct(response.data.product)
-    console.log('✅ MAPPED PRODUCT:', JSON.stringify(mappedProduct, null, 2))
     products.value.push(mappedProduct)
     return mappedProduct
   }

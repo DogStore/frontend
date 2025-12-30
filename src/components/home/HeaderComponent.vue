@@ -64,6 +64,7 @@
           <!-- CART -->
           <button
             class="relative p-2 bg-[#FFAA0C] text-white rounded-lg hover:bg-orange-500 transition"
+            @click="goTOcart"
           >
             <img src="@/assets/HeaderImages/Shopping Cart.png" class="h-5 w-5" />
             <span
@@ -73,7 +74,7 @@
             </span>
           </button>
 
-          <!-- MOBILE MENU TOGGLE - Using SVG icons -->
+          <!-- MOBILE MENU TOGGLE -->
           <button @click="toggleMobileMenu" class="p-2 border border-orange-300 rounded-lg">
             <svg
               v-if="!isMobileMenuOpen"
@@ -107,7 +108,7 @@
         </div>
       </div>
 
-      <!-- SEARCH BAR (middle on desktop, full width on mobile) -->
+      <!-- SEARCH BAR -->
       <div class="w-full sm:w-auto sm:flex-grow max-w-xl relative order-3 sm:order-2">
         <input
           v-model="searchQuery"
@@ -124,21 +125,20 @@
         </button>
       </div>
 
-      <!-- BUTTONS (desktop) -->
+      <!-- DESKTOP BUTTONS -->
       <div class="hidden sm:flex items-center gap-4 lg:gap-6 flex-shrink-0 order-2 sm:order-3">
         <!-- Wish List -->
         <button
           class="hidden lg:flex items-center px-4 py-2 border border-orange-300 rounded-lg text-gray-800 hover:bg-orange-500 hover:text-white transition"
-          @click="router.push('/wishlist')"
+          @click="goToWishlist"
         >
           <span class="mr-2">Wish Lists</span>
           <img src="@/assets/HeaderImages/Favorite.png" class="h-5" />
         </button>
 
-        <!-- Wish List Icon only for tablet -->
         <button
           class="lg:hidden p-2 border border-orange-300 rounded-lg text-gray-800 hover:bg-orange-500 hover:text-white transition"
-          @click="router.push('/wishlist')"
+          @click="goToWishlist"
           title="Wish List"
         >
           <img src="@/assets/HeaderImages/Favorite.png" class="h-5" />
@@ -158,35 +158,69 @@
           </span>
         </button>
 
-        <!-- LOGIN -->
-        <button
-          class="hidden lg:flex px-8 py-2 bg-[#FFAA0C] text-white font-bold rounded-lg hover:bg-orange-500 transition shadow-sm"
-        >
-          Login
-        </button>
-
-        <!-- Login icon for tablet -->
-        <button
-          class="lg:hidden px-4 py-2 bg-[#FFAA0C] text-white rounded-lg hover:bg-orange-500 transition"
-          title="Login"
-        >
-          <!-- Using User icon or create a simple SVG -->
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            ></path>
-          </svg>
-        </button>
+        <!-- 👇 LOGIN OR PROFILE (DESKTOP) -->
+        <template v-if="isLoggedIn">
+          <div class="relative">
+            <button
+              @click="showProfileMenu = !showProfileMenu"
+              class="flex items-center gap-2 text-gray-700 hover:text-black"
+            >
+              <!-- Avatar placeholder -->
+              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-600 font-medium text-sm">
+                  {{ userStore.name ? userStore.name[0]?.toUpperCase() : 'U' }}
+                </span>
+              </div>
+              <span class="hidden lg:inline">Profile</span>
+            </button>
+            <div
+              v-if="showProfileMenu"
+              class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10"
+            >
+              <router-link
+                to="/user/profile"
+                class="block px-4 py-2 hover:bg-gray-100"
+                @click="showProfileMenu = false"
+              >
+                My Profile
+              </router-link>
+              <button
+                @click="logout"
+                class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <router-link
+            to="/login"
+            class="hidden lg:flex px-8 py-2 bg-[#FFAA0C] text-white font-bold rounded-lg hover:bg-orange-500 transition shadow-sm"
+          >
+            Login
+          </router-link>
+          <!-- Tablet login icon -->
+          <button
+            class="lg:hidden px-4 py-2 bg-[#FFAA0C] text-white rounded-lg hover:bg-orange-500 transition"
+            @click="goToLogin"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+          </button>
+        </template>
       </div>
     </div>
 
     <!-- ROW 3: NAVIGATION BAR - HIDDEN ON MOBILE -->
     <div class="hidden sm:block max-w-[1500px] mx-auto px-4 lg:px-6 mt-[-1rem]">
       <nav class="flex items-center flex-wrap gap-6 lg:gap-8 text-base lg:text-lg">
-        <!-- Home -->
         <button
           type="button"
           @click="goToHome"
@@ -194,10 +228,8 @@
         >
           <img src="@/assets/HeaderImages/Home.png" class="w-5 lg:w-6 mr-2" />
           <span class="hidden md:inline">Home</span>
-          <span class="md:hidden">Home</span>
         </button>
 
-        <!-- Dropdown -->
         <div class="relative">
           <button
             @click="toggleDropdown"
@@ -206,13 +238,11 @@
           >
             <img src="@/assets/HeaderImages/Product.png" class="w-5 lg:w-6 mr-2" />
             <span class="hidden md:inline">All Products</span>
-            <span class="md:hidden">Products</span>
             <span class="ml-2 transition-transform" :class="{ 'rotate-180': isDropdownOpen }"
               >⌵</span
             >
           </button>
 
-          <!-- Dropdown menu -->
           <div
             v-if="isDropdownOpen"
             class="absolute top-full left-0 mt-2 w-48 bg-white border border-orange-300 shadow-xl rounded-lg z-50 divide-y divide-orange-300"
@@ -229,11 +259,9 @@
           </div>
         </div>
 
-        <!-- Best Selling -->
         <div class="flex items-center font-bold hover:text-orange-500" @click="goToBestSelling">
           <img src="@/assets/HeaderImages/Fire.png" class="w-5 lg:w-6 mr-2" />
           <span class="hidden lg:inline">Best Selling Products</span>
-          <span class="lg:hidden">Best Selling</span>
         </div>
       </nav>
     </div>
@@ -241,7 +269,6 @@
     <!-- MOBILE MENU -->
     <div v-if="isMobileMenuOpen" class="sm:hidden border-t border-gray-200 bg-white shadow-lg">
       <div class="px-4 py-3 space-y-4">
-        <!-- Navigation Links -->
         <button
           type="button"
           class="flex items-center font-bold text-lg py-2 hover:text-orange-500 w-full bg-transparent border-none"
@@ -251,7 +278,6 @@
           Home
         </button>
 
-        <!-- Products Dropdown in Mobile -->
         <div>
           <button
             @click="toggleMobileDropdown"
@@ -270,7 +296,7 @@
               v-for="item in dropdownItems"
               :key="item.name"
               href="#"
-              @click.prevent="closeAllDropdowns"
+              @click.prevent="goToCategory(item.route)"
               class="flex items-center py-2 hover:text-orange-500 text-gray-700"
             >
               <img :src="item.icon" class="w-5 mr-3" />
@@ -282,14 +308,13 @@
         <a
           href="#"
           class="flex items-center font-bold text-lg py-2 hover:text-orange-500"
-          @click="closeMobileMenu"
+          @click="goToBestSelling"
         >
           <img src="@/assets/HeaderImages/Fire.png" class="w-6 mr-3" /> Best Selling Products
         </a>
 
         <!-- MOBILE USER ACTIONS -->
         <div class="pt-4 border-t border-gray-200 space-y-3">
-          <!-- Wish List -->
           <button
             class="flex items-center w-full font-bold text-lg py-2 hover:text-orange-500 cursor-pointer"
             @click="goToWishlist"
@@ -298,17 +323,29 @@
             Wish List
           </button>
 
-          <!-- Login -->
-          <button
-            class="flex items-center w-full font-bold text-lg py-2 hover:text-orange-500"
-            @click="closeAll"
-          >
-            <svg
-              class="w-6 h-6 mr-3 text-orange-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <!-- Mobile Login / Profile -->
+          <div v-if="isLoggedIn">
+            <button
+              class="flex items-center w-full font-bold text-lg py-2 hover:text-orange-500"
+              @click="goToProfile"
             >
+              <svg class="w-6 h-6 mr-3 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              My Profile
+            </button>
+          </div>
+          <button
+            v-else
+            class="flex items-center w-full font-bold text-lg py-2 hover:text-orange-500"
+            @click="goToLogin"
+          >
+            <svg class="w-6 h-6 mr-3 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -320,22 +357,14 @@
           </button>
         </div>
 
-        <!-- Mobile Only Links -->
         <div class="pt-4 border-t border-gray-200 space-y-3">
-          <a href="#" class="flex items-center py-2 hover:text-orange-500" @click="closeMobileMenu">
+          <a href="#" class="flex items-center py-2 hover:text-orange-500">
             <img src="@/assets/HeaderImages/About.png" class="w-6 mr-3" /> About Us
           </a>
-
           <div class="flex items-center space-x-6 py-2">
-            <a href="#" class="flex items-center hover:text-orange-500" @click="closeMobileMenu">
-              <img src="@/assets/HeaderImages/Instagram Circle.png" class="w-6 mr-2" /> Instagram
-            </a>
-            <a href="#" class="flex items-center hover:text-orange-500" @click="closeMobileMenu">
-              <img src="@/assets/HeaderImages/Facebook f.png" class="w-6 mr-2" /> Facebook
-            </a>
-            <a href="#" class="flex items-center hover:text-orange-500" @click="closeMobileMenu">
-              <img src="@/assets/HeaderImages/X.png" class="w-6 mr-2" /> X
-            </a>
+            <a href="#" class="flex items-center hover:text-orange-500">Instagram</a>
+            <a href="#" class="flex items-center hover:text-orange-500">Facebook</a>
+            <a href="#" class="flex items-center hover:text-orange-500">X</a>
           </div>
         </div>
       </div>
@@ -344,44 +373,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
+import { useProductStore } from '@/stores/productStore'
+import { useUserStore } from '@/stores/userStore'
+
+// Assets
 import foodIcon from '@/assets/HeaderImages/Food.png'
 import clothesIcon from '@/assets/HeaderImages/Clothes.png'
 import toyIcon from '@/assets/HeaderImages/Toy.png'
 import moreIcon from '@/assets/HeaderImages/More.png'
-import { useRouter } from 'vue-router'
-import { useProductStore } from '@/stores/productStore'
+import { useToast } from 'vue-toast-notification'
 
+const userStore = useUserStore()
 const cart = useCartStore()
-
-const searchQuery = ref('')
 const router = useRouter()
 const productStore = useProductStore()
 
-// Search function
-const onSearch = async () => {
-  if (!searchQuery.value.trim()) return
-
-  //  Navigate FIRST
-  if (router.currentRoute.value.name !== 'search') {
-    await router.push('/search')
-  }
-
-  //  Then search
-  productStore.searchProducts(searchQuery.value)
-}
-
-// Clear search results when query is cleared
-watch(searchQuery, (q) => {
-  if (q === '') {
-    productStore.clearSearch()
-  }
-})
-
+const searchQuery = ref('')
 const isDropdownOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 const isMobileDropdownOpen = ref(false)
+const showProfileMenu = ref(false)
+
+const isLoggedIn = computed(() => !!userStore.token)
+
+// Search
+const onSearch = async () => {
+  if (!searchQuery.value.trim()) return
+  if (router.currentRoute.value.name !== 'search') {
+    await router.push('/search')
+  }
+  productStore.searchProducts(searchQuery.value)
+}
+
+watch(searchQuery, (q) => {
+  if (q === '') productStore.clearSearch()
+})
 
 // Dropdown items
 const dropdownItems = [
@@ -391,68 +420,59 @@ const dropdownItems = [
   { name: 'Others', icon: moreIcon, route: '/products/others' },
 ]
 
+// Toggle functions
 const toggleDropdown = () => (isDropdownOpen.value = !isDropdownOpen.value)
-const closeDropdown = () => (isDropdownOpen.value = false)
-
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
-  if (!isMobileMenuOpen.value) {
-    isMobileDropdownOpen.value = false
-  }
+  if (!isMobileMenuOpen.value) isMobileDropdownOpen.value = false
 }
+const toggleMobileDropdown = () => (isMobileDropdownOpen.value = !isMobileDropdownOpen.value)
 
-// Close all menus
+// Close utilities
 const closeAll = () => {
   isDropdownOpen.value = false
   isMobileMenuOpen.value = false
   isMobileDropdownOpen.value = false
 }
 
-// Close mobile menu
-const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false
-  isMobileDropdownOpen.value = false
-}
-
-// Toggle mobile dropdown
-const toggleMobileDropdown = () => {
-  isMobileDropdownOpen.value = !isMobileDropdownOpen.value
-}
-
-// Close all dropdowns
-const closeAllDropdowns = () => {
-  isMobileMenuOpen.value = false
-  isMobileDropdownOpen.value = false
-  isDropdownOpen.value = false
-}
-
-// Navigation functions
-function goToHome() {
+// Navigation
+const goToHome = () => {
   router.push('/')
   closeAll()
 }
-
-// Navigate to Wish List
-function goToWishlist() {
+const goToWishlist = () => {
   router.push('/wishlist')
   closeAll()
 }
-
-// Navigate to Cart
-function goTOcart() {
+const goTOcart = () => {
   router.push('/cart')
   closeAll()
 }
-
-// Navigate to Category
-function goToCategory(route: string) {
+const goToCategory = (route: string) => {
   router.push(route)
-  closeDropdown()
+  isDropdownOpen.value = false
+  isMobileMenuOpen.value = false
+}
+const goToBestSelling = () => {
+  router.push('/products/bestSelling')
+  closeAll()
+}
+const goToLogin = () => {
+  router.push('/login')
+  closeAll()
+}
+const goToProfile = () => {
+  router.push('/user/profile')
+  closeAll()
 }
 
-// Navigate to Best Selling
-function goToBestSelling() {
-  router.push('/products/bestSelling')
+// Logout
+const logout = () => {
+  userStore.logout()
+  router.push('/')
+  const $toast = useToast()
+  $toast.success("You've been logged out.")
+  showProfileMenu.value = false
   closeAll()
 }
 </script>
