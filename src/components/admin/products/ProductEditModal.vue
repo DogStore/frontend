@@ -106,6 +106,18 @@
             </div>
           </div>
 
+          <!-- Country Name -->
+          <div>
+            <label class="block text-sm font-medium mb-1">
+              Country Name <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.countryName"
+              type="text"
+              class="w-full rounded-lg border border-orange-300 px-4 py-2 outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400 transition"
+            />
+          </div>
+
           <!-- Toggles -->
           <div class="flex gap-6 pt-2">
             <label class="flex items-center gap-2">
@@ -260,6 +272,7 @@ type ProductForm = {
   size: string
   isPromoted: boolean
   isActive: boolean
+  countryName: string
 }
 // State
 const form = ref<ProductForm>({
@@ -272,6 +285,7 @@ const form = ref<ProductForm>({
   size: '',
   isPromoted: false,
   isActive: true,
+  countryName: '',
 })
 
 const editImages = ref<string[]>([])
@@ -302,6 +316,7 @@ watch(
         size: newProduct.size || '',
         isPromoted: newProduct.isPromoted || false,
         isActive: newProduct.isActive || true,
+        countryName: newProduct.countryName || '',
       }
 
       // Load images
@@ -364,6 +379,7 @@ const clearNewImages = () => {
 const close = () => {
   emit('close')
   clearNewImages()
+  // form.value.countryName = ''
 }
 
 // Handle flag upload
@@ -382,11 +398,9 @@ const removeFlag = () => {
   flagPreview.value = null
 }
 
-// Remove old flag (mark for deletion)
+// Remove old flag
 const removeOldFlag = () => {
   oldFlagUrl.value = null
-  // Mark for deletion in backend
-  // We'll send this in FormData later
 }
 
 const save = () => {
@@ -404,6 +418,7 @@ const save = () => {
   formData.append('size', form.value.size.trim())
   formData.append('isPromoted', String(form.value.isPromoted))
   formData.append('isActive', String(form.value.isActive))
+  formData.append('countryName', form.value.countryName.trim())
 
   // Images
   imagesToDelete.value.forEach((url) => {

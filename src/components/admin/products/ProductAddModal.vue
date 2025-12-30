@@ -237,6 +237,19 @@
               </button>
             </div>
           </div>
+
+          <!-- Country Name -->
+          <div>
+            <label class="block text-sm font-medium mb-1">
+              Country Name <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.countryName"
+              type="text"
+              placeholder="e.g. Cambodia"
+              class="w-full rounded-lg border outline-none border-orange-300 px-4 py-2 focus:ring-1 focus:ring-orange-400 focus:border-orange-400 transition"
+            />
+          </div>
         </div>
       </div>
 
@@ -275,6 +288,7 @@ type ProductForm = {
   size: string
   isPromoted: boolean
   isActive: boolean
+  countryName: string
 }
 
 const props = defineProps<{
@@ -296,6 +310,7 @@ const form = ref<ProductForm>({
   size: '',
   isPromoted: false,
   isActive: true,
+  countryName: '',
 })
 
 // Images
@@ -372,6 +387,7 @@ const canSave = computed(() => {
     form.value.regularPrice > 0 &&
     form.value.category.trim() !== '' &&
     form.value.stock >= 0 &&
+    form.value.countryName.trim() !== '' &&
     imageFiles.value.length > 0
   )
 })
@@ -390,6 +406,7 @@ const close = () => {
     size: '',
     isPromoted: false,
     isActive: true,
+    countryName: '',
   }
   imageFiles.value = []
   imagePreviews.value.forEach((url) => URL.revokeObjectURL(url))
@@ -435,6 +452,7 @@ const save = () => {
   formData.append('size', form.value.size)
   formData.append('isPromoted', form.value.isPromoted.toString())
   formData.append('isActive', form.value.isActive.toString())
+  formData.append('countryName', form.value.countryName.trim())
 
   // Images
   imageFiles.value.forEach((file) => {

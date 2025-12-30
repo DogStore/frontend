@@ -19,4 +19,5 @@ export interface Product {
   soldCount?: number
   isPromoted?: boolean
   addedAt?: number
+  countryName: string
 }

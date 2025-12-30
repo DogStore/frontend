@@ -31,6 +31,7 @@ export const useProductStore = defineStore('product', () => {
       size: p.size,
       soldCount: p.soldCount,
       isPromoted: p.isPromoted,
+      countryName: p.countryName || '',
       addedAt: p.createdAt ? new Date(p.createdAt).getTime() : undefined,
     }
   }
