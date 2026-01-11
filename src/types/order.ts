@@ -24,13 +24,18 @@ export interface ShippingAddress {
 export interface Order extends BaseEntity {
   orderNumber: string
   user: ID
+  customerName: string
+  phone?: string
+
   items: OrderItem[]
   totalAmount: number
+
   shippingAddress: ShippingAddress
-  phone?: string
   status: OrderStatus
+
   appliedCoupon?: {
     code: string
     discountAmount: number
   }
 }
+
