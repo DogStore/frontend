@@ -19,7 +19,7 @@ export const useAdminOrderStore = defineStore("adminOrder", () => {
     error.value = null;
     try {
       orders.value = await fetchAdminOrders();
-    } catch (e) {
+    } catch (err) {
       error.value = "Failed to load orders";
     } finally {
       loading.value = false;
@@ -32,7 +32,7 @@ export const useAdminOrderStore = defineStore("adminOrder", () => {
     error.value = null;
     try {
       selectedOrder.value = await fetchAdminOrderById(id);
-    } catch (e) {
+    } catch (err) {
       error.value = "Failed to load order";
     } finally {
       loading.value = false;
