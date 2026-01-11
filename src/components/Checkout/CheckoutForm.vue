@@ -39,10 +39,22 @@
         class="flex border rounded-[10px] overflow-hidden"
         :class="isPhoneValid || !form.phone ? 'border-[#FFAA0C]' : 'border-red-500'"
       >
-        <span class="px-4 flex items-center font-semibold text-gray-700 border-r border-[#FFAA0C]">
-          +855
-        </span>
+        <!-- Country Code -->
+        <select
+          v-model="form.phoneCode"
+          class="px-3 bg-white border-r border-[#FFAA0C] outline-none
+                font-semibold text-gray-700"
+        >
+          <option
+            v-for="c in countryCodes"
+            :key="c.code"
+            :value="c.code"
+          >
+            {{ c.label }} ({{ c.code }})
+          </option>
+        </select>
 
+        <!-- Phone Input -->
         <input
           v-model="form.phone"
           type="tel"
@@ -58,25 +70,59 @@
       </p>
     </div>
 
+
     <!-- Address -->
     <div>
       <label class="block font-medium text-gray-800 mb-1">
         Address*
       </label>
 
-      <input
-        v-model.trim="form.address"
-        type="url"
-        placeholder="Paste your Google Maps link"
-        class="border rounded-[10px] px-3 py-2 w-full outline-none
-              focus:ring-1"
-        :class="isAddressValid || !form.address
-          ? 'border-[#FFAA0C] focus:ring-[#FFAA0C]'
-          : 'border-red-500 focus:ring-red-500'"
-      />
+      <div class="grid grid-cols-2 gap-4">
+        <input
+          v-model.trim="form.address.homeNo"
+          type="text"
+          placeholder="Home No"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
 
-      <p v-if="form.address && !isAddressValid" class="text-red-500 text-sm mt-1">
-        Address must be a valid URL (Google Maps link)
+        <input
+          v-model.trim="form.address.street"
+          type="text"
+          placeholder="Street"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+
+        <input
+          v-model.trim="form.address.city"
+          type="text"
+          placeholder="City"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+
+        <input
+          v-model.trim="form.address.country"
+          type="text"
+          placeholder="Country"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+
+        <input
+          v-model="form.address.postalCode"
+          type="text"
+          inputmode="numeric"
+          placeholder="Postal Code"
+          @input="sanitizePostalCode"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                outline-none focus:ring-1 focus:ring-[#FFAA0C] col-span-2"
+        />
+      </div>
+
+      <p v-if="form.address.postalCode && !isPostalCodeValid" class="text-red-500 text-sm mt-1">
+        Postal code must contain numbers only
       </p>
     </div>
 
@@ -107,26 +153,62 @@ const emit = defineEmits<{
 const form = reactive({
   firstName: '',
   lastName: '',
+  phoneCode: '+855', // 👈 dynamic
   phone: '',
-  address: '',
+  address: {
+    homeNo: '',
+    street: '',
+    city: '',
+    country: '',
+    postalCode: '',
+  },
   note: '',
 })
+
+const countryCodes = [
+  { code: '+855', label: 'Cambodia' },
+  { code: '+84', label: 'Vietnam' },
+  { code: '+33', label: 'France' },
+  { code: '+1', label: 'USA' },
+  { code: '+44', label: 'UK' },
+]
 
 /* Numbers only for phone */
 function sanitizePhone() {
   form.phone = form.phone.replace(/\D/g, '')
 }
 
-// Check Validate phone number format
+/* Numbers only for postal code */
+function sanitizePostalCode() {
+  form.address.postalCode = form.address.postalCode.replace(/\D/g, '')
+}
+
+/* Phone validation */
 const isPhoneValid = computed(() =>
   /^[0-9]{8,9}$/.test(form.phone)
 )
+// const fullPhoneNumber = computed(() =>
+//   `${form.phoneCode}${form.phone}`
+// )
 
-// Check Validate address format (simple URL check)
-const isAddressValid = computed(() =>
-  /^https?:\/\/.+/.test(form.address)
+
+/* Postal code validation */
+const isPostalCodeValid = computed(() =>
+  /^[0-9]{4,10}$/.test(form.address.postalCode)
 )
 
+/* Address validation */
+const isAddressValid = computed(() =>
+  !!(
+    form.address.homeNo &&
+    form.address.street &&
+    form.address.city &&
+    form.address.country &&
+    isPostalCodeValid.value
+  )
+)
+
+/* Final form validation */
 const isFormValid = computed(() =>
   !!(
     form.firstName &&
@@ -137,5 +219,7 @@ const isFormValid = computed(() =>
 )
 
 /* Notify parent */
-watch(isFormValid, (val) => emit('valid-change', val))
+watch(isFormValid, (val) => emit('valid-change', val), {
+  immediate: true,
+})
 </script>

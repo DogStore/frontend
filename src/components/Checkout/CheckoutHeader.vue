@@ -8,14 +8,7 @@
       >
         Carts
       </RouterLink>
-      <span class="mx-1 text-[#FF6600] ">/</span>
-      <RouterLink 
-        to="/Checkout" 
-        class="text-gray-600 hover:underline transition"
-      >
-        Checkout
-      </RouterLink>
-   
+      <span class="mx-1 text-gray-600">/ Checkout</span>
     <div class="absolute top-6 left-15 flex gap-2">
       <img src="/src/assets/CartImages/image46.png" alt="pets" class="h-[160px]" />
     </div>
