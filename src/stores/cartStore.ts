@@ -1,29 +1,37 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import type { Product } from "@/types/Product";
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { Product } from '@/types/product'
 
 export interface CartItem extends Product {
-  quantity: number;
+  quantity: number
 }
 
-export const useCartStore = defineStore("cart", () => {
-  const cartItems = ref<CartItem[]>([]);
-
-  /* ------------------ Persistence ------------------ */
-
-  function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cartItems.value));
-  }
+export const useCartStore = defineStore('cart', () => {
+  // const cartItems = ref<Product[]>([])
+  const cartItems = ref<CartItem[]>([])
+  const cartCount = ref<number>(0)
 
   function loadFromStorage() {
-    cartItems.value = JSON.parse(localStorage.getItem("cart") || "[]");
+    const stored = localStorage.getItem('cart')
+    cartItems.value = stored ? (JSON.parse(stored) as CartItem[]) : []
+
+    cartCount.value = cartItems.value.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )
   }
+
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cartItems.value))
+    localStorage.setItem('cartCount', String(cartCount.value))
+  }
+
 
   /* ------------------ GETTERS ------------------ */
 
-  const cartCount = computed(() =>
-    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
-  );
+  // const cartCount = computed(() =>
+  //   cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+  // );
 
   const totalItems = computed(() => cartCount.value);
 
@@ -53,45 +61,60 @@ export const useCartStore = defineStore("cart", () => {
   /* ------------------ ACTIONS ------------------ */
 
   function addToCart(product: Product) {
-    const existing = cartItems.value.find(p => p.id === product.id);
+    const item = cartItems.value.find(p => p.id === product.id)
 
-    if (existing) {
-      existing.quantity += 1;
+    if (item) {
+      item.quantity += 1
     } else {
-      cartItems.value.push({ ...product, quantity: 1 });
+      cartItems.value.push({
+        ...product,
+        quantity: 1,
+      })
     }
 
-    saveCart();
+    cartCount.value = cartItems.value.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )
+
+    saveCart()
   }
 
   function increaseQuantity(productId: string) {
-    const item = cartItems.value.find(p => p.id === productId);
-    if (!item) return;
+    const item = cartItems.value.find(p => p.id === productId)
+    if (!item) return
 
-    item.quantity += 1;
-    saveCart();
+    item.quantity += 1
+    saveCart()
   }
 
   function decreaseQuantity(productId: string) {
-    const item = cartItems.value.find(p => p.id === productId);
-    if (!item || item.quantity === 1) return;
+    const item = cartItems.value.find(p => p.id === productId)
+    if (!item || item.quantity <= 1) return
 
-    item.quantity -= 1;
-    saveCart();
+    item.quantity -= 1
+    saveCart()
   }
 
   function removeFromCart(productId: string) {
-    cartItems.value = cartItems.value.filter(p => p.id !== productId);
-    saveCart();
+    cartItems.value = cartItems.value.filter(p => p.id !== productId)
+
+    cartCount.value = cartItems.value.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )
+
+    saveCart()
   }
 
   function clearCart() {
-    cartItems.value = [];
-    saveCart();
+    cartItems.value = []
+    cartCount.value = 0
+    saveCart()
   }
 
-  /* ------------------ INIT ------------------ */
-  loadFromStorage();
+  // Load at initialization
+  loadFromStorage()
 
   return {
     // state
@@ -112,5 +135,6 @@ export const useCartStore = defineStore("cart", () => {
     decreaseQuantity,
     removeFromCart,
     clearCart,
-  };
-});
+    loadFromStorage,
+  }
+})

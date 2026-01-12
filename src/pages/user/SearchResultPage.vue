@@ -10,21 +10,15 @@
       No products found!
     </div>
 
-    <div
-      v-else
-      class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-      <ProductCard
-        v-for="product in productStore.products"
-        :key="product.id"
-        :product="product"
-      />
+    <div v-else class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+      <ProductCard v-for="product in productStore.products" :key="product.id" :product="product" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useProductStore } from "@/stores/productStore";
-import ProductCard from "@/components/home/ProductCard.vue";
+import { useProductStore } from '@/stores/productStore'
+import ProductCard from '@/components/home/ProductCard.vue'
 
-const productStore = useProductStore();
+const productStore = useProductStore()
 </script>

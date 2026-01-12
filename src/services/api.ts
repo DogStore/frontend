@@ -1,20 +1,38 @@
-import axios from "axios";
+// src/services/api.ts
 
-const api = axios.create({
+import axios from 'axios'
+
+// Public API (no auth)
+export const publicApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
+  timeout: 300000,
+})
+
+// Admin API (with auth)
+export const adminApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 300000,
+})
+
+// Add request interceptor to adminApi to inject token
+adminApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
   },
-});
+  (error) => Promise.reject(error),
+)
 
-// (Optional) Response interceptor
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error:", error.response || error.message);
-    return Promise.reject(error);
-  }
-);
-
-export default api;
+// Optional: response interceptor for both
+;[publicApi, adminApi].forEach((api) => {
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.error('API Error:', error.response || error.message)
+      return Promise.reject(error)
+    },
+  )
+})

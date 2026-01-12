@@ -1,60 +1,40 @@
-import HomePage from '@/pages/HomePage.vue'
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
+import adminRoutes from './admin.route'
+import userRoutes from './user.route'
+import authRoutes from './auth.route'
+import publicRoutes from './public.route'
+import { useUserStore } from '../stores/userStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/cart",
-      name: "cart",
-      component: () => import("@/pages/CartPage.vue"),
-    },
-    {
-      path: '/checkout',
-      name: 'checkout',
-      component: () => import('@/pages/CheckoutPage.vue'),
-    },
-    { path: "/",
-      name: "Home",
-      component: HomePage
-    },
-    {
-      path: "/search",
-      name: "Search",
-      component: () => import("@/pages/SearchResultPage.vue"),
-    },
-    {
-      path: "/wishlist",
-      name: "wishlist",
-      component: () => import("@/pages/WhishlistPage.vue"),
-    },
-    
-    // {
-    //   path: "/products/foods",
-    //   name: "foods",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/clothes",
-    //   name: "clothes",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/toys",
-    //   name: "toys",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/others",
-    //   name: "others",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/bestSelling",
-    //   name: "bestSelling",
-    //   component: () => import("@/pages/BestSellingPage.vue"),
-    // },
-  ],
+  routes: [...publicRoutes, ...authRoutes, ...adminRoutes, ...userRoutes],
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const isLoggedIn = !!userStore.token
+  const userRole = userStore.role
+
+  // Guest-only routes (e.g., /login)
+  if (to.meta.guestOnly && isLoggedIn) {
+    next(userRole === 'admin' ? '/admin/dashboard' : '/user/profile')
+    return
+  }
+
+  // Auth-required routes
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next('/login')
+    return
+  }
+
+  // Role check
+  if (to.meta.role && to.meta.role !== userRole) {
+    next('/')
+    return
+  }
+
+  next()
 })
 
 export default router

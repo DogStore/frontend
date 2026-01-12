@@ -1,32 +1,32 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import type { Product } from "@/types/Product";
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import type { Product } from '@/types/product'
 
-export const useRecentStore = defineStore("recent", () => {
-  const recent = ref<Product[]>([]);
+export const useRecentStore = defineStore('recent', () => {
+  const recent = ref<Product[]>([])
 
   function loadFromStorage() {
-    recent.value = JSON.parse(localStorage.getItem("recent") || "[]");
+    recent.value = JSON.parse(localStorage.getItem('recent') || '[]')
   }
 
   function save() {
-    localStorage.setItem("recent", JSON.stringify(recent.value));
+    localStorage.setItem('recent', JSON.stringify(recent.value))
   }
 
   function addRecent(product: Product) {
     if (recent.value.some((p) => p.id === product.id)) {
-      return;
+      return
     }
-    recent.value.unshift(product);
+    recent.value.unshift(product)
 
     if (recent.value.length > 20) {
-      recent.value.pop();
+      recent.value.pop()
     }
 
-    save();
+    save()
   }
 
-  loadFromStorage();
+  loadFromStorage()
 
-  return { recent, addRecent, loadFromStorage };
-});
+  return { recent, addRecent, loadFromStorage }
+})
