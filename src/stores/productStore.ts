@@ -13,12 +13,19 @@ export const useProductStore = defineStore('product', () => {
     const regular = p.regularPrice ?? 0
     const discount = p.discount ?? 0
     const images = Array.isArray(p.images) ? p.images : []
+
+    // Handle category - it can be either a string or an object
+    const categoryValue =
+      typeof p.category === 'object' && p.category !== null
+        ? p.category._id || p.category.slug || p.category.name
+        : p.category
+
     return {
       country: p._country,
       id: p._id?.toString() || '',
       name: p.name,
       countryName: p.countryName,
-      slug: p.slug, 
+      slug: p.slug,
       images: images,
       price: discount > 0 ? regular - (regular * discount) / 100 : regular,
       originalPrice: regular,
@@ -85,8 +92,6 @@ export const useProductStore = defineStore('product', () => {
   const lastQuery = ref('')
   const isSearching = ref(false)
 
-
-
   // GET all products
   async function fetchProducts() {
     loading.value = true
@@ -103,28 +108,49 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  // fix this to use try and catch for more details when loading products
   async function fetchProductsByCategory(slug: string) {
-  const res = await publicApi.get(`/products/category/${slug}`)
-  products.value = res.data.products.map(mapBackendProduct)
-}
+    loading.value = true
+    error.value = null
 
-// Fetch single product by slug
-async function fetchProductBySlug(slug: string) {
-  loading.value = true
-  error.value = null
-
-  try {
-    const res = await publicApi.get(`/products/${slug}`)
-    // Return the mapped product for immediate use
-    return mapBackendProduct(res.data.product || res.data)
-  } catch (err) {
-    error.value = 'Failed to load product'
-    console.error(err)
-    throw err
-  } finally {
-    loading.value = false
+    try {
+      // If slug is empty or falsy, load all products instead of calling category endpoint
+      if (!slug) {
+        const resAll = await publicApi.get('/products')
+        products.value = resAll.data.products.map(mapBackendProduct)
+        console.log(`Loaded ${products.value.length} products for empty category (all products)`)
+      } else {
+        const res = await publicApi.get(`/products/category/${slug}`)
+        products.value = res.data.products.map(mapBackendProduct)
+        // Debug log to verify products loaded
+        console.log(`Loaded ${products.value.length} products for category: ${slug}`)
+      }
+    } catch (err) {
+      error.value = 'Failed to load products for this category'
+      console.error('Fetch products by category error:', err)
+      products.value = []
+    } finally {
+      loading.value = false
+    }
   }
-}
+
+  // Fetch single product by slug
+  async function fetchProductBySlug(slug: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const res = await publicApi.get(`/products/${slug}`)
+      // Return the mapped product for immediate use
+      return mapBackendProduct(res.data.product || res.data)
+    } catch (err) {
+      error.value = 'Failed to load product'
+      console.error(err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
   // SEARCH products
   async function searchProducts(query: string) {
     isSearching.value = true

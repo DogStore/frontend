@@ -15,10 +15,12 @@ const productStore = useProductStore()
 watch(
   () => route.params.slug,
   async (slug) => {
-    if (typeof slug === 'string') {
+    // Normalize slug to a string (may be undefined when route is /category)
+    const s = typeof slug === 'string' ? slug : ''
+    if (s && s.length > 0) {
       await Promise.all([
-        categoryStore.fetchCategoryBySlug(slug),
-        productStore.fetchProductsByCategory(slug),
+        categoryStore.fetchCategoryBySlug(s),
+        productStore.fetchProductsByCategory(s),
       ])
     } else {
       categoryStore.activeCategory = null
@@ -31,6 +33,21 @@ watch(
 onMounted(() => {
   categoryStore.fetchPublicCategories()
 })
+
+// Debug reactive states
+watch(
+  () => productStore.products,
+  (products) => {
+    console.log('Products updated:', products.length)
+  },
+)
+
+watch(
+  () => categoryStore.activeCategory,
+  (cat) => {
+    console.log('Active category:', cat?.name || 'None')
+  },
+)
 
 /* -------------------------
    FILTER + SORT (LOCAL)

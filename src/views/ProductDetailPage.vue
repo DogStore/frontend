@@ -642,20 +642,27 @@ watch(
 )
 
 // Recommendations - fetch from same category
-const recommended = computed(() => {
-  if (!product.value) return []
-  return productStore.products
-    .filter((p) => p.category === product.value.category && p.id !== product.value.id)
-    .slice(0, 12) // Limit to 12 recommendations
-})
+const recommended = ref<any[]>([])
 
-// Load products for recommendations
-onMounted(async () => {
-  // Ensure we have products loaded for recommendations
-  if (productStore.products.length === 0) {
-    await productStore.fetchProducts()
-  }
-})
+watch(
+  () => product.value,
+  async (newProduct) => {
+    if (!newProduct) {
+      recommended.value = []
+      return
+    }
+
+    // Extract category slug properly
+    const categorySlug =
+      typeof newProduct.category === 'object' ? newProduct.category.slug : newProduct.category
+
+    if (categorySlug) {
+      await productStore.fetchProductsByCategory(categorySlug)
+      recommended.value = productStore.products.filter((p) => p.id !== newProduct.id).slice(0, 12)
+    }
+  },
+  { immediate: true },
+)
 
 const itemsPerPage = ref(6)
 const currentRecommendationPage = ref(1)

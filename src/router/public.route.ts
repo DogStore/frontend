@@ -29,10 +29,10 @@ const publicRoutes: RouteRecordRaw[] = [
         component: WishlistPage,
       },
       {
-      path: '/category',
-      name: 'Category',
-      component: CategoryPage,
-    },
+    path: '/category/:slug?',  // ✅ Handles both /category and /category/slug
+    name: 'Category',
+    component: CategoryPage
+      },
     {
       path: "/product/:slug",
       name: "ProductDetail",
