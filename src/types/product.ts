@@ -8,6 +8,7 @@ export interface Product {
   slug: string
   originalPrice: number
   discount: number
+  country: string
   rating: number
   countryFlag?: string | null
   isActive: boolean

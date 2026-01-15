@@ -14,6 +14,7 @@ export const useProductStore = defineStore('product', () => {
     const discount = p.discount ?? 0
     const images = Array.isArray(p.images) ? p.images : []
     return {
+      country: p._country,
       id: p._id?.toString() || '',
       name: p.name,
       countryName: p.countryName,
@@ -84,6 +85,8 @@ export const useProductStore = defineStore('product', () => {
   const lastQuery = ref('')
   const isSearching = ref(false)
 
+
+
   // GET all products
   async function fetchProducts() {
     loading.value = true
@@ -103,6 +106,24 @@ export const useProductStore = defineStore('product', () => {
   async function fetchProductsByCategory(slug: string) {
   const res = await publicApi.get(`/products/category/${slug}`)
   products.value = res.data.products.map(mapBackendProduct)
+}
+
+// Fetch single product by slug
+async function fetchProductBySlug(slug: string) {
+  loading.value = true
+  error.value = null
+
+  try {
+    const res = await publicApi.get(`/products/${slug}`)
+    // Return the mapped product for immediate use
+    return mapBackendProduct(res.data.product || res.data)
+  } catch (err) {
+    error.value = 'Failed to load product'
+    console.error(err)
+    throw err
+  } finally {
+    loading.value = false
+  }
 }
   // SEARCH products
   async function searchProducts(query: string) {
@@ -132,6 +153,7 @@ export const useProductStore = defineStore('product', () => {
     searchProducts,
     clearSearch,
     fetchProductsByCategory,
+    fetchProductBySlug,
 
     // admin
     fetchAdminProducts,
