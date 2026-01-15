@@ -1,7 +1,8 @@
 <template>
-  <div class="relative bg-white rounded-xl shadow hover:shadow-lg p-4 cursor-pointer flex flex-col h-[300px] border border-gray-300 hover:border-orange-300"
-  @click="$router.push(`/product/${product.id}`)">
-    
+  <div
+    class="relative bg-white rounded-xl shadow hover:shadow-lg p-4 cursor-pointer flex flex-col h-[300px] border border-gray-300 hover:border-orange-300"
+    @click="$router.push(`/product/${product.slug || product.id}`)"
+  >
     <!-- Wishlist Heart (top-right corner) -->
     <button
       @click.stop="toggleWishlist"
@@ -23,7 +24,7 @@
     <!-- Product Image with reduced height -->
     <div class="px-4 h-32 flex items-center justify-center">
       <img
-        :src="product.image"
+        :src="product.images?.[0] || 'https://via.placeholder.com/200'"
         :alt="product.name"
         class="w-full h-full object-contain drop-shadow-md"
       />
@@ -47,13 +48,20 @@
       <!-- Price + Flag (smaller) -->
       <div class="flex items-center gap-3 mb-2">
         <span class="text-xl font-bold text-orange-500">
-          {{ product.price.toFixed(2) }}$
+          {{ (product.price || 0).toFixed(2) }}$
         </span>
-        <span class="text-xl">{{ product.flag }}</span>
+        <img
+          v-if="product.countryFlag"
+          :src="product.countryFlag"
+          :alt="product.countryName"
+          class="w-6 h-4 object-cover rounded"
+        />
       </div>
 
       <!-- Add to Cart button at bottom (smaller) -->
-      <button class=" bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm py-2 rounded-xl flex items-center justify-center  shadow-md transition">
+      <button
+        class="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm py-2 rounded-xl flex items-center justify-center shadow-md transition"
+      >
         Add to cart
       </button>
     </div>
@@ -62,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Product } from "@/data/product"
+import type { Product } from '@/types/product'
 
 const props = defineProps<{
   product: Product

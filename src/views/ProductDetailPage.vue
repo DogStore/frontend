@@ -1,144 +1,79 @@
 <template>
-  <!-- Loading State -->
-  <div v-if="loading" class="p-6 max-w-6xl mx-auto text-center py-20">
-    <div class="text-lg text-gray-600">Loading product...</div>
-  </div>
-
-  <!-- Error State -->
-  <div v-else-if="!product" class="p-6 max-w-6xl mx-auto text-center py-20">
-    <div class="text-lg text-red-600">Product not found</div>
-  </div>
-
-  <!-- Actual Product Content -->
-  <div v-else class="p-6 max-w-6xl mx-auto grid grid-cols-12 gap-8">
-    <div class="p-6 max-w-6xl mx-auto grid grid-cols-12 gap-8">
-      <!-- LEFT: Images -->
-      <div class="col-span-6">
-        <!-- Image Gallery with Pagination -->
-        <div class="flex items-center justify-center gap-4 mb-4">
-          <button
-            @click="prevImage"
-            :disabled="currentImageIndex === 0"
-            class="p-3 rounded-full border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow"
-          >
-            <svg
-              class="w-5 h-5 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          <!-- Main Image Container -->
-          <div class="border rounded-xl p-4 flex justify-center items-center bg-white h-96 w-full">
-            <img :src="activeImage" class="max-h-full max-w-full object-contain" />
-          </div>
-
-          <button
-            @click="nextImage"
-            :disabled="currentImageIndex === totalImages - 1"
-            class="p-3 rounded-full border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow"
-          >
-            <svg
-              class="w-5 h-5 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <!-- Image Indicator -->
+  <div class="min-h-screen bg-gray-50">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
         <div
-          class="flex justify-center items-center gap-2 mb-4"
-          v-if="product.images && product.images.length > 1"
-        >
-          <div
-            v-for="(img, index) in product.images"
-            :key="img"
-            @click="goToImage(Number(index))"
-            class="w-2 h-2 rounded-full cursor-pointer transition-all"
-            :class="
-              index === currentImageIndex ? 'bg-orange-500 w-4' : 'bg-gray-300 hover:bg-gray-400'
-            "
-          ></div>
-          <span class="text-sm text-gray-600 ml-2">
-            {{ currentImageIndex + 1 }} / {{ totalImages }}
-          </span>
-        </div>
-
-        <!-- Thumbnails -->
-        <div class="flex gap-3 overflow-x-auto py-2" v-if="product.images && product.images.length">
-          <img
-            v-for="(img, index) in product.images"
-            :key="img"
-            :src="img"
-            class="h-20 w-20 border rounded-md cursor-pointer hover:opacity-80 shrink-0 object-cover"
-            :class="activeImage === img ? 'ring-2 ring-orange-400' : ''"
-            @click="goToImage(Number(index))"
-          />
-        </div>
+          class="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"
+        ></div>
+        <p class="text-gray-600">Loading product...</p>
       </div>
+    </div>
 
-      <!-- RIGHT: Product Info -->
-      <div class="col-span-6 space-y-4">
-        <h1 class="text-3xl font-bold">{{ product.name }}</h1>
-        <p class="text-gray-600">30–70 cm Back Length</p>
-
-        <!-- Rating -->
-        <div class="flex items-center gap-2">
-          <div class="flex">
-            <span v-for="i in 5" :key="i" class="text-yellow-500 text-lg">★</span>
-          </div>
-          <span class="text-gray-700 font-semibold">({{ product.rating }})</span>
-          <span class="text-gray-500 ml-2">{{ product.reviewCount }} reviews</span>
-        </div>
-
-        <!-- Description -->
-        <p class="text-gray-600 leading-relaxed">
-          {{ product.description }}
-        </p>
-
-        <!-- Variant selector - Using select and option tags -->
-        <div
-          class="border rounded-xl p-4 bg-white"
-          v-if="product.variants && product.variants.length"
+    <!-- Error State -->
+    <div v-else-if="!product" class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <svg
+          class="mx-auto h-16 w-16 text-red-500 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <h2 class="text-lg font-semibold mb-3">
-            Choose Items ({{ product.variants.length }} options)
-          </h2>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Product Not Found</h2>
+        <p class="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
+        <router-link
+          to="/"
+          class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 inline-block"
+        >
+          Back to Home
+        </router-link>
+      </div>
+    </div>
 
+    <!-- Product Content -->
+    <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-6 text-sm">
+        <ol class="flex items-center space-x-2 text-gray-500">
+          <li><router-link to="/" class="hover:text-orange-500">Home</router-link></li>
+          <li>›</li>
+          <li><router-link to="/category" class="hover:text-orange-500">Products</router-link></li>
+          <li>›</li>
+          <li class="text-gray-900 font-medium">{{ product.name }}</li>
+        </ol>
+      </nav>
+
+      <!-- Main Product Section -->
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-10">
+          <!-- LEFT: Image Gallery -->
           <div class="space-y-4">
-            <!-- Select dropdown for variants -->
-            <div class="relative">
-              <select
-                v-model="selectedVariant"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 appearance-none bg-white cursor-pointer"
-              >
-                <option value="" disabled>Select a variant</option>
-                <option v-for="v in product.variants" :key="v.label" :value="v.label">
-                  {{ product.name }} – {{ v.label }} - ${{ v.price }}
-                </option>
-              </select>
+            <!-- Main Image with Navigation -->
+            <div class="relative bg-gray-50 rounded-xl overflow-hidden">
+              <div class="aspect-square flex items-center justify-center p-8">
+                <img
+                  :src="activeImage"
+                  :alt="product.name"
+                  class="max-h-full max-w-full object-contain"
+                />
+              </div>
 
-              <!-- Custom dropdown arrow -->
-              <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+              <!-- Navigation Arrows -->
+              <button
+                v-if="totalImages > 1"
+                @click="prevImage"
+                :disabled="currentImageIndex === 0"
+                class="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
                 <svg
-                  class="w-5 h-5 text-gray-400"
+                  class="w-6 h-6 text-gray-800"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -147,408 +82,455 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M19 9l-7 7-7-7"
+                    d="M15 19l-7-7 7-7"
                   />
                 </svg>
+              </button>
+
+              <button
+                v-if="totalImages > 1"
+                @click="nextImage"
+                :disabled="currentImageIndex === totalImages - 1"
+                class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                <svg
+                  class="w-6 h-6 text-gray-800"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Image Counter -->
+              <div
+                v-if="totalImages > 1"
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm"
+              >
+                {{ currentImageIndex + 1 }} / {{ totalImages }}
               </div>
             </div>
 
-            <!-- Display selected price -->
-            <div
-              v-if="selectedVariant"
-              class="flex justify-between items-center p-3 bg-orange-50 rounded-lg"
-            >
-              <span class="font-medium">Selected:</span>
-              <span class="font-bold text-orange-600 text-lg">
-                ${{ getSelectedVariantPrice() }}
-              </span>
+            <!-- Thumbnail Gallery -->
+            <div v-if="product.images && product.images.length > 1" class="grid grid-cols-6 gap-2">
+              <button
+                v-for="(img, index) in product.images"
+                :key="index"
+                @click="goToImage(Number(index))"
+                class="aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-orange-400"
+                :class="
+                  Number(index) === currentImageIndex
+                    ? 'border-orange-500 ring-2 ring-orange-200'
+                    : 'border-gray-200'
+                "
+              >
+                <img
+                  :src="img"
+                  :alt="`${product.name} ${Number(index) + 1}`"
+                  class="w-full h-full object-cover"
+                />
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT: Product Info -->
+          <div class="space-y-6">
+            <!-- Product Title & Country -->
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <img
+                  v-if="product.countryFlag"
+                  :src="product.countryFlag"
+                  :alt="product.countryName"
+                  class="w-6 h-4 object-cover rounded shadow-sm"
+                />
+                <span class="text-sm text-gray-600">{{
+                  product.countryName || 'International'
+                }}</span>
+                <span
+                  v-if="product.stock > 0"
+                  class="ml-auto px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full"
+                >
+                  In Stock ({{ product.stock }})
+                </span>
+                <span
+                  v-else
+                  class="ml-auto px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full"
+                >
+                  Out of Stock
+                </span>
+              </div>
+              <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">{{ product.name }}</h1>
+              <p v-if="product.size" class="text-gray-600">Size: {{ product.size }}</p>
+            </div>
+
+            <!-- Rating & Reviews -->
+            <div class="flex items-center gap-4 pb-6 border-b">
+              <div class="flex items-center gap-2">
+                <div class="flex">
+                  <span
+                    v-for="i in 5"
+                    :key="i"
+                    class="text-xl"
+                    :class="
+                      i <= Math.round(product.avgRating || 0) ? 'text-yellow-500' : 'text-gray-300'
+                    "
+                    >★</span
+                  >
+                </div>
+                <span class="font-semibold text-gray-900">{{ product.avgRating || 0 }}</span>
+              </div>
+              <a href="#reviews" class="text-orange-500 hover:text-orange-600 font-medium">
+                ({{ product.reviewCount || 0 }} reviews)
+              </a>
+              <span class="text-gray-400">•</span>
+              <span class="text-gray-600">{{ product.soldCount || 0 }} sold</span>
+            </div>
+
+            <!-- Price -->
+            <div class="py-6 border-b">
+              <div class="flex items-baseline gap-4">
+                <span class="text-4xl font-bold text-orange-500"
+                  >${{ product.salePrice || product.price }}</span
+                >
+                <span v-if="product.discount > 0" class="text-2xl text-gray-400 line-through"
+                  >${{ product.regularPrice }}</span
+                >
+                <span
+                  v-if="product.discount > 0"
+                  class="px-3 py-1 bg-red-100 text-red-700 font-bold rounded-lg"
+                >
+                  -{{ product.discount }}%
+                </span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div v-if="product.description" class="py-6 border-b">
+              <h3 class="font-semibold text-gray-900 mb-2">Description</h3>
+              <p class="text-gray-700 leading-relaxed">{{ product.description }}</p>
+            </div>
+
+            <!-- Variants (if any) -->
+            <div v-if="product.variants && product.variants.length" class="py-6 border-b">
+              <h3 class="font-semibold text-gray-900 mb-3">Select Variant</h3>
+              <select
+                v-model="selectedVariant"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
+              >
+                <option value="" disabled>Choose an option</option>
+                <option v-for="v in product.variants" :key="v.label" :value="v.label">
+                  {{ v.label }} - ${{ v.price }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Add to Cart Section -->
+            <div class="space-y-3 pt-6">
+              <button
+                @click="addToCart"
+                :disabled="product.stock === 0"
+                class="w-full bg-orange-500 text-white px-8 py-4 rounded-lg hover:bg-orange-600 font-semibold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+              </button>
+
+              <button
+                @click="toggleWishlist"
+                :class="[
+                  'w-full px-8 py-4 rounded-lg hover:bg-gray-50 font-semibold text-lg transition-colors flex items-center justify-center gap-2',
+                  isWishlisted
+                    ? 'border-red-300 text-red-700 border-2 bg-red-50'
+                    : 'border-2 border-gray-300 text-gray-700',
+                ]"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                <span v-if="isWishlisted">Wishlisted</span>
+                <span v-else> Add to Wishlist</span>
+              </button>
             </div>
           </div>
         </div>
-
-        <!-- Add to cart -->
-        <button
-          class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 w-full mt-4"
-        >
-          Add to Cart
-        </button>
-      </div>
-    </div>
-
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 max-w-6xl px-4 mx-auto mt-10">
-      Products you might find interesting
-    </h2>
-    <!-- Recommendations section remains the same -->
-    <section class="mt-10 px-4 max-w-screen-2xl mx-auto">
-      <!-- Pagination Container with Products in Between -->
-      <div class="flex items-center gap-4" v-if="recommended.length > itemsPerPage">
-        <!-- Previous Button -->
-        <button
-          @click="prevRecommendationPage"
-          :disabled="currentRecommendationPage === 1"
-          class="px-5 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 text-gray-700 font-medium shadow-sm hover:shadow shrink-0"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Previous
-        </button>
-
-        <!-- Product Grid (Centered between buttons) -->
-        <div class="flex-1">
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <ProductCard
-              v-for="p in paginatedRecommendations"
-              :key="p.id"
-              :product="p"
-              class="w-full"
-            />
-          </div>
-        </div>
-
-        <!-- Next Button -->
-        <button
-          @click="nextRecommendationPage"
-          :disabled="currentRecommendationPage === totalRecommendationPages"
-          class="px-5 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 text-gray-700 font-medium shadow-sm hover:shadow shrink-0"
-        >
-          Next
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
       </div>
 
-      <!-- Display without pagination when not needed -->
-      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <ProductCard v-for="p in recommended" :key="p.id" :product="p" class="w-full" />
-      </div>
-
-      <!-- Page Indicator Below -->
-      <div
-        class="flex justify-center items-center gap-3 mt-6"
-        v-if="recommended.length > itemsPerPage"
-      >
-        <div class="flex items-center gap-2">
-          <div class="flex space-x-1">
-            <div
-              v-for="page in Math.min(5, totalRecommendationPages)"
-              :key="page"
-              @click="currentRecommendationPage = page"
-              class="w-2 h-2 rounded-full cursor-pointer transition-all"
+      <!-- Tabs Section -->
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
+        <!-- Tab Navigation -->
+        <div class="border-b">
+          <nav class="flex">
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              class="px-8 py-4 font-semibold transition-colors relative"
               :class="
-                page === currentRecommendationPage
-                  ? 'bg-orange-500 w-4'
-                  : 'bg-gray-300 hover:bg-gray-400'
+                activeTab === tab.id
+                  ? 'text-orange-500 border-b-2 border-orange-500'
+                  : 'text-gray-600 hover:text-gray-900'
               "
-            ></div>
-          </div>
-          <span class="text-sm text-gray-600 font-medium">
-            Page {{ currentRecommendationPage }} of {{ totalRecommendationPages }}
-          </span>
+            >
+              {{ tab.label }}
+            </button>
+          </nav>
         </div>
-      </div>
-    </section>
 
-    <!-- Product Detail Rating & Review Section -->
-    <section class="mt-12 px-4 max-w-6xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6">Product Details & Reviews</h2>
+        <!-- Tab Content -->
+        <div class="p-6 lg:p-10">
+          <!-- Product Details Tab -->
+          <div v-if="activeTab === 'details'" class="prose max-w-none">
+            <h3 class="text-2xl font-bold mb-6">Product Details</h3>
 
-      <!-- Tab Navigation (Only 2 tabs) -->
-      <div class="border-b mb-6">
-        <div class="flex space-x-8">
-          <button
-            v-for="tab in tabs"
-            :key="tab.id"
-            @click="activeTab = tab.id"
-            class="py-3 px-1 font-medium text-gray-500 hover:text-gray-700 relative"
-            :class="activeTab === tab.id ? 'text-orange-500 border-b-2 border-orange-500' : ''"
-          >
-            {{ tab.label }}
-          </button>
-        </div>
-      </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-semibold text-lg mb-3">Specifications</h4>
+                <dl class="space-y-2">
+                  <div class="flex justify-between py-2 border-b">
+                    <dt class="text-gray-600">Size</dt>
+                    <dd class="font-medium">{{ product.size || 'N/A' }}</dd>
+                  </div>
+                  <div class="flex justify-between py-2 border-b">
+                    <dt class="text-gray-600">Stock</dt>
+                    <dd class="font-medium">{{ product.stock }} units</dd>
+                  </div>
+                  <div class="flex justify-between py-2 border-b">
+                    <dt class="text-gray-600">Category</dt>
+                    <dd class="font-medium">{{ product.category?.name || 'N/A' }}</dd>
+                  </div>
+                  <div class="flex justify-between py-2 border-b">
+                    <dt class="text-gray-600">Country</dt>
+                    <dd class="font-medium">{{ product.countryName || 'N/A' }}</dd>
+                  </div>
+                </dl>
+              </div>
 
-      <!-- Tab Content -->
-      <div class="bg-white rounded-xl border p-6 w-200">
-        <!-- Product Detail Tab -->
-        <div v-if="activeTab === 'productDetail'" class="space-y-8">
-          <!-- Overview Section -->
-          <div class="space-y-4">
-            <h3 class="text-xl font-bold mb-3">Overview</h3>
-            <p class="text-gray-700 leading-relaxed">
-              Keep your pup cozy in style with our Quilted Dog Coat—a perfect blend of lightweight
-              warmth, comfort, and classic design. Ideal for breezy walks, fall strolls, or chilly
-              mornings, this coat offers just the right amount of insulation without restricting
-              movement.
-            </p>
-          </div>
-
-          <!-- Recommended Breeds Section -->
-          <div class="space-y-4">
-            <h3 class="text-xl font-bold mb-3">Recommended For</h3>
-            <p class="text-gray-700 mb-4">
-              Best suited for small to medium, short-haired breeds like:
-            </p>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>Corgis</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>Jack Russells</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>Mini Dachshunds</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>Beagles (smaller frame)</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>French Bulldogs</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <span>Border Terriers</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Fit & Sizing Section -->
-          <div class="space-y-4">
-            <h3 class="text-xl font-bold mb-3">Fit & Sizing</h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <div>
-                  <span class="font-medium">Back Length:</span>
-                  <span class="ml-2">50 cm</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <div>
-                  <span class="font-medium">Chest Girth (max):</span>
-                  <span class="ml-2">~55 cm</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <div>
-                  <span class="font-medium">Neck Opening:</span>
-                  <span class="ml-2">~38 cm (slightly stretchy)</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-orange-500 rounded-full shrink-0"></span>
-                <div>
-                  <span class="font-medium">Weight Range:</span>
-                  <span class="ml-2">9–13 kg (ideal, but always measure!)</span>
+              <div>
+                <h4 class="font-semibold text-lg mb-3">Product Information</h4>
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r">
+                  <p class="text-gray-700">{{ product.description }}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Note Section -->
-          <div class="space-y-4">
-            <h3 class="text-xl font-bold mb-3">Note</h3>
-            <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r">
-              <p class="text-gray-700">
-                This coat is designed for dry, cool weather—not waterproof or intended for heavy
-                rain or deep snow. Perfect for urban walks, light winter days, and stylish comfort!
+          <!-- Reviews Tab -->
+          <div v-if="activeTab === 'reviews'" id="reviews" class="space-y-8">
+            <!-- Reviews Header -->
+            <div class="flex justify-between items-center">
+              <h3 class="text-2xl font-bold">Customer Reviews</h3>
+              <button
+                @click="showReviewForm = !showReviewForm"
+                class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold transition-colors"
+              >
+                {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
+              </button>
+            </div>
+
+            <!-- Review Form (Collapsible) -->
+            <ReviewForm
+              v-if="showReviewForm"
+              :product-id="product.id"
+              @review-submitted="handleReviewSubmitted"
+            />
+
+            <!-- Overall Rating Summary -->
+            <div class="bg-gray-50 rounded-xl p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left: Average Rating -->
+                <div class="text-center lg:text-left">
+                  <div class="text-5xl font-bold text-gray-900 mb-2">
+                    {{ product.avgRating || 0 }}
+                  </div>
+                  <div class="flex items-center justify-center lg:justify-start gap-1 mb-2">
+                    <span
+                      v-for="i in 5"
+                      :key="i"
+                      class="text-2xl"
+                      :class="
+                        i <= Math.round(product.avgRating || 0)
+                          ? 'text-yellow-500'
+                          : 'text-gray-300'
+                      "
+                      >★</span
+                    >
+                  </div>
+                  <p class="text-gray-600">Based on {{ product.reviewCount || 0 }} reviews</p>
+                </div>
+
+                <!-- Right: Rating Breakdown -->
+                <div class="space-y-2">
+                  <div
+                    v-for="rating in [5, 4, 3, 2, 1]"
+                    :key="rating"
+                    class="flex items-center gap-3"
+                  >
+                    <span class="text-sm font-medium w-16">{{ rating }} stars</span>
+                    <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        class="h-full bg-yellow-500 rounded-full transition-all"
+                        :style="{ width: calculateRatingPercentage(rating) + '%' }"
+                      ></div>
+                    </div>
+                    <span class="text-sm text-gray-600 w-12 text-right">{{
+                      getRatingCount(rating)
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reviews List -->
+            <div v-if="product.reviews && product.reviews.length > 0" class="space-y-6">
+              <h4 class="text-xl font-bold">All Reviews</h4>
+
+              <div
+                v-for="review in paginatedReviews"
+                :key="review._id"
+                class="border rounded-xl p-6 hover:shadow-md transition-shadow"
+              >
+                <!-- Review Header -->
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h5 class="font-bold text-lg">{{ review.name }}</h5>
+                    <div class="flex items-center gap-2 mt-1">
+                      <div class="flex">
+                        <span
+                          v-for="i in 5"
+                          :key="i"
+                          class="text-lg"
+                          :class="i <= review.rating ? 'text-yellow-500' : 'text-gray-300'"
+                          >★</span
+                        >
+                      </div>
+                      <span class="text-sm text-gray-500">{{ formatDate(review.createdAt) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Review Title -->
+                <h6 v-if="review.title" class="font-semibold text-lg mb-2">{{ review.title }}</h6>
+
+                <!-- Review Content -->
+                <p class="text-gray-700 leading-relaxed">{{ review.comment }}</p>
+              </div>
+
+              <!-- Pagination for Reviews -->
+              <div v-if="totalReviewPages > 1" class="flex justify-center gap-2 pt-6">
+                <button
+                  @click="currentReviewPage--"
+                  :disabled="currentReviewPage === 1"
+                  class="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <button
+                  v-for="page in totalReviewPages"
+                  :key="page"
+                  @click="currentReviewPage = page"
+                  class="px-4 py-2 border rounded-lg transition-colors"
+                  :class="
+                    page === currentReviewPage ? 'bg-orange-500 text-white' : 'hover:bg-gray-50'
+                  "
+                >
+                  {{ page }}
+                </button>
+                <button
+                  @click="currentReviewPage++"
+                  :disabled="currentReviewPage === totalReviewPages"
+                  class="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+
+            <!-- No Reviews Message -->
+            <div v-else class="text-center py-12">
+              <svg
+                class="mx-auto h-16 w-16 text-gray-400 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+              <p class="text-gray-600 text-lg">
+                No reviews yet. Be the first to review this product!
               </p>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Reviews Tab - Redesigned to match image -->
-        <div v-if="activeTab === 'reviews'" class="space-y-8">
-          <!-- Header with View All button -->
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold">Product Detail Rating & Review</h3>
-            <button class="text-orange-500 font-semibold hover:text-orange-600 transition-colors">
-              View all review →
+      <!-- Recommended Products -->
+      <section
+        v-if="recommended.length > 0"
+        class="bg-white rounded-2xl shadow-sm overflow-hidden p-6 lg:p-10"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold">You Might Also Like</h2>
+          <div class="flex gap-2">
+            <button
+              @click="prevRecommendationPage"
+              :disabled="currentRecommendationPage === 1"
+              class="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              @click="nextRecommendationPage"
+              :disabled="currentRecommendationPage === totalRecommendationPages"
+              class="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </button>
           </div>
-
-          <!-- Overall Rating -->
-          <div class="bg-gray-50 p-6 rounded-lg mb-8">
-            <div class="flex justify-between items-start mb-6">
-              <div>
-                <h4 class="text-xl font-bold mb-2">
-                  Overall Rating ({{ product.reviewCount || 120 }})
-                </h4>
-                <div class="flex items-center gap-2">
-                  <div class="flex">
-                    <span v-for="i in 5" :key="i" class="text-yellow-500 text-2xl">★</span>
-                  </div>
-                  <span class="text-3xl font-bold ml-2">{{ product.rating || 4.5 }}</span>
-                </div>
-              </div>
-              <button
-                class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 font-semibold"
-              >
-                Write a Review
-              </button>
-            </div>
-
-            <!-- Rating Breakdown - Matches image exactly -->
-            <div class="space-y-4">
-              <!-- 5 Stars -->
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                </div>
-                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 58.3%"></div>
-                </div>
-                <span class="font-medium w-20 text-right">70/120 rates</span>
-              </div>
-
-              <!-- 4 Stars -->
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                </div>
-                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 20.8%"></div>
-                </div>
-                <span class="font-medium w-20 text-right">25/120 rates</span>
-              </div>
-
-              <!-- 3 Stars -->
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                </div>
-                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 8.3%"></div>
-                </div>
-                <span class="font-medium w-20 text-right">10/120 rates</span>
-              </div>
-
-              <!-- 2 Stars -->
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                </div>
-                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 8.3%"></div>
-                </div>
-                <span class="font-medium w-20 text-right">10/120 rates</span>
-              </div>
-
-              <!-- 1 Star -->
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <span class="text-yellow-500 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                  <span class="text-gray-300 text-xl">★</span>
-                </div>
-                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 4.2%"></div>
-                </div>
-                <span class="font-medium w-20 text-right">05/120 rates</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Latest Reviews Header -->
-          <div class="flex justify-between items-center mb-6">
-            <h4 class="text-xl font-bold">Review</h4>
-            <h5 class="text-lg font-semibold text-gray-700">Latest Reviews</h5>
-          </div>
-
-          <!-- Review Cards -->
-          <div class="space-y-6">
-            <!-- Review 1 -->
-            <div class="border rounded-lg p-6">
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <h5 class="font-bold text-lg">Json Best | 03/11/2025</h5>
-                  <div class="flex items-center gap-1 mt-1">
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                  </div>
-                </div>
-              </div>
-              <h6 class="font-semibold text-lg mb-2">The suit is really good with my dog</h6>
-              <p class="text-gray-700">
-                This coat is really good with my dog! He seems happy and relaxed wearing it—no
-                scratching or trying to rub it off. The fit is just right (we got the 50 cm for our
-                Corgi), and it's easy to put on and take off. Plus, it's adorable! Great quality for
-                the price.
-              </p>
-            </div>
-
-            <!-- Review 2 -->
-            <div class="border rounded-lg p-6">
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <h5 class="font-bold text-lg">Hello World | 03/11/2025</h5>
-                  <div class="flex items-center gap-1 mt-1">
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                    <span class="text-yellow-500 text-lg">★</span>
-                  </div>
-                </div>
-              </div>
-              <h6 class="font-semibold text-lg mb-2">Satisfy with the product</h6>
-              <p class="text-gray-700">
-                I was a little nervous about ordering a fixed-size coat, but this one fits my Jack
-                Russell perfectly! The 50 cm length is just right—covers his back without getting in
-                the way when he runs. The material is soft on the inside and looks stylish on the
-                outside.
-              </p>
-            </div>
-
-            <!-- View All Reviews Button -->
-            <div class="text-center pt-6">
-              <button class="text-orange-500 font-semibold hover:text-orange-600 transition-colors">
-                View all review →
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <ProductCard v-for="p in paginatedRecommendations" :key="p.slug || p.id" :product="p" />
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -557,6 +539,9 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductCard from '@/components/Categories/ProductCard.vue'
 import { useProductStore } from '@/stores/productStore'
+import ReviewForm from '@/components/Categories/ReviewForm.vue'
+import { useFavoriteStore } from '@/stores/favoriteStore'
+import { useCartStore } from '@/stores/cartStore'
 
 const route = useRoute()
 const productStore = useProductStore()
@@ -571,6 +556,29 @@ const loadProduct = async (slug: string) => {
   try {
     const fetchedProduct = await productStore.fetchProductBySlug(slug)
     product.value = fetchedProduct
+
+    // Load local reviews from localStorage and merge with backend reviews
+    if (product.value) {
+      const storageKey = `reviews_${product.value.id}`
+      const localReviews = JSON.parse(localStorage.getItem(storageKey) || '[]')
+
+      // Combine backend reviews with local reviews
+      if (Array.isArray(product.value.reviews)) {
+        product.value.reviews = [...localReviews, ...product.value.reviews]
+      } else {
+        product.value.reviews = localReviews
+      }
+
+      // Recalculate review stats with merged reviews
+      if (product.value.reviews.length > 0) {
+        const sum = product.value.reviews.reduce(
+          (s: number, r: any) => s + (Number(r.rating) || 0),
+          0,
+        )
+        product.value.avgRating = Math.round((sum / product.value.reviews.length) * 10) / 10
+        product.value.reviewCount = product.value.reviews.length
+      }
+    }
   } catch (error) {
     console.error('Failed to load product:', error)
     product.value = null
@@ -630,6 +638,26 @@ const goToImage = (index: number) => {
 }
 
 const selectedVariant = ref('')
+
+// Cart & Favorite stores
+const favoriteStore = useFavoriteStore()
+const cartStore = useCartStore()
+
+const productIdStr = computed(() => product.value?._id ?? product.value?.id ?? '')
+
+const isWishlisted = computed(() =>
+  favoriteStore.favorites.some((p) => p.id === productIdStr.value),
+)
+
+function toggleWishlist() {
+  if (!product.value) return
+  favoriteStore.toggleFavorite(product.value)
+}
+
+function addToCart() {
+  if (!product.value) return
+  cartStore.addToCart(product.value)
+}
 
 // Watch for product changes to set default variant
 watch(
@@ -691,16 +719,68 @@ const nextRecommendationPage = () => {
 
 // Tab system
 const tabs = ref([
-  { id: 'productDetail', label: 'Product Detail' },
+  { id: 'details', label: 'Product Detail' },
   { id: 'reviews', label: `Rating & Reviews` },
 ])
 
-const activeTab = ref('productDetail')
+const activeTab = ref('details')
 
 const getSelectedVariantPrice = () => {
   if (!product.value || !selectedVariant.value) return product.value?.price || 0
 
   const selected = product.value.variants?.find((v: any) => v.label === selectedVariant.value)
   return selected?.price || product.value.price
+}
+
+// Review state & helpers (used by template)
+const showReviewForm = ref(false)
+const currentReviewPage = ref(1)
+const reviewsPerPage = 5
+
+const totalReviewPages = computed(() => {
+  const len = Array.isArray(product.value?.reviews) ? product.value.reviews.length : 0
+  return Math.max(1, Math.ceil(len / reviewsPerPage))
+})
+
+const paginatedReviews = computed(() => {
+  const all = Array.isArray(product.value?.reviews) ? product.value.reviews : []
+  const start = (currentReviewPage.value - 1) * reviewsPerPage
+  return all.slice(start, start + reviewsPerPage)
+})
+
+function formatDate(iso?: string) {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleDateString()
+  } catch {
+    return iso
+  }
+}
+
+function calculateRatingPercentage(rating: number) {
+  const all = Array.isArray(product.value?.reviews) ? product.value.reviews : []
+  if (all.length === 0) return 0
+  const count = all.filter((r: any) => Number(r.rating) === rating).length
+  return Math.round((count / all.length) * 100)
+}
+
+function getRatingCount(rating: number) {
+  const all = Array.isArray(product.value?.reviews) ? product.value.reviews : []
+  return all.filter((r: any) => Number(r.rating) === rating).length
+}
+
+function handleReviewSubmitted(newReview: any) {
+  if (!product.value) return
+  if (!Array.isArray(product.value.reviews)) product.value.reviews = []
+  product.value.reviews.unshift(newReview)
+  // update counts/averages if backend doesn't return them
+  product.value.reviewCount = product.value.reviews.length
+  const sum = product.value.reviews.reduce((s: number, r: any) => s + (Number(r.rating) || 0), 0)
+  product.value.avgRating = product.value.reviews.length
+    ? Math.round((sum / product.value.reviews.length) * 10) / 10
+    : 0
+  // show list and reset to first page
+  showReviewForm.value = false
+  currentReviewPage.value = 1
 }
 </script>
