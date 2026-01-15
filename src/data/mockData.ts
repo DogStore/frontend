@@ -3,440 +3,413 @@ import type { Product } from "./product";
 export const mockProducts: Product[] = [
   {
     id: 1,
-    name: "Premium Dry Dog Food",
-    price: 22.99,
+    name: "Premium Dry Dog Food - Chicken & Rice",
+    slug: "premium-dry-dog-food-chicken-rice",
+    price: 29.99,
     category: "food",
     country: "Cambodia",
-    image: "https://www.postconsumerbrands.com/wp-content/uploads/2024/03/Kibblesn-Bits-Original-Beef-Chicken-Dry-Dog-Food-3.5LB-1024x1024.png",
-    
+    image: "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/880fbe03-8a0e-4cf8-96c1-dd025a1d80d0-retina-large.jpg",
+    images: [
+      "https://img.packworld.com/files/base/pmmi/all/image/2025/03/03_Heckova_2024_Products.67cf7869bdc2a.png?auto=format%2Ccompress&q=70&w=400",
+      "https://d2wrwj382xgrci.cloudfront.net/Pictures/480xany/1/8/7/9187_coveris19.05_631117.jpg",
+      "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/e0982327-1f93-46b3-be66-e0b8db72ef38-retina-large.png",
+      "https://petgalaxylb.com/wp-content/uploads/2025/05/amity-super-premium-low-grain-chicken-dog-food.webp",
+    ],
+    variants: [
+      { label: "5kg", price: 29.99 },
+      { label: "10kg", price: 49.99 },
+      { label: "15kg", price: 69.99 },
+    ],
+    description: "High-quality dry kibble formulated for adult dogs of all breeds. Rich in protein and essential nutrients for healthy skin and coat.",
   },
   {
     id: 2,
-    name: "Chicken Meal Wet Dog Food",
-    price: 19.5,
-    category: "food",
-    country: "France",
-    image: "https://www.naturesrecipe.com/wp-content/uploads/2024/04/Natures-Recipe-Grain-Free-Puppy-Chicken-Sweet-Potato-Pumpkin-Recipe-Dry-Dog-Food-4-LB.png"
+    name: "Durable Rubber Chew Toy - Flying Saucer",
+    slug: "durable-rubber-chew-toy-flying-saucer",
+    price: 14.99,
+    category: "toy",
+    country: "Cambodia",
+    image: "https://swiftpaws.com/cdn/shop/files/sodapup-dog-toys-sn-flying-saucer-durable-rubber-chew-toy-treat-dispenser-14200538693766.jpg?v=1721664252&width=2000",
+    images: [
+      "https://i.ebayimg.com/images/g/8gEAAOSwkFhkdXxj/s-l400.jpg",
+      "https://cdn11.bigcommerce.com/s-trks3lo/images/stencil/1024x1024/products/48424/345969/jw-30254__1__14783.1684861162.jpg?c=2",
+      "https://maddiesamerican.com/cdn/shop/products/sodapup-dog-toys-mkb-bone-ultra-durable-nylon-dog-chew-toy-for-aggressive-chewers-pink-13077919301766_1024x1024_2x_f21a7861-0092-4ff1-8fc2-6f02aa6c6369.png?v=1694991782",
+      "https://swiftpaws.com/cdn/shop/files/sodapup-dog-toys-sn-flying-saucer-durable-rubber-chew-toy-treat-dispenser-14200538628230.jpg?v=1721664252&width=2000",
+    ],
+    variants: [
+      { label: "Small", price: 12.99 },
+      { label: "Medium", price: 14.99 },
+      { label: "Large", price: 18.99 },
+    ],
+    description: "Tough rubber toy perfect for aggressive chewers. Doubles as a treat dispenser for mental stimulation.",
   },
   {
     id: 3,
-    name: "Beef Flavored Dog Treats",
-    price: 15.0,
-    category: "food",
-    country: "Australia",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    name: "Reflective Dog Collar & Leash Set",
+    slug: "reflective-dog-collar-leash-set",
+    price: 24.99,
+    category: "toy",
+    country: "Cambodia",
+    image: "https://swag.power3.com/wp-content/uploads/2024/11/Screen-Shot-2024-11-10-at-10.57.10-PM.png",
+    images: [
+      "https://daragansdogcare.com/wp-content/uploads/2024/12/29030e_0815464ae9f64b279551eefad0c8aee6mv2.jpg",
+      "https://i.ebayimg.com/images/g/~j0AAOSwuK9ixmkb/s-l400.jpg",
+      "https://www.boo-oh.com/cdn/shop/files/S-CML-11mm_6c02dfa2-6fef-4f65-8bee-f928c91647ca_720x.jpg?v=1746139090",
+      "https://iwoof.com/wp-content/uploads/2019/09/IWO-035.jpg",
+    ],
+    variants: [
+      { label: "Small", price: 19.99 },
+      { label: "Medium", price: 24.99 },
+      { label: "Large", price: 29.99 },
+    ],
+    description: "Safe and stylish set with reflective stitching for nighttime visibility. Adjustable for a perfect fit.",
   },
   {
     id: 4,
-    name: "Dog Hoodie Winter Edition",
-    price: 29.99,
+    name: "Plush Orthopedic Dog Bed",
+    slug: "plush-orthopedic-dog-bed",
+    price: 59.99,
     category: "cloth",
     country: "Cambodia",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    image: "https://www.petsense.com/cdn/shop/products/45336087_SofaBed_Suede_Ortho_MD_Gray_InUseStudio_2400x1602_7c6bb869-f9b4-457c-b8fc-4083bae376e7_3000x.jpg?v=1669743401",
+    images: [
+      "https://image.chewy.com/catalog/general/images/moe/0691e24d-4ea2-7b5f-8000-42ec123733a8._AC_SX500_SY400_QL75_V1_.jpg",
+      "https://m.media-amazon.com/images/I/71oJ6JUMD5L._AC_UF894,1000_QL80_.jpg",
+      "https://www.petsense.com/cdn/shop/products/31335085_LuxeLounger_UltraPlush_Ortho_MD_Chocolate_InUse_2400x1602_ae5ae7fc-588c-418f-a30f-5904923bbdfd_2000x.jpg?v=1669743405",
+      "https://beautyrestpetbeds.com/cdn/shop/products/tstarchdog-NVMPet-145_2048x.jpg?v=1619203750",
+    ],
+    variants: [
+      { label: "Medium", price: 59.99 },
+      { label: "Large", price: 79.99 },
+      { label: "Extra Large", price: 99.99 },
+    ],
+    description: "Supportive memory foam base with soft plush cover. Ideal for older dogs or those with joint issues.",
   },
   {
     id: 5,
-    name: "Puppy Raincoat",
-    price: 24.99,
+    name: "Professional Dog Grooming Brush Kit",
+    slug: "professional-dog-grooming-brush-kit",
+    price: 19.99,
     category: "cloth",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://m.media-amazon.com/images/I/71nug1CQf1L._AC_UF1000,1000_QL80_.jpg",
+    images: [
+      "https://cdn11.bigcommerce.com/s-rbtuebnwu6/images/stencil/1280x1280/products/247/772/opt-ram-k-g1-ray-allen-grooming-kit__05790.1606579889.jpg?c=1",
+      "https://i.ebayimg.com/images/g/L4UAAOSwPhdVQNot/s-l400.jpg",
+      "https://i.ebayimg.com/images/g/YOsAAOSwstxgw3gi/s-l1200.jpg",
+      "https://i5.walmartimages.com/seo/Dog-and-Cat-Home-Grooming-Kit-Slicker-Rotating-Pin-Brush-Comb-Nail-Trimmer-4-pc-3-Kits_53c96375-405a-4907-9a74-d5f211101a1c.39d0724ddfdf39b1f70df5b545a3db69.png",
+    ],
+    variants: [],
+    description: "Complete 4-piece set including slicker brush, dematting tool, comb, and nail clipper for at-home grooming.",
   },
   {
     id: 6,
-    name: "Soft Dog T-Shirt",
-    price: 12.5,
+    name: "Warm Fleece Dog Sweater Coat",
+    slug: "warm-fleece-dog-sweater-coat",
+    price: 27.99,
     category: "cloth",
-    country: "Australia",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://www.derbyoriginals.com/cdn/shop/products/Double_Layer_Fleece_Cold_Weather_Adventure_Dog_Coat_Royal-Blue_Set_8065.jpg?v=1598630465&width=1445",
+    images: [
+      "https://chillydogsweaters.com/wp-content/uploads/2016/08/18-04-20-D1-369-CD-Dogs-in-Sweaters-scaled.jpg",
+      "https://pet-health-content-media.chewy.com/wp-content/uploads/2025/04/16180619/202503bec-201711dog-sweater-fair-isle-1024x615.jpg",
+      "https://i.etsystatic.com/11832339/r/il/12fdd6/1849394555/il_570xN.1849394555_yedg.jpg",
+      "http://cloakanddawggie.com/cdn/shop/collections/StandardPoodles_1bcc1311-936e-42ae-b999-7fdefcdb46a2.jpg?v=1700521897",
+    ],
+    variants: [
+      { label: "Small", price: 22.99 },
+      { label: "Medium", price: 27.99 },
+      { label: "Large", price: 32.99 },
+    ],
+    description: "Cozy double-layer fleece coat to keep your dog warm during cold weather walks.",
   },
   {
     id: 7,
-    name: "Chew Rope Toy",
-    price: 9.99,
-    category: "toy",
+    name: "Grain-Free Wet Canned Dog Food - Beef Pâté",
+    slug: "grain-free-wet-canned-dog-food-beef-pate",
+    price: 3.49,
+    category: "food",
     country: "Cambodia",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    image: "https://cdn.whole-dog-journal.com/wp-content/uploads/2019/03/p1bst4snje1ub51c7dnkv5i91lq28.jpg.optimal.jpg",
+    images: [
+      "https://chuckanddons.com/cdn/shop/products/12210-1624038198_590x.jpg?v=1628534768",
+      "https://image.chewy.com/catalog/general/images/american-journey-limited-ingredient-diet-poultry-variety-pack-grain-free-canned-dog-food-12-5oz-can-case-of-12/img-430852._AC_SX500_SY400_QL75_V1_.jpg",
+      "https://www.orijenpetfoods.com/on/demandware.static/-/Sites-orijen-na-storefront-catalog/default/dw9941a121/images/menu/ORI%20WetDog%20Cans%201.webp",
+      "http://www.stellaandchewys.com/cdn/shop/collections/category-dog-pate_45b01ff1-4665-47c7-96ee-167eec8e319b.png?v=1721766900",
+    ],
+    variants: [
+      { label: "Single Can", price: 3.49 },
+      { label: "Case of 12", price: 39.99 },
+    ],
+    description: "Premium grain-free pâté made with real beef and vegetables. Great as a meal or topper.",
   },
   {
     id: 8,
-    name: "Interactive Ball Toy",
-    price: 14.5,
-    category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    name: "Soft Training Treats - Chicken Flavor",
+    slug: "soft-training-treats-chicken-flavor",
+    price: 9.99,
+    category: "food",
+    country: "Cambodia",
+    image: "https://pet-munchies.com/cdn/shop/articles/Eddie_Hattie_Day_074_copy_1_1_9295ed28-4254-46f0-8f32-66c8a4b20d79.jpg?v=1738919843&width=1500",
+    images: [
+      "https://i5.walmartimages.com/seo/MerlinsMart-Zine-Purina-Puppy-Chow-Healthy-Start-Dog-Training-Treats-Soft-Meaty-Salmon-Flavor-24-Ounces-Rope-Toy_21cb32f0-f7fa-4bef-b074-a90064b33b7f.d3c37ac7081686aa9d123a68837f38ec.jpeg",
+      "https://content.app-sources.com/s/5660145994823288/uploads/Images/Bowie_Beef_Berries_Treats_Cover-5533228.png?format=webp",
+      "https://www.petfoodprocessing.net/ext/resources/PFP-Images/Articles-20/072121_Pet-Botanics-training_Lead.webp?height=667&t=1626874433&width=1080",
+      "https://projectupland.com/wp-content/uploads/2025/07/Using-Dog-Treats-in-Dog-Training.jpg",
+    ],
+    variants: [
+      { label: "Small Bag (200g)", price: 9.99 },
+      { label: "Large Bag (500g)", price: 19.99 },
+    ],
+    description: "Small, soft treats perfect for training sessions. High-value reward with real chicken flavor.",
   },
   {
     id: 9,
-    name: "Bone Rubber Chew Toy",
-    price: 11.99,
+    name: "Ultra Durable Bone Chew Toy",
+    slug: "ultra-durable-bone-chew-toy",
+    price: 16.99,
     category: "toy",
-    country: "Australia",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://maddiesamerican.com/cdn/shop/products/sodapup-dog-toys-mkb-bone-ultra-durable-nylon-dog-chew-toy-for-aggressive-chewers-pink-13077919301766_1024x1024_2x_f21a7861-0092-4ff1-8fc2-6f02aa6c6369.png?v=1694991782",
+    images: [
+      "https://i.ebayimg.com/images/g/8gEAAOSwkFhkdXxj/s-l400.jpg",
+      "https://cdn11.bigcommerce.com/s-trks3lo/images/stencil/1024x1024/products/48424/345969/jw-30254__1__14783.1684861162.jpg?c=2",
+      "https://swiftpaws.com/cdn/shop/files/sodapup-dog-toys-sn-flying-saucer-durable-rubber-chew-toy-treat-dispenser-14200538693766.jpg?v=1721664252&width=2000",
+      "https://swiftpaws.com/cdn/shop/files/sodapup-dog-toys-sn-flying-saucer-durable-rubber-chew-toy-treat-dispenser-14200538628230.jpg?v=1721664252&width=2000",
+    ],
+    variants: [
+      { label: "Medium", price: 16.99 },
+      { label: "Large", price: 21.99 },
+    ],
+    description: "Nylon bone designed for power chewers. Long-lasting and helps clean teeth.",
   },
   {
     id: 10,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
+    name: "Premium Lamb Flavor Dry Dog Food",
+    slug: "premium-lamb-flavor-dry-dog-food",
+    price: 34.99,
     category: "food",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/e0982327-1f93-46b3-be66-e0b8db72ef38-retina-large.png",
+    images: [
+      "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/880fbe03-8a0e-4cf8-96c1-dd025a1d80d0-retina-large.jpg",
+      "https://petgalaxylb.com/wp-content/uploads/2025/05/amity-super-premium-low-grain-chicken-dog-food.webp",
+      "https://www.petsense.com/cdn/shop/products/32089-1542641658_3000x.png?v=1739291674",
+      "https://m.media-amazon.com/images/I/818wA56oW1L.jpg_BO30,255,255,255_UF900,850_SR1910,1000,0,C_QL100_.jpg",
+    ],
+    variants: [
+      { label: "10kg", price: 34.99 },
+      { label: "20kg", price: 59.99 },
+    ],
+    description: "Complete and balanced nutrition with real lamb as the first ingredient. Suitable for sensitive stomachs.",
   },
+
   {
     id: 11,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
+    name: "Interactive Puzzle Toy - Treat Maze",
+    slug: "interactive-puzzle-toy-treat-maze",
+    price: 24.99,
     category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://outwardhound.com/fun/feedy/media/nina-ottosson-dog-smart-composite-treat-puzzle-toy-orange-level-1/Puzzle_Composite_Orange_L1_DogSmart_1.jpg",
+    images: [
+      "https://outwardhound.com/fun/feedy/media/nina-ottosson-dog-brick-treat-puzzle-toy-blue-level-2/Brick_Blue_L2_1.jpg",
+      "https://m.media-amazon.com/images/I/81f5f4h5vNL._AC_SL1500_.jpg",
+      "https://i5.walmartimages.com/asr/9e0d0b0a-3b0e-4b0e-9b0e-4b0e9b0e4b0e.9b0e4b0e9b0e4b0e9b0e4b0e.jpg",
+      "https://cdn.shopify.com/s/files/1/0087/6088/1048/products/DogTornado_1_1024x1024.jpg?v=1678901234",
+    ],
+    variants: [
+      { label: "Level 1", price: 24.99 },
+      { label: "Level 2", price: 29.99 },
+    ],
+    description: "Engaging puzzle toy that dispenses treats as your dog solves it. Great for mental stimulation and reducing boredom.",
   },
   {
     id: 12,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
+    name: "Waterproof Dog Raincoat",
+    slug: "waterproof-dog-raincoat",
+    price: 34.99,
     category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://www.djdogsupplies.com.au/cdn/shop/products/Back-on-Track-Bark-All-Weather-Dog-Coat-Black-2_1200x.jpg?v=1658281234",
+    images: [
+      "https://i.etsystatic.com/22456789/r/il/5d9e6f/2967890123/il_1140xN.2967890123_5v0p.jpg",
+      "https://m.media-amazon.com/images/I/71iU8n+1bBL._AC_UX679_.jpg",
+      "https://www.rover.com/blog/wp-content/uploads/2022/04/dog-raincoat-1024x683.jpg",
+      "https://cdn.shopify.com/s/files/1/0509/3577/6269/products/raincoat-yellow-1_800x.jpg?v=1678904567",
+    ],
+    variants: [
+      { label: "Small", price: 29.99 },
+      { label: "Medium", price: 34.99 },
+      { label: "Large", price: 39.99 },
+      { label: "XL", price: 44.99 },
+    ],
+    description: "Lightweight, fully waterproof raincoat with reflective strips for safety. Easy to put on with adjustable straps.",
   },
   {
     id: 13,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
-    category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    name: "Salmon & Sweet Potato Grain-Free Dry Food",
+    slug: "salmon-sweet-potato-grain-free-dry-food",
+    price: 44.99,
+    category: "food",
+    country: "Cambodia",
+    image: "https://www.acana.com/wp-content/uploads/2023/08/ACANA_WholesomeGrains_RedMeat_22.5lb_FrontRight_1100x1100.png",
+    images: [
+      "https://www.orijenpetfoods.com/on/demandware.static/-/Sites-orijen-na-storefront-catalog/default/dw8e0d4d4e/images/products/dog/dry/ORI_Dog_RegionalRed_25lb_Front.png",
+      "https://m.media-amazon.com/images/I/81vD8g9r3+L._AC_SL1500_.jpg",
+      "https://www.petsmart.com/thumbs/320-qvga/52685.jpg",
+      "https://www.tasteofthewildpetfood.com/wp-content/uploads/2020/10/Pacific-Stream-Canine-Recipe-with-Salmon-in-Gravy-13.2oz.png",
+    ],
+    variants: [
+      { label: "5kg", price: 44.99 },
+      { label: "10kg", price: 74.99 },
+      { label: "15kg", price: 99.99 },
+    ],
+    description: "Premium grain-free formula with real salmon as the #1 ingredient. Ideal for dogs with food sensitivities.",
   },
   {
     id: 14,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
+    name: "Squeaky Plush Fox Toy",
+    slug: "squeaky-plush-fox-toy",
+    price: 12.99,
     category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
+    country: "Cambodia",
+    image: "https://kongcompany.com/media/catalog/product/k/o/kong_wild_knots_bear_1.jpg?width=1000&height=1000&canvas=1000:1000&quality=85&bg-color=255,255,255&fit=bounds",
+    images: [
+      "https://www.kongcompany.com/media/catalog/product/k/o/kong_cozie_plush_dog_toy_1.jpg?width=1000&height=1000",
+      "https://m.media-amazon.com/images/I/81KqZ9Z9ZPL._AC_SL1500_.jpg",
+      "https://www.chewy.com/fp-images/600x600/kong-cozie-plush-dog-toy-marvin-moose.jpg",
+      "https://cdn.shopify.com/s/files/1/0073/1143/1234/products/kong-wild-knots-bear-dog-toy.jpg?v=1678907890",
+    ],
+    variants: [
+      { label: "Small", price: 10.99 },
+      { label: "Medium", price: 12.99 },
+      { label: "Large", price: 16.99 },
+    ],
+    description: "Soft and cuddly fox with internal squeaker and knotted rope skeleton for added durability.",
   },
   {
     id: 15,
-    name: "Duck Flavored Dog Treats",
-    price: 18.99,
-    category: "toy",
-    country: "France",
-    image: "https://www.harringtonspetfood.com/cdn/shop/files/1.7kg-Puppy-Turkey-FOP-ISO-comp.png?v=1723735752"
-  },
-];
-
-
-
-
-export const products: Product[] = [
-  // -----------------------------------------------------------
-  // CLOTH — Quilted Coats, Jackets, Clothing
-  // -----------------------------------------------------------
-  {
-    id: 1,
-    name: "Quilted Dog Coat",
-    price: 23.99,
-    rating: 4.5,
-    category: "cloth",
-    country: "France",
-
-    images: [
-      "https://picsum.photos/seed/cloth1/450/450",
-      "https://picsum.photos/seed/cloth1b/450/450",
-      "https://picsum.photos/seed/cloth1c/450/450",
-      "https://picsum.photos/seed/cloth1d/450/450",
-    ],
-
-    variants: [
-      { label: "30cm", price: 23.99 },
-      { label: "40cm", price: 25.99 },
-      { label: "50cm", price: 24.99 },
-      { label: "60cm", price: 32.99 },
-      { label: "70cm", price: 35.99 },
-    ],
-
-    description:
-      "Recommended for Corgis, Jack Russells, Mini Dachshunds, and similar-sized pups.",
-  },
-
-  {
-    id: 2,
-    name: "Winter Dog Jacket",
-    price: 29.99,
-    rating: 4.4,
+    name: "Knitted Winter Dog Sweater",
+    slug: "knitted-winter-dog-sweater",
+    price: 28.99,
     category: "cloth",
     country: "Cambodia",
-
+    image: "https://i.etsystatic.com/22456789/r/il/5d9e6f/2967890123/il_1140xN.2967890123_5v0p.jpg",
     images: [
-      "https://picsum.photos/seed/cloth2/450/450",
-      "https://picsum.photos/seed/cloth2b/450/450",
+      "https://chillydogsweaters.com/wp-content/uploads/2016/08/18-04-20-D1-369-CD-Dogs-in-Sweaters-scaled.jpg",
+      "https://www.gooby.com/cdn/shop/products/Gooby-Fashion-Vest-Red-1.jpg?v=1678901234",
+      "https://m.media-amazon.com/images/I/81eKqZ9Z9ZL._AC_SL1500_.jpg",
+      "https://www.dogids.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/o/dog-sweater-red-cable-knit.jpg",
     ],
-
-    variants: [
-      { label: "S", price: 29.99 },
-      { label: "M", price: 31.49 },
-      { label: "L", price: 33.49 },
-    ],
-
-    description:
-      "A warm insulated jacket suitable for cold-weather dog walks.",
-  },
-
-  {
-    id: 3,
-    name: "Rain Dog Coat",
-    price: 24.99,
-    rating: 4.0,
-    category: "cloth",
-    country: "Australia",
-
-    images: [
-      "https://picsum.photos/seed/cloth3/450/450",
-    ],
-
     variants: [
       { label: "XS", price: 24.99 },
-      { label: "S", price: 26.99 },
-      { label: "M", price: 28.49 },
+      { label: "Small", price: 26.99 },
+      { label: "Medium", price: 28.99 },
+      { label: "Large", price: 32.99 },
     ],
-
-    description:
-      "Lightweight waterproof coat perfect for rainy days.",
+    description: "Hand-knitted style sweater with classic cable pattern. Warm and stretchy for comfortable fit.",
   },
-
-  {
-    id: 4,
-    name: "Dog Hoodie",
-    price: 18.99,
-    rating: 4.6,
-    category: "cloth",
-    country: "France",
-
-    images: [
-      "https://picsum.photos/seed/cloth4/450/450",
-    ],
-
-    variants: [
-      { label: "S", price: 18.99 },
-      { label: "M", price: 19.99 },
-      { label: "L", price: 20.99 },
-    ],
-
-    description: "A comfortable cotton hoodie for your stylish pup.",
-  },
-
-  {
-    id: 5,
-    name: "Soft Dog Pajamas",
-    price: 16.49,
-    rating: 4.2,
-    category: "cloth",
-    country: "Cambodia",
-
-    images: [
-      "https://picsum.photos/seed/cloth5/450/450",
-    ],
-
-    variants: [
-      { label: "S", price: 16.49 },
-      { label: "M", price: 17.49 },
-      { label: "L", price: 19.49 },
-    ],
-
-    description: "Made with soft fleece for maximum bedtime comfort.",
-  },
-
-  {
-    id: 6,
-    name: "Mini Dog Sneakers",
-    price: 21.99,
-    rating: 4.3,
-    category: "cloth",
-    country: "France",
-    images: ["https://picsum.photos/seed/cloth6/450/450"],
-    variants: [{ label: "One Size", price: 21.99 }],
-    description: "Protect your dog's paws during walks.",
-  },
-
-  {
-    id: 7,
-    name: "Dog Backpack Harness",
-    price: 27.89,
-    rating: 4.5,
-    category: "cloth",
-    country: "Australia",
-    images: ["https://picsum.photos/seed/cloth7/450/450"],
-    variants: [{ label: "Adjustable", price: 27.89 }],
-    description: "Perfect for small outdoor adventures.",
-  },
-
-  {
-    id: 8,
-    name: "Premium Dry Dog Food",
-    price: 22.99,
-    rating: 4.5,
-    category: "cloth",
-    country: "France",
-
-    images: [
-      "https://picsum.photos/seed/food1/450/450",
-    ],
-
-    variants: [
-      { label: "1kg", price: 22.99 },
-      { label: "3kg", price: 39.99 },
-    ],
-
-    description: "High-protein dry kibble made for active dogs.",
-  },
-
-  {
-    id: 9,
-    name: "Organic Wet Dog Food",
-    price: 19.99,
-    rating: 4.1,
-    category: "food",
-    country: "Cambodia",
-
-    images: ["https://picsum.photos/seed/food2/450/450"],
-    variants: [{ label: "400g", price: 19.99 }],
-    description: "Organic ingredients slow-cooked for maximum nutrition.",
-  },
-
-  {
-    id: 10,
-    name: "Beef Flavored Dog Treats",
-    price: 12.49,
-    rating: 4.7,
-    category: "food",
-    country: "Australia",
-
-    images: ["https://picsum.photos/seed/food3/450/450"],
-    variants: [{ label: "Small Bag", price: 12.49 }],
-    description: "Chewy beef treats that dogs love.",
-  },
-
-  {
-    id: 11,
-    name: "Chicken Bites Snack",
-    price: 15.29,
-    rating: 4.3,
-    category: "food",
-    country: "France",
-
-    images: ["https://picsum.photos/seed/food4/450/450"],
-    variants: [{ label: "Small Bag", price: 15.29 }],
-    description: "Crunchy chicken-flavored treats.",
-  },
-
-  {
-    id: 12,
-    name: "Healthy Puppy Food",
-    price: 25.99,
-    rating: 4.8,
-    category: "food",
-    country: "Australia",
-
-    images: ["https://picsum.photos/seed/food5/450/450"],
-    variants: [{ label: "2kg", price: 25.99 }],
-    description: "Formulated for growing puppies.",
-  },
-
-  {
-    id: 13,
-    name: "Dental Chew Stick",
-    price: 11.59,
-    rating: 4.2,
-    category: "food",
-    country: "France",
-    images: ["https://picsum.photos/seed/food6/450/450"],
-    variants: [{ label: "Pack of 5", price: 11.59 }],
-    description: "Reduces tartar buildup and improves dental health.",
-  },
-
-  {
-    id: 14,
-    name: "Air-Dried Lamb Dog Food",
-    price: 34.99,
-    rating: 4.9,
-    category: "food",
-    country: "Australia",
-    images: ["https://picsum.photos/seed/food7/450/450"],
-    variants: [{ label: "1kg", price: 34.99 }],
-    description: "Premium lamb food with no preservatives.",
-  },
-
-  // -----------------------------------------------------------
-  // TOYS — Balls, Chew Toys, Squeaky
-  // -----------------------------------------------------------
-  {
-    id: 15,
-    name: "Rubber Chewing Bone",
-    price: 9.99,
-    rating: 4.8,
-    category: "toy",
-    country: "France",
-    images: ["https://picsum.photos/seed/toy1/450/450"],
-    variants: [{ label: "One Size", price: 9.99 }],
-    description: "Durable rubber chew bone for strong chewers.",
-  },
-
   {
     id: 16,
-    name: "Squeaky Dog Duck",
-    price: 7.99,
-    rating: 4.1,
-    category: "toy",
-    country: "Australia",
-    images: ["https://picsum.photos/seed/toy2/450/450"],
-    variants: [{ label: "One Size", price: 7.99 }],
-    description: "Soft squeaky duck for playful pups.",
+    name: "Turkey & Vegetable Wet Dog Food Tray",
+    slug: "turkey-vegetable-wet-dog-food-tray",
+    price: 2.99,
+    category: "food",
+    country: "Cambodia",
+    image: "https://www.pedigree.com/sites/g/files/fpzhm6/files/2023-03/pedigree-choice-cuts-in-gravy-adult-wet-dog-food-variety-pack-3-5-oz-pouches-30-count.png",
+    images: [
+      "https://www.cesar.com/sites/g/files/qyyrlu326/files/migrate-product-images/cesar-classic-loaf-in-sauce-adult-wet-dog-food-variety-pack-3-5-oz-trays-24-count.png",
+      "https://m.media-amazon.com/images/I/81qZ9Z9Z9ZL._AC_SL1500_.jpg",
+      "https://www.petsmart.com/thumbs/320-qvga/52785.jpg",
+      "https://www.bluebuffalo.com/globalassets/products/dog/wet/blue-wilderness/trays/rocky-mountain-recipe-red-meat-dinner/blue-wilderness-rocky-mountain-recipe-red-meat-dinner-3.5oz-tray.png",
+    ],
+    variants: [
+      { label: "Single Tray", price: 2.99 },
+      { label: "Pack of 12", price: 32.99 },
+    ],
+    description: "Complete and balanced wet food with real turkey and garden vegetables in savory gravy.",
   },
-
   {
     id: 17,
-    name: "Rope Pull Toy",
-    price: 14.99,
-    rating: 4.9,
-    category: "toy",
-    country: "Cambodia",
-    images: ["https://picsum.photos/seed/toy3/450/450"],
-    variants: [{ label: "One Size", price: 14.99 }],
-    description: "Strong rope toy ideal for tug-of-war.",
-  },
-
-  {
-    id: 18,
-    name: "Tennis Ball Pack (3pcs)",
-    price: 6.99,
-    rating: 4.4,
+    name: "Indestructible Rubber Ball Toy",
+    slug: "indestructible-rubber-ball-toy",
+    price: 15.99,
     category: "toy",
     country: "France",
-    images: ["https://picsum.photos/seed/toy4/450/450"],
-    variants: [{ label: "3 Balls", price: 6.99 }],
-    description: "High-bounce tennis balls for fetch games.",
+    image: "https://www.kongcompany.com/media/catalog/product/k/o/kong_extreme_ball_1.jpg?width=1000&height=1000",
+    images: [
+      "https://m.media-amazon.com/images/I/71KqZ9Z9ZPL._AC_SL1500_.jpg",
+      "https://www.chewy.com/fp-images/600x600/kong-extreme-ball-dog-toy.jpg",
+      "https://www.orbee-tuff.com/cdn/shop/products/orbee-tuff-ball-blue.jpg?v=1678904567",
+      "https://www.westpaw.com/cdn/shop/products/zogoflex-air-boz-dog-ball.jpg?v=1678907890",
+    ],
+    variants: [
+      { label: "Medium", price: 15.99 },
+      { label: "Large", price: 19.99 },
+    ],
+    description: "Virtually indestructible solid rubber ball. Perfect for fetch and tough chewers.",
   },
-
+  {
+    id: 18,
+    name: "Reversible Dog Hoodie",
+    slug: "reversible-dog-hoodie",
+    price: 31.99,
+    category: "cloth",
+    country: "Cambodia",
+    image: "https://www.fitwarm.com/cdn/shop/products/fitwarm-reversible-dog-hoodie.jpg?v=1678901234",
+    images: [
+      "https://i.etsystatic.com/22456789/r/il/5d9e6f/2967890123/il_1140xN.2967890123_5v0p.jpg",
+      "https://www.gooby.com/cdn/shop/products/Gooby-Zip-Up-Fleece-Red.jpg?v=1678904567",
+      "https://m.media-amazon.com/images/I/81eKqZ9Z9ZL._AC_SL1500_.jpg",
+      "https://www.dogids.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/o/dog-hoodie-grey.jpg",
+    ],
+    variants: [
+      { label: "Small", price: 27.99 },
+      { label: "Medium", price: 31.99 },
+      { label: "Large", price: 35.99 },
+    ],
+    description: "Stylish reversible hoodie with two different colors/patterns. Soft fleece lining for warmth.",
+  },
   {
     id: 19,
-    name: "Interactive Treat Toy",
-    price: 17.49,
-    rating: 4.6,
-    category: "toy",
-    country: "Australia",
-    images: ["https://picsum.photos/seed/toy5/450/450"],
-    variants: [{ label: "One Size", price: 17.49 }],
-    description: "Dispenses treats as your dog plays.",
+    name: "Chicken & Rice Sensitive Stomach Dry Food",
+    slug: "chicken-rice-sensitive-stomach-dry-food",
+    price: 39.99,
+    category: "food",
+    country: "Cambodia",
+    image: "https://www.hillspet.com/content/dam/cp-sites/hills/hills-pet/en_us/img/products/dog/science-diet/sensitive-stomach-skin-chicken-recipe-dry-dog-food.png",
+    images: [
+      "https://www.purina.com/sites/g/files/qyyrlu326/files/migrate-product-images/pro-plan-sensitive-skin-stomach-salmon-rice-formula.png",
+      "https://m.media-amazon.com/images/I/81vD8g9r3+L._AC_SL1500_.jpg",
+      "https://www.royalcanin.com/us/dogs/products/vet-products/sensitive-digestion-dry-dog-food",
+      "https://www.iams.com/sites/g/files/qyyrlu326/files/migrate-product-images/iams-proactive-health-sensitive-skin-stomach.png",
+    ],
+    variants: [
+      { label: "4kg", price: 39.99 },
+      { label: "10kg", price: 69.99 },
+    ],
+    description: "Gentle formula with easily digestible chicken and rice. Supports sensitive stomachs and healthy skin.",
   },
-
   {
     id: 20,
-    name: "Snuffle Feeding Mat",
-    price: 23.49,
-    rating: 4.7,
+    name: "Tug-of-War Rope Toy with Handle",
+    slug: "tug-of-war-rope-toy-with-handle",
+    price: 18.99,
     category: "toy",
-    country: "Cambodia",
-    images: ["https://picsum.photos/seed/toy6/450/450"],
-    variants: [{ label: "Standard", price: 23.49 }],
-    description: "Slow-feeding puzzle mat to stimulate your dog's brain.",
+    country: "Australia",
+    image: "https://www.kongcompany.com/media/catalog/product/k/o/kong_tugger_knots_moose_1.jpg?width=1000&height=1000",
+    images: [
+      "https://m.media-amazon.com/images/I/71KqZ9Z9ZPL._AC_SL1500_.jpg",
+      "https://www.chewy.com/fp-images/600x600/kong-tugger-knots-moose-dog-toy.jpg",
+      "https://www.mammothpet.com/cdn/shop/products/mammoth-flossy-chews-rope-tug.jpg?v=1678901234",
+      "https://www.westpaw.com/cdn/shop/products/zogoflex-bumi-tug-toy.jpg?v=1678904567",
+    ],
+    variants: [
+      { label: "Medium", price: 18.99 },
+      { label: "Large", price: 22.99 },
+    ],
+    description: "Strong cotton rope toy with comfortable handle. Perfect for interactive tug games.",
   },
-]
+
+];

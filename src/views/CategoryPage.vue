@@ -1,197 +1,100 @@
-<template>
-  <div class="grid grid-cols-12 gap-6 p-6">
-
-    <!-- SIDEBAR FILTERS -->
-    <aside class="col-span-3 bg-white p-4 rounded-xl shadow">
-
-      <!-- Selected Filters -->
-      <div v-if="hasFilters" class="mb-4 flex justify-between items-center">
-        <p class="font-semibold">Filters:</p>
-        <button @click="resetAll" class="text-orange-500">Remove all</button>
-      </div>
-
-      <!-- Selected Category Tag -->
-      <div v-if="selectedCategory"
-           class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full mb-4">
-        Category: {{ selectedCategory }}
-      </div>
-
-      <!-- CATEGORY FILTER -->
-      <h2 class="font-bold text-gray-700 mb-2">Category</h2>
-      <div class="space-y-2">
-        <label v-for="c in categoryOptions" :key="c" class="flex items-center gap-2">
-          <input type="radio" :value="c" v-model="selectedCategory" />
-          <span>{{ c }}</span>
-        </label>
-      </div>
-
-      <hr class="my-4" />
-
-      <!-- COUNTRY FILTER -->
-      <h2 class="font-bold text-gray-700 mb-2">Country</h2>
-      <div class="space-y-2">
-        <label v-for="c in countryOptions" :key="c" class="flex items-center gap-2">
-          <input type="checkbox" :value="c" v-model="selectedCountries" />
-          <span>{{ c }}</span>
-        </label>
-      </div>
-
-      <hr class="my-4" />
-
-      <!-- PRICE FILTER -->
-      <h2 class="font-bold text-gray-700 mb-2">Price Range</h2>
-      <div class="flex gap-2">
-        <input type="number" class="w-1/2 border rounded p-2"
-               placeholder="Min" v-model.number="minPrice" />
-
-        <input type="number" class="w-1/2 border rounded p-2"
-               placeholder="Max" v-model.number="maxPrice" />
-      </div>
-
-      <button class="mt-4 bg-orange-500 text-white w-full py-2 rounded hover:bg-orange-600"
-              @click="applyFilter">
-        Apply Filter
-      </button>
-
-      <button class="mt-2 bg-gray-200 w-full py-2 rounded hover:bg-gray-300"
-              @click="resetAll">
-        Clear
-      </button>
-    </aside>
-
-    <!-- PRODUCT LIST SECTION -->
-    <main class="col-span-9">
-
-      <!-- CATEGORY TITLE -->
-      <h1 v-if="selectedCategory"
-          class="text-3xl font-bold mb-6 capitalize">
-        {{ categoryTitle }}
-      </h1>
-
-      <!-- SORTING -->
-      <div class="mb-6 flex justify-end">
-        <select v-model="sortType" class="border px-3 py-2 rounded">
-          <option value="">Sort By</option>
-          <option value="low">Price: Low → High</option>
-          <option value="high">Price: High → Low</option>
-          <option value="az">Name: A → Z</option>
-        </select>
-      </div>
-
-      <!-- PRODUCT GRID (4 per row) -->
-      <div class="grid grid-cols-4 gap-6">
-        <ProductCard 
-          v-for="p in paginatedProducts"
-          :key="p.id"
-          :product="p"
-        />
-      </div>
-
-      <!-- PAGINATION -->
-      <div class="flex justify-center items-center gap-4 mt-8">
-
-        <button class="px-3 py-2 bg-gray-200 rounded"
-                :disabled="currentPage === 1"
-                @click="currentPage--">
-          Previous
-        </button>
-
-        <span v-for="n in totalPages" :key="n"
-              class="px-3 py-1 rounded cursor-pointer"
-              :class="n === currentPage ? 'bg-orange-500 text-white' : 'bg-gray-200'"
-              @click="currentPage = n">
-          {{ n }}
-        </span>
-
-        <button class="px-3 py-2 bg-gray-200 rounded"
-                :disabled="currentPage === totalPages"
-                @click="currentPage++">
-          Next
-        </button>
-
-      </div>
-    </main>
-  </div>
-</template>
-
-
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import ProductCard from "@/components/Categories/ProductCard.vue"
-import { mockProducts } from "@/data/mockData"
-import type { Product } from "@/data/product"
+import { computed, watch, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import ProductCard from '@/components/home/ProductCard.vue'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { useProductStore } from '@/stores/productStore'
 
-// FILTER STATES
-const selectedCategory = ref<string>("")
-const selectedCountries = ref<string[]>([])
-const minPrice = ref<number | null>(null)
-const maxPrice = ref<number | null>(null)
+const route = useRoute()
+const categoryStore = useCategoryStore()
+const productStore = useProductStore()
 
-// SORTING
-const sortType = ref<string>("")
-
-// CHECK if filters exist
-const hasFilters = computed(() =>
-  selectedCategory.value ||
-  selectedCountries.value.length > 0 ||
-  minPrice.value ||
-  maxPrice.value
+/* -------------------------
+   FETCH DATA BASED ON ROUTE
+-------------------------- */
+watch(
+  () => route.params.slug,
+  async (slug) => {
+    if (typeof slug === 'string') {
+      await Promise.all([
+        categoryStore.fetchCategoryBySlug(slug),
+        productStore.fetchProductsByCategory(slug),
+      ])
+    } else {
+      categoryStore.activeCategory = null
+      await productStore.fetchProducts()
+    }
+  },
+  { immediate: true }
 )
 
-// OPTIONS
-const categoryOptions = ["food", "cloth", "toy"]
-const countryOptions = [...new Set(mockProducts.map(p => p.country))]
+onMounted(() => {
+  categoryStore.fetchPublicCategories()
+})
 
-// FILTER LOGIC
+/* -------------------------
+   FILTER + SORT (LOCAL)
+-------------------------- */
 const filteredProducts = computed(() => {
-  return mockProducts.filter((p: Product) => {
-    const matchCategory = selectedCategory.value ? p.category === selectedCategory.value : true
-    const matchCountry = selectedCountries.value.length ? selectedCountries.value.includes(p.country) : true
-    const matchMin = minPrice.value !== null ? p.price >= minPrice.value : true
-    const matchMax = maxPrice.value !== null ? p.price <= maxPrice.value : true
+  return productStore.products.filter(p => {
+    if (
+      categoryStore.selectedCountries.length &&
+      (!p.countryFlag ||
+        !categoryStore.selectedCountries.includes(p.countryName))
+    ) return false
 
-    return matchCategory && matchCountry && matchMin && matchMax
+    if (
+      categoryStore.minPrice !== null &&
+      p.price < categoryStore.minPrice
+    ) return false
+
+    if (
+      categoryStore.maxPrice !== null &&
+      p.price > categoryStore.maxPrice
+    ) return false
+
+    return true
   })
 })
 
-// SORTING LOGIC
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value]
 
-  if (sortType.value === "low") list.sort((a, b) => a.price - b.price)
-  if (sortType.value === "high") list.sort((a, b) => b.price - a.price)
-  if (sortType.value === "az") list.sort((a, b) => a.name.localeCompare(b.name))
+  if (categoryStore.sortType === 'low') {
+    list.sort((a, b) => a.price - b.price)
+  }
+
+  if (categoryStore.sortType === 'high') {
+    list.sort((a, b) => b.price - a.price)
+  }
+
+  if (categoryStore.sortType === 'az') {
+    list.sort((a, b) => a.name.localeCompare(b.name))
+  }
 
   return list
 })
 
-function applyFilter() {
-  currentPage.value = 1
-}
-
-function resetAll() {
-  selectedCategory.value = ""
-  selectedCountries.value = []
-  minPrice.value = null
-  maxPrice.value = null
-  sortType.value = ""
-  currentPage.value = 1
-}
-
-// CATEGORY TITLE
-const categoryTitle = computed(() => {
-  if (!selectedCategory.value) return ""
-  if (selectedCategory.value === "food") return "Dog Food"
-  if (selectedCategory.value === "cloth") return "Dog Clothing"
-  if (selectedCategory.value === "toy") return "Dog Toys"
-  return selectedCategory.value
-})
-
-// PAGINATION
+/* -------------------------
+   PAGINATION
+-------------------------- */
 const itemsPerPage = 12
 const currentPage = ref(1)
 
-const totalPages = computed(() => 
+watch(
+  [
+    () => categoryStore.selectedCountries,
+    () => categoryStore.minPrice,
+    () => categoryStore.maxPrice,
+    () => categoryStore.sortType,
+    () => route.params.slug,
+  ],
+  () => {
+    currentPage.value = 1
+  }
+)
+
+const totalPages = computed(() =>
   Math.ceil(sortedProducts.value.length / itemsPerPage)
 )
 
@@ -199,4 +102,175 @@ const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   return sortedProducts.value.slice(start, start + itemsPerPage)
 })
+
+/* -------------------------
+   COUNTRY OPTIONS (FROM PRODUCTS)
+-------------------------- */
+const countryOptions = computed<string[]>(() => {
+  return [
+    ...new Set(
+      productStore.products
+        .map(p => p.countryName)
+        .filter((c): c is string => typeof c === 'string' && c.length > 0)
+    )
+  ]
+})
+
 </script>
+
+<template>
+  <div class="container mx-auto px-6 py-6">
+
+    <!-- SEO / CATEGORY HEADER -->
+    <div v-if="categoryStore.activeCategory" class="mb-8">
+      <img
+        v-if="categoryStore.activeCategory.image"
+        :src="categoryStore.activeCategory.image"
+        class="w-full h-56 object-cover rounded-xl mb-4"
+        alt="Category banner"
+      />
+      <h1 class="text-3xl font-bold">
+        {{ categoryStore.activeCategory.name }}
+      </h1>
+    </div>
+
+    <div v-else class="mb-8">
+      <h1 class="text-3xl font-bold">All Products</h1>
+    </div>
+
+    <div v-if="!productStore.loading" class="grid grid-cols-12 gap-6">
+
+      <!-- SIDEBAR FILTERS -->
+      <aside class="col-span-3 bg-white p-4 rounded-xl shadow">
+        <h2 class="font-bold mb-2">Country</h2>
+
+        <label
+          v-for="c in countryOptions"
+          :key="c"
+          class="flex gap-2 mb-1"
+        >
+          <input
+            type="checkbox"
+            :value="c"
+            v-model="categoryStore.selectedCountries"
+          />
+          <span>{{ c }}</span>
+        </label>
+
+        <hr class="my-4" />
+        <h2 class="font-bold mb-2">Category</h2>
+
+<label
+  v-for="cat in categoryStore.categories"
+  :key="cat.slug"
+  class="flex gap-2 mb-1"
+>
+  <input
+    type="radio"
+    name="category"
+    :value="cat.slug"
+    :checked="cat.slug === route.params.slug"
+    @change="$router.push(`/category/${cat.slug}`)"
+  />
+  <span>{{ cat.name }}</span>
+</label>
+
+<hr class="my-4" />
+
+        <hr class="my-4" />
+
+        <h2 class="font-bold mb-2">Price</h2>
+
+        <input
+          type="number"
+          placeholder="Min"
+          class="w-full border p-2 mb-2"
+          v-model.number="categoryStore.minPrice"
+        />
+
+        <input
+          type="number"
+          placeholder="Max"
+          class="w-full border p-2"
+          v-model.number="categoryStore.maxPrice"
+        />
+
+        <button
+          class="mt-4 w-full bg-gray-200 py-2 rounded"
+          @click="categoryStore.resetFilters"
+        >
+          Clear
+        </button>
+      </aside>
+
+      <!-- PRODUCT LIST -->
+      <main class="col-span-9">
+
+        <!-- SORT -->
+        <div class="flex justify-end mb-6">
+          <select
+            v-model="categoryStore.sortType"
+            class="border p-2 rounded"
+          >
+            <option value="">Sort</option>
+            <option value="low">Price ↑</option>
+            <option value="high">Price ↓</option>
+            <option value="az">Name A–Z</option>
+          </select>
+        </div>
+
+        <!-- GRID -->
+        <div v-if="paginatedProducts.length" class="grid grid-cols-4 gap-6">
+          <ProductCard
+            v-for="p in paginatedProducts"
+            :key="p.id"
+            :product="p"
+          />
+        </div>
+
+        <div v-else class="text-center py-20 text-gray-500">
+          No products found.
+        </div>
+
+        <!-- PAGINATION -->
+        <div
+          v-if="totalPages > 1"
+          class="flex justify-center gap-2 mt-10"
+        >
+          <button
+            :disabled="currentPage === 1"
+            @click="currentPage--"
+            class="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Prev
+          </button>
+
+          <button
+            v-for="n in totalPages"
+            :key="n"
+            @click="currentPage = n"
+            class="px-3 py-1 border rounded"
+            :class="{
+              'bg-orange-500 text-white': n === currentPage,
+            }"
+          >
+            {{ n }}
+          </button>
+
+          <button
+            :disabled="currentPage === totalPages"
+            @click="currentPage++"
+            class="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+
+      </main>
+    </div>
+
+    <div v-else class="text-center py-20">
+      Loading products…
+    </div>
+  </div>
+</template>

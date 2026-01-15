@@ -480,13 +480,15 @@
 import { ref, computed, watch } from "vue"
 import { useRoute } from "vue-router"
 import ProductCard from "@/components/Categories/ProductCard.vue"
-import { products } from "@/data/mockData"
+import { mockProducts } from "@/data/mockData"
 
 const route = useRoute()
 
 const product = computed(() => {
-  return products.find(p => p.id === Number(route.params.id))!
+  return mockProducts.find(p => p.id === Number(route.params.id))!
 })
+
+
 
 // Image Gallery Pagination
 const activeImage = ref(
@@ -529,7 +531,7 @@ const selectedVariant = ref(
 
 // Recommendations with Pagination (separate from image pagination)
 const recommended = computed(() => 
-  products.filter(
+  mockProducts.filter(
     p => p.category === product.value.category && p.id !== product.value.id
   )
 )

@@ -7,7 +7,8 @@ export interface Product {
   image?: string;     
   flag?: String;
   star?: String; 
-  reviews?: Review[];            
+  reviews?: Review[];    
+  slug: String;        
 
   // For product details page
   images?: string[];            
