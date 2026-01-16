@@ -9,44 +9,42 @@ const route = useRoute()
 const categoryStore = useCategoryStore()
 const productStore = useProductStore()
 
+// Fetch categories only once on component mount
+onMounted(() => {
+  if (categoryStore.categories.length === 0) {
+    categoryStore.fetchPublicCategories()
+  }
+})
+
 /* -------------------------
    FETCH DATA BASED ON ROUTE
 -------------------------- */
+const isFetching = ref(false)
+
 watch(
   () => route.params.slug,
   async (slug) => {
+    if (isFetching.value) return
+
     // Normalize slug to a string (may be undefined when route is /category)
     const s = typeof slug === 'string' ? slug : ''
-    if (s && s.length > 0) {
-      await Promise.all([
-        categoryStore.fetchCategoryBySlug(s),
-        productStore.fetchProductsByCategory(s),
-      ])
-    } else {
-      categoryStore.activeCategory = null
-      await productStore.fetchProducts()
+    isFetching.value = true
+
+    try {
+      if (s && s.length > 0) {
+        await Promise.all([
+          categoryStore.fetchCategoryBySlug(s),
+          productStore.fetchProductsByCategory(s),
+        ])
+      } else {
+        categoryStore.activeCategory = null
+        await productStore.fetchProducts()
+      }
+    } finally {
+      isFetching.value = false
     }
   },
   { immediate: true },
-)
-
-onMounted(() => {
-  categoryStore.fetchPublicCategories()
-})
-
-// Debug reactive states
-watch(
-  () => productStore.products,
-  (products) => {
-    console.log('Products updated:', products.length)
-  },
-)
-
-watch(
-  () => categoryStore.activeCategory,
-  (cat) => {
-    console.log('Active category:', cat?.name || 'None')
-  },
 )
 
 /* -------------------------
@@ -113,16 +111,12 @@ const paginatedProducts = computed(() => {
 })
 
 /* -------------------------
-   COUNTRY OPTIONS (FROM PRODUCTS)
+   COUNTRY OPTIONS (STATIC - 5 FIXED COUNTRIES)
 -------------------------- */
+const staticCountries = ['Cambodia', 'Australia', 'French', 'China', 'Japan']
+
 const countryOptions = computed<string[]>(() => {
-  return [
-    ...new Set(
-      productStore.products
-        .map((p) => p.countryName)
-        .filter((c): c is string => typeof c === 'string' && c.length > 0),
-    ),
-  ]
+  return staticCountries
 })
 </script>
 

@@ -2,6 +2,17 @@
   <div class="bg-white rounded-xl border p-6 shadow-sm">
     <h3 class="text-xl font-bold mb-4">Write a Review</h3>
 
+    <!-- Login Required Message -->
+    <div
+      v-if="!isUserLoggedIn"
+      class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700"
+    >
+      <span class="font-semibold">Login Required:</span> You must be logged in to submit a review.
+      <router-link to="/auth" class="font-semibold underline hover:text-blue-900">
+        Click here to login
+      </router-link>
+    </div>
+
     <!-- Success Message -->
     <div
       v-if="successMessage"
@@ -18,27 +29,31 @@
       {{ errorMessage }}
     </div>
 
-    <form @submit.prevent="submitReview" class="space-y-4">
-      <!-- Name Input -->
+    <form @submit.prevent="submitReview" class="space-y-4" v-if="isUserLoggedIn">
+      <!-- Name Input (Auto-filled) -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
         <input
           v-model="formData.name"
           type="text"
           required
-          placeholder="Enter your name"
+          placeholder="Your name"
+          :readonly="isUserLoggedIn"
           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+          :class="{ 'bg-gray-100': isUserLoggedIn }"
         />
       </div>
 
-      <!-- Email Input (Optional) -->
+      <!-- Email Input (Auto-filled) -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Email (Optional)</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Email (Auto-filled)</label>
         <input
           v-model="formData.email"
           type="email"
+          :readonly="isUserLoggedIn"
           placeholder="your.email@example.com"
           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+          :class="{ 'bg-gray-100': isUserLoggedIn }"
         />
       </div>
 
@@ -109,8 +124,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 import { publicApi } from '@/services/api'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 const props = defineProps<{
   productId: string
@@ -132,16 +152,46 @@ const isSubmitting = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
+// Check if user is logged in
+const isUserLoggedIn = computed(() => {
+  return !!userStore.token && !!userStore._id
+})
+
+// Auto-fill user info when component mounts
+onMounted(() => {
+  if (isUserLoggedIn.value) {
+    formData.name = userStore.name || ''
+    formData.email = userStore.email || ''
+  }
+})
+
 const submitReview = async () => {
+  // Check if user is logged in
+  if (!isUserLoggedIn.value) {
+    errorMessage.value = 'Please login to submit a review'
+    return
+  }
+
   // Validate rating
   if (formData.rating === 0) {
     errorMessage.value = 'Please select a rating'
     return
   }
 
-  // Validate comment length
+  // Validate comment
+  if (formData.comment.length === 0) {
+    errorMessage.value = 'Please write a review'
+    return
+  }
+
   if (formData.comment.length > 500) {
     errorMessage.value = 'Review must be less than 500 characters'
+    return
+  }
+
+  // Validate product ID
+  if (!props.productId || props.productId === 'undefined' || props.productId === '') {
+    errorMessage.value = 'Product ID is missing. Please refresh and try again.'
     return
   }
 
@@ -149,89 +199,65 @@ const submitReview = async () => {
   errorMessage.value = ''
   successMessage.value = ''
 
-  // Debug: log productId to ensure it's defined
-  console.log('ReviewForm - productId:', props.productId)
-
-  if (!props.productId || props.productId === 'undefined' || props.productId === '') {
-    errorMessage.value = 'Product ID is missing. Please refresh and try again.'
-    isSubmitting.value = false
-    return
-  }
-
   try {
     const endpoint = `/products/${props.productId}/reviews`
     const reviewPayload = {
-      name: formData.name,
-      email: formData.email || undefined,
       rating: formData.rating,
       title: formData.title,
       comment: formData.comment,
-    }
-
-    // Get admin token from env - this is required for review submission
-    const adminToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjlhNDIwMDdjNmZlYjhlNGU3N2E3NCIsImlhdCI6MTc2NDMzNzkzMiwiZXhwIjoxNzY2OTI5OTMyfQ.8sQYlXy3oFTwz6N7eVbrmpbRsxRHjpzzH9oyIWBoJ2o'
-
-    const headers = {
-      Authorization: `Bearer ${adminToken}`,
-      'Content-Type': 'application/json',
+      userId: userStore._id,
     }
 
     console.log('Submitting review to:', endpoint)
-    console.log('Full URL:', `${publicApi.defaults.baseURL}${endpoint}`)
     console.log('Payload:', reviewPayload)
+    console.log('Token:', userStore.token)
 
-    const res = await publicApi.post(endpoint, reviewPayload, { headers })
+    const res = await publicApi.post(endpoint, reviewPayload, {
+      headers: {
+        Authorization: `Bearer ${userStore.token}`,
+        'Content-Type': 'application/json',
+      },
+    })
 
     successMessage.value = 'Thank you! Your review has been submitted successfully.'
 
-    // If backend returns the created review, emit it; otherwise emit without payload
-    const created = res?.data?.review ?? res?.data ?? null
+    const created = res?.data?.review ?? res?.data ?? reviewPayload
 
-    // Reset form after 2 seconds then emit
     setTimeout(() => {
       resetForm()
       emit('reviewSubmitted', created)
-    }, 2000)
+    }, 1500)
   } catch (error: any) {
-    console.error('Backend submission failed:', error.response?.status, error.response?.data)
+    console.error('Failed to submit review:')
+    console.error('Status:', error.response?.status)
+    console.error('Data:', error.response?.data)
+    console.error('Full error:', error)
 
-    // If backend fails (401, 500, etc), save review to localStorage instead
-    const localReview = {
-      id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email || '',
-      rating: formData.rating,
-      title: formData.title,
-      comment: formData.comment,
-      createdAt: new Date().toISOString(),
-      _local: true, // Mark as locally stored
-    }
-
-    // Get existing local reviews from localStorage
-    const storageKey = `reviews_${props.productId}`
-    const existingReviews = JSON.parse(localStorage.getItem(storageKey) || '[]')
-    existingReviews.unshift(localReview)
-    localStorage.setItem(storageKey, JSON.stringify(existingReviews))
-
-    successMessage.value = 'Review saved locally. It will sync with the server when available.'
-
-    // Reset form after 2 seconds then emit the locally created review
-    setTimeout(() => {
-      resetForm()
-      emit('reviewSubmitted', localReview)
-    }, 2000)
+    // Show alert for any backend error
+    const errorMsg =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      'Failed to submit review. Please try again.'
+    alert(errorMsg)
+    errorMessage.value = errorMsg
   } finally {
     isSubmitting.value = false
   }
 }
 
 const resetForm = () => {
-  formData.name = ''
-  formData.email = ''
-  formData.rating = 0
-  formData.title = ''
   formData.comment = ''
+  formData.title = ''
+  formData.rating = 0
+
+  if (isUserLoggedIn.value) {
+    formData.name = userStore.name || ''
+    formData.email = userStore.email || ''
+  } else {
+    formData.name = ''
+    formData.email = ''
+  }
+
   successMessage.value = ''
   errorMessage.value = ''
 }

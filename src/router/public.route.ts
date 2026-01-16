@@ -7,6 +7,7 @@ import PublicLayout from '@/layouts/PublicLayout.vue'
 import CategoryPage from '@/views/CategoryPage.vue'
 import ProductDetail from '@/views/ProductDetailPage.vue'
 
+
 const publicRoutes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -37,7 +38,7 @@ const publicRoutes: RouteRecordRaw[] = [
       path: "/product/:slug",
       name: "ProductDetail",
       component: ProductDetail
-    }
+    },
     // {
     //   path: "/cart",
     //   name: "cart",
