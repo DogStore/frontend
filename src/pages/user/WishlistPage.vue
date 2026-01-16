@@ -17,9 +17,37 @@
 
       <div
         v-if="recentFavorites.length === 0"
-        class="text-center py-20 text-gray-500"
+        class="flex flex-col items-center justify-center py-20 text-center"
       >
-        Your wishlist is empty 🐾
+        <!-- Heart Icon with Dog -->
+        <div class="mb-6 relative">
+          <svg class="w-32 h-32 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+          <div class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg">
+            <span class="text-4xl">🐕</span>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-700 mb-2">Your Wishlist is Empty</h3>
+        <p class="text-gray-500 mb-6 max-w-md">
+          Start adding your favorite products to keep track of what you love! 🐾
+        </p>
+
+        <button
+          @click="goShopping"
+          class="px-8 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition font-semibold flex items-center gap-2"
+        >
+          <span>Browse Products</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </button>
       </div>
 
       <div
