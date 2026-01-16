@@ -21,3 +21,10 @@ export interface Product {
   addedAt?: number
   countyName: string
 }
+export interface CartProduct extends Product {
+  quantity?: number
+}
+
+export interface FavoriteProduct extends Product {
+  addedAt: number
+}

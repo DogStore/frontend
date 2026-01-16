@@ -251,7 +251,7 @@ const filteredProducts = computed(() => {
               <p class="text-green-600 font-semibold">
                 {{ productStore.products.filter(p => p.stock > 10).length }}
               </p>
-              <p class="text-gray-600 text-xs">In Stock</p>
+              <p class="text-gray-600 text-xs">High Stock</p>
             </div>
             <div class="text-center px-4 py-2 bg-orange-50 rounded-lg">
               <p class="text-orange-600 font-semibold">

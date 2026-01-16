@@ -1,21 +1,34 @@
-// src/services/api.ts
-
 import axios from 'axios'
 
-// Public API (no auth)
-export const publicApi = axios.create({
+const baseConfig = {
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 300000,
-})
+}
 
-// Admin API (with auth)
-export const adminApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 300000,
-})
+
+// Public API (no auth) — guest
+export const publicApi = axios.create(baseConfig)
+
+// Admin API (with auth) — dashboard
+export const adminApi = axios.create(baseConfig)
+
+// User API (with auth) — wishlist, cart, orders
+export const userApi = axios.create(baseConfig)
 
 // Add request interceptor to adminApi to inject token
 adminApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error),
+)
+
+// Add request interceptor to userApi to inject token
+userApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken')
     if (token) {

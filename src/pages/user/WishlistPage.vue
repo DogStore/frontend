@@ -28,7 +28,7 @@
       >
         <ProductCard
           v-for="product in recentFavorites"
-          :key="product.id"
+          :key="getProductKey(product)"
           :product="product"
         />
       </div>
@@ -74,14 +74,14 @@
       >
         <ProductCard
           v-for="product in filteredFavorites"
-          :key="product.id"
+          :key="getProductKey(product)"
           :product="product"
         />
       </transition-group>
 
       <!-- EMPTY FILTER RESULT -->
       <div
-        v-if="filteredFavorites.length === 0"
+        v-if="filteredFavorites.length === 0 && favoriteStore.favorites.length > 0"
         class="text-center py-16 text-gray-400"
       >
         No items found for {{ filterLabel.toLowerCase() }}
@@ -117,6 +117,12 @@ const filters: { label: string; value: "week" | "month" | "year" }[] = [
 const filterLabel = computed(() => {
   return filters.find(f => f.value === filter.value)?.label ?? "Last month";
 });
+
+// ===== HELPER: Get unique key for product (handles both id and _id) =====
+function getProductKey(product: any): string {
+  // Try multiple ID sources to ensure we always have a unique key
+  return product.id || product._id || `product-${product.name}-${product.addedAt}`;
+}
 
 // ===== HELPERS =====
 function isWithin(days: number, time: number) {
@@ -183,11 +189,22 @@ const filteredFavorites = computed(() => {
 }
 
 /* Grid animation */
-.fade-enter-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.3s ease;
 }
+
 .fade-enter-from {
   opacity: 0;
   transform: scale(0.96);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.fade-move {
+  transition: transform 0.3s ease;
 }
 </style>
