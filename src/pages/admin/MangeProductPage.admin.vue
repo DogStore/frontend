@@ -16,7 +16,7 @@ const showAddModal = ref(false)
 const searchQuery = ref('')
 
 onMounted(() => {
-  productStore.fetchProducts()
+  productStore.fetchAdminProducts() // fetchAdminProducts instead of fetchProducts() to show all status
 })
 
 const handleEdit = (product: Product) => {

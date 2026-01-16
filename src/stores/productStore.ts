@@ -89,7 +89,10 @@ export const useProductStore = defineStore('product', () => {
 
     try {
       const res = await publicApi.get('/products')
-      products.value = res.data.products.map(mapBackendProduct)
+      // Filter to show only active products on frontend
+      products.value = res.data.products
+      .filter((p: any) => p.isActive === true)
+      .map(mapBackendProduct)
     } catch (err) {
       error.value = 'Failed to load products'
       console.error(err)
@@ -108,7 +111,10 @@ export const useProductStore = defineStore('product', () => {
       const res = await publicApi.get('/products/search/query', {
         params: { q: query },
       })
-      products.value = res.data.products.map(mapBackendProduct)
+      //Filter to show only active products in search
+      products.value = res.data.products
+      .filter((p: any) => p.isActive === true)
+      .map(mapBackendProduct)
     } finally {
       loading.value = false
     }
