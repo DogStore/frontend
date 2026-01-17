@@ -51,11 +51,11 @@ const publicRoutes: RouteRecordRaw[] = [
     //   name: "others",
     //   component: () => import("@/pages/ProductsByCategory.vue"),
     // },
-    // {
-    //   path: "/products/bestSelling",
-    //   name: "bestSelling",
-    //   component: () => import("@/pages/BestSellingPage.vue"),
-    // },
+    {
+      path: "/products/bestSelling",
+      name: "bestSelling",
+      component: () => import("@/pages/user/Bestsellingpage.vue"),
+    },
 
     ]
   },

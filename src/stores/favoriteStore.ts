@@ -27,18 +27,18 @@ export const useFavoriteStore = defineStore('favorite', () => {
     try {
       isLoading.value = true
 
-      // 👤 Guest → localStorage
+      //  Guest → localStorage
       if (!isLoggedIn()) {
         const storedFavorites = localStorage.getItem('favorites')
         favorites.value = storedFavorites ? JSON.parse(storedFavorites) : []
-        console.log('❤️ Loaded favorites from localStorage:', favorites.value.length, 'items')
+        console.log(' Loaded favorites from localStorage:', favorites.value.length, 'items')
         return
       }
 
-      // 🔐 Logged-in → backend
-      console.log('❤️ Loading favorites from API...')
+      //  Logged-in → backend
+      console.log(' Loading favorites from API...')
       const res = await getWishlist()
-      console.log('❤️ API Response:', res.data)
+      console.log(' API Response:', res.data)
 
       // Handle different API response structures
       let wishlistItems: any[] = []
@@ -72,10 +72,10 @@ export const useFavoriteStore = defineStore('favorite', () => {
         }
       })
 
-      console.log('❤️ Favorites loaded:', favorites.value.length, 'items')
-      console.log('❤️ Favorite IDs:', favorites.value.map(f => ({ name: f.name, id: f.id, _id: f.id })))
+      console.log(' Favorites loaded:', favorites.value.length, 'items')
+      console.log(' Favorite IDs:', favorites.value.map(f => ({ name: f.name, id: f.id, _id: f.id })))
     } catch (error) {
-      console.error('❌ Error loading wishlist:', error)
+      console.error(' Error loading wishlist:', error)
       // Fallback to empty array on error
       favorites.value = []
     } finally {
@@ -86,7 +86,7 @@ export const useFavoriteStore = defineStore('favorite', () => {
   /* ---------------- SAVE LOCAL ---------------- */
   function saveLocal() {
     localStorage.setItem('favorites', JSON.stringify(favorites.value))
-    console.log('💾 Favorites saved to localStorage:', favorites.value.length, 'items')
+    console.log(' Favorites saved to localStorage:', favorites.value.length, 'items')
   }
 
   /* ---------------- TOGGLE ---------------- */
@@ -100,24 +100,24 @@ export const useFavoriteStore = defineStore('favorite', () => {
     const productId = getProductId(product)
 
     if (!productId) {
-      console.error('❌ Product has no valid ID:', product)
+      console.error(' Product has no valid ID:', product)
       return
     }
 
-    console.log('🔍 Looking for product with ID:', productId)
-    console.log('🔍 Current favorites IDs:', favorites.value.map(f => getProductId(f)))
+    console.log(' Looking for product with ID:', productId)
+    console.log(' Current favorites IDs:', favorites.value.map(f => getProductId(f)))
 
     // Find product by comparing IDs (handles both _id and id)
     const index = favorites.value.findIndex((p) => getProductId(p) === productId)
     const exists = index >= 0
 
-    console.log(exists ? '💔 Removing from favorites:' : '❤️ Adding to favorites:', product.name)
+    console.log(exists ? ' Removing from favorites:' : ' Adding to favorites:', product.name)
     console.log('Found at index:', index)
 
     // Store previous state for rollback
     const previousFavorites = [...favorites.value]
 
-    // ✅ Optimistic UI
+    //  Optimistic UI
     if (exists) {
       favorites.value.splice(index, 1)
     } else {
@@ -133,24 +133,24 @@ export const useFavoriteStore = defineStore('favorite', () => {
 
     try {
       if (isLoggedIn()) {
-        // 🔐 Sync with backend
-        console.log('🔐 Syncing to API with ID:', productId)
+        //  Sync with backend
+        console.log(' Syncing to API with ID:', productId)
         if (exists) {
           await removeFromWishlist(productId)
-          console.log('✅ Remove synced to API')
+          console.log(' Remove synced to API')
         } else {
           await addToWishlist(productId)
-          console.log('✅ Add synced to API')
+          console.log(' Add synced to API')
         }
       } else {
-        // 👤 Guest → local only
+        //  Guest → local only
         saveLocal()
       }
     } catch (err) {
-      console.error('❌ Error toggling favorite:', err)
+      console.error(' Error toggling favorite:', err)
       // Rollback if API fails
       favorites.value = previousFavorites
-      console.log('↩️ Rolled back favorites')
+      console.log(' Rolled back favorites')
       throw err
     }
   }

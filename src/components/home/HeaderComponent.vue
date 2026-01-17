@@ -400,7 +400,6 @@ const goToProfile = () => { router.push('/user/profile'); closeAll() }
 // Logout
 const logout = () => {
   userStore.logout()
-  cart.clearCart()
   router.push('/')
   $toast.success('Successfully logged out')
   closeAll()
