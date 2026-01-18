@@ -1,8 +1,7 @@
 <template>
   <div
     class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-60 md:w-full mx-auto cursor-pointer transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
-     @click="goToProduct"
-
+    @click="goToProduct"
   >
     <!-- County Flag -->
     <img
@@ -82,7 +81,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-
 // PROPS
 const props = defineProps<{
   product: Product
@@ -122,7 +120,7 @@ function goToProduct() {
 
 // STARS
 const starArray = computed(() => {
-  const rating = props.product.rating
+  const rating = props.product.averageRating || props.product.rating || 0
   return Array.from({ length: 5 }, (_, i) => {
     const full = i + 1 <= rating
     const half = !full && i + 0.5 <= rating

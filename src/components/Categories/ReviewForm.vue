@@ -210,7 +210,6 @@ const submitReview = async () => {
 
     console.log('Submitting review to:', endpoint)
     console.log('Payload:', reviewPayload)
-    console.log('Token:', userStore.token)
 
     const res = await publicApi.post(endpoint, reviewPayload, {
       headers: {
@@ -221,17 +220,24 @@ const submitReview = async () => {
 
     successMessage.value = 'Thank you! Your review has been submitted successfully.'
 
-    const created = res?.data?.review ?? res?.data ?? reviewPayload
+    // Get the review from response, or create a temporary one for immediate display
+    const submittedReview = res?.data?.review ?? {
+      ...reviewPayload,
+      _id: Date.now().toString(), // temporary ID
+      user: {
+        _id: userStore._id,
+        name: userStore.name,
+      },
+      name: userStore.name, // Add name for display
+      createdAt: new Date().toISOString(),
+    }
 
     setTimeout(() => {
       resetForm()
-      emit('reviewSubmitted', created)
+      emit('reviewSubmitted', submittedReview)
     }, 1500)
   } catch (error: any) {
-    console.error('Failed to submit review:')
-    console.error('Status:', error.response?.status)
-    console.error('Data:', error.response?.data)
-    console.error('Full error:', error)
+    console.error('Failed to submit review:', error)
 
     // Show alert for any backend error
     const errorMsg =

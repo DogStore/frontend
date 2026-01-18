@@ -179,12 +179,14 @@
                     :key="i"
                     class="text-xl"
                     :class="
-                      i <= Math.round(product.avgRating || 0) ? 'text-yellow-500' : 'text-gray-300'
+                      i <= Math.round(product.averageRating || 0)
+                        ? 'text-yellow-500'
+                        : 'text-gray-300'
                     "
                     >★</span
                   >
                 </div>
-                <span class="font-semibold text-gray-900">{{ product.avgRating || 0 }}</span>
+                <span class="font-semibold text-gray-900">{{ product.averageRating || 0 }}</span>
               </div>
               <a href="#reviews" class="text-orange-500 hover:text-orange-600 font-medium">
                 ({{ product.reviewCount || 0 }} reviews)
@@ -359,7 +361,7 @@
                 <!-- Left: Average Rating -->
                 <div class="text-center lg:text-left">
                   <div class="text-5xl font-bold text-gray-900 mb-2">
-                    {{ product.avgRating || 0 }}
+                    {{ product.averageRating || 0 }}
                   </div>
                   <div class="flex items-center justify-center lg:justify-start gap-1 mb-2">
                     <span
@@ -367,7 +369,7 @@
                       :key="i"
                       class="text-2xl"
                       :class="
-                        i <= Math.round(product.avgRating || 0)
+                        i <= Math.round(product.averageRating || 0)
                           ? 'text-yellow-500'
                           : 'text-gray-300'
                       "
@@ -403,7 +405,7 @@
             <div v-if="product.reviews && product.reviews.length > 0" class="space-y-6">
               <h4 class="text-xl font-bold">All Reviews</h4>
 
-              <div
+             <div
                 v-for="review in paginatedReviews"
                 :key="review._id"
                 class="border rounded-xl p-6 hover:shadow-md transition-shadow"
@@ -411,7 +413,9 @@
                 <!-- Review Header -->
                 <div class="flex justify-between items-start mb-4">
                   <div>
-                    <h5 class="font-bold text-lg">{{ review.name }}</h5>
+                    <h5 class="font-bold text-lg">
+                      {{ review.name || review.user?.name || 'Anonymous User' }}
+                    </h5>
                     <div class="flex items-center gap-2 mt-1">
                       <div class="flex">
                         <span
@@ -557,25 +561,22 @@ const loadProduct = async (slug: string) => {
     const fetchedProduct = await productStore.fetchProductBySlug(slug)
     product.value = fetchedProduct
 
-    // Load local reviews from localStorage and merge with backend reviews
+    // Reviews should come from the backend - no need to merge with localStorage
+    // The backend already returns reviews in the product object
     if (product.value) {
-      const storageKey = `reviews_${product.value.id}`
-      const localReviews = JSON.parse(localStorage.getItem(storageKey) || '[]')
-
-      // Combine backend reviews with local reviews
-      if (Array.isArray(product.value.reviews)) {
-        product.value.reviews = [...localReviews, ...product.value.reviews]
-      } else {
-        product.value.reviews = localReviews
+      // Ensure reviews array exists
+      if (!Array.isArray(product.value.reviews)) {
+        product.value.reviews = []
       }
 
-      // Recalculate review stats with merged reviews
-      if (product.value.reviews.length > 0) {
+      // Review stats are already calculated by backend (avgRating, reviewCount)
+      // But if they're missing, calculate them from the reviews array
+      if (product.value.reviews.length > 0 && !product.value.averageRating) {
         const sum = product.value.reviews.reduce(
           (s: number, r: any) => s + (Number(r.rating) || 0),
           0,
         )
-        product.value.avgRating = Math.round((sum / product.value.reviews.length) * 10) / 10
+        product.value.averageRating = Math.round((sum / product.value.reviews.length) * 10) / 10
         product.value.reviewCount = product.value.reviews.length
       }
     }
@@ -771,16 +772,31 @@ function getRatingCount(rating: number) {
 
 function handleReviewSubmitted(newReview: any) {
   if (!product.value) return
+  
+  // Ensure reviews array exists
   if (!Array.isArray(product.value.reviews)) product.value.reviews = []
+  
+  // Add the new review to the beginning of the array
   product.value.reviews.unshift(newReview)
-  // update counts/averages if backend doesn't return them
+  
+  // Recalculate review count and average rating
   product.value.reviewCount = product.value.reviews.length
+  
   const sum = product.value.reviews.reduce((s: number, r: any) => s + (Number(r.rating) || 0), 0)
-  product.value.avgRating = product.value.reviews.length
+  product.value.averageRating = product.value.reviews.length
     ? Math.round((sum / product.value.reviews.length) * 10) / 10
     : 0
-  // show list and reset to first page
+  
+  // Hide the form and reset to first page
   showReviewForm.value = false
   currentReviewPage.value = 1
+  
+  // Optionally reload the product from backend to get updated avgRating
+  // This ensures the product data matches the backend exactly
+  if (route.params.slug && typeof route.params.slug === 'string') {
+    setTimeout(() => {
+      loadProduct(route.params.slug as string)
+    }, 1000)
+  }
 }
 </script>

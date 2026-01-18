@@ -42,6 +42,10 @@ export const useProductStore = defineStore('product', () => {
       soldCount: p.soldCount,
       isPromoted: p.isPromoted,
       addedAt: p.createdAt ? new Date(p.createdAt).getTime() : undefined,
+
+      averageRating: p.avgRating ?? p.averageRating ?? 0,
+      reviewCount: p.reviewCount ?? 0,
+      reviews: p.reviews ?? [],
     }
   }
 

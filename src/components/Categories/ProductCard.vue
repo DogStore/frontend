@@ -38,11 +38,15 @@
       </h3>
 
       <!-- Stars (smaller) -->
-      <div class="flex gap-3 text-xl">
-        <span class="text-orange-200">★</span>
-        <span class="text-orange-200">★</span>
-        <span class="text-orange-200">★</span>
-        <span class="text-orange-200">★</span>
+      <div class="flex gap-1 text-lg items-center">
+        <span
+          v-for="i in 5"
+          :key="i"
+          :class="i <= Math.round(product.averageRating || 0) ? 'text-yellow-500' : 'text-gray-300'"
+        >
+          ★
+        </span>
+        <span class="text-sm text-gray-600 ml-1">({{ product.averageRating || 0 }})</span>
       </div>
 
       <!-- Price + Flag (smaller) -->
