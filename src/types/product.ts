@@ -1,12 +1,16 @@
 // src/types/product.ts
 
+import type { NumberLiteralType } from 'typescript'
+
 export interface Product {
   id: string
   name: string
   images: string[]
   price: number
+  slug: string
   originalPrice: number
   discount: number
+  country: string
   rating: number
   countryFlag?: string | null
   isActive: boolean
@@ -20,6 +24,9 @@ export interface Product {
   isPromoted?: boolean
   addedAt?: number
   countryName: string
+  averageRating?: number
+  reviewCount?: number
+  reviews?: any[]
 }
 export interface CartProduct extends Product {
   quantity?: number

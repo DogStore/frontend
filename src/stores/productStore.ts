@@ -13,9 +13,18 @@ export const useProductStore = defineStore('product', () => {
     const regular = p.regularPrice ?? 0
     const discount = p.discount ?? 0
     const images = Array.isArray(p.images) ? p.images : []
+
+    // Handle category - it can be either a string or an object
+    const categoryValue =
+      typeof p.category === 'object' && p.category !== null
+        ? p.category._id || p.category.slug || p.category.name
+        : p.category
+
     return {
+      country: p._country,
       id: p._id?.toString() || '',
       name: p.name,
+      slug: p.slug,
       images: images,
       price: discount > 0 ? regular - (regular * discount) / 100 : regular,
       originalPrice: regular,
@@ -33,6 +42,10 @@ export const useProductStore = defineStore('product', () => {
       isPromoted: p.isPromoted,
       countryName: p.countryName || '',
       addedAt: p.createdAt ? new Date(p.createdAt).getTime() : undefined,
+
+      averageRating: p.avgRating ?? p.averageRating ?? 0,
+      reviewCount: p.reviewCount ?? 0,
+      reviews: p.reviews ?? [],
     }
   }
 
@@ -92,8 +105,8 @@ export const useProductStore = defineStore('product', () => {
       const res = await publicApi.get('/products')
       // Filter to show only active products on frontend
       products.value = res.data.products
-      .filter((p: any) => p.isActive === true)
-      .map(mapBackendProduct)
+        .filter((p: any) => p.isActive === true)
+        .map(mapBackendProduct)
     } catch (err) {
       error.value = 'Failed to load products'
       console.error(err)
@@ -102,6 +115,49 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  // fix this to use try and catch for more details when loading products
+  async function fetchProductsByCategory(slug: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      // If slug is empty or falsy, load all products instead of calling category endpoint
+      if (!slug) {
+        const resAll = await publicApi.get('/products')
+        products.value = resAll.data.products.map(mapBackendProduct)
+        console.log(`Loaded ${products.value.length} products for empty category (all products)`)
+      } else {
+        const res = await publicApi.get(`/products/category/${slug}`)
+        products.value = res.data.products.map(mapBackendProduct)
+        // Debug log to verify products loaded
+        console.log(`Loaded ${products.value.length} products for category: ${slug}`)
+      }
+    } catch (err) {
+      error.value = 'Failed to load products for this category'
+      console.error('Fetch products by category error:', err)
+      products.value = []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Fetch single product by slug
+  async function fetchProductBySlug(slug: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const res = await publicApi.get(`/products/${slug}`)
+      // Return the mapped product for immediate use
+      return mapBackendProduct(res.data.product || res.data)
+    } catch (err) {
+      error.value = 'Failed to load product'
+      console.error(err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
   // SEARCH products
   async function searchProducts(query: string) {
     isSearching.value = true
@@ -114,8 +170,8 @@ export const useProductStore = defineStore('product', () => {
       })
       //Filter to show only active products in search
       products.value = res.data.products
-      .filter((p: any) => p.isActive === true)
-      .map(mapBackendProduct)
+        .filter((p: any) => p.isActive === true)
+        .map(mapBackendProduct)
     } finally {
       loading.value = false
     }
@@ -132,6 +188,8 @@ export const useProductStore = defineStore('product', () => {
     fetchProducts,
     searchProducts,
     clearSearch,
+    fetchProductsByCategory,
+    fetchProductBySlug,
 
     // admin
     fetchAdminProducts,

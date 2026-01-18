@@ -4,6 +4,9 @@ import HomePage from '../pages/user/HomePage.vue'
 import SearchResultPage from '@/pages/user/SearchResultPage.vue'
 import WishlistPage from '@/pages/user/WishlistPage.vue'
 import PublicLayout from '@/layouts/PublicLayout.vue'
+import CategoryPage from '@/views/CategoryPage.vue'
+import ProductDetail from '@/views/ProductDetailPage.vue'
+
 
 const publicRoutes: RouteRecordRaw[] = [
   {
@@ -26,6 +29,16 @@ const publicRoutes: RouteRecordRaw[] = [
         name: 'wishlist',
         component: WishlistPage,
       },
+      {
+    path: '/category/:slug?',  // ✅ Handles both /category and /category/slug
+    name: 'Category',
+    component: CategoryPage
+      },
+    {
+      path: "/product/:slug",
+      name: "ProductDetail",
+      component: ProductDetail
+    },
     // {
     //   path: "/cart",
     //   name: "cart",
