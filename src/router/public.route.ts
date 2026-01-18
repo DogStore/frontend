@@ -4,9 +4,9 @@ import HomePage from '../pages/user/HomePage.vue'
 import SearchResultPage from '@/pages/user/SearchResultPage.vue'
 import WishlistPage from '@/pages/user/WishlistPage.vue'
 import PublicLayout from '@/layouts/PublicLayout.vue'
-import CategoryPage from '@/views/CategoryPage.vue'
-import ProductDetail from '@/views/ProductDetailPage.vue'
-
+import CategoryPage from '@/pages/user/CategoryPage.vue'
+import ProductDetail from '@/pages/user/ProductDetailPage.vue'
+import Bestsellingpage from '@/pages/user/BestsellingPage.vue'
 
 const publicRoutes: RouteRecordRaw[] = [
   {
@@ -30,50 +30,22 @@ const publicRoutes: RouteRecordRaw[] = [
         component: WishlistPage,
       },
       {
-    path: '/category/:slug?',  // ✅ Handles both /category and /category/slug
-    name: 'Category',
-    component: CategoryPage
+        path: '/category/:slug?',
+        name: 'Category',
+        component: CategoryPage,
       },
-    {
-      path: "/product/:slug",
-      name: "ProductDetail",
-      component: ProductDetail
-    },
-    // {
-    //   path: "/cart",
-    //   name: "cart",
-    //   component: () => import("@/pages/CartPage.vue"),
-    // },
-    // {
-    //   path: "/products/foods",
-    //   name: "foods",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/clothes",
-    //   name: "clothes",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/toys",
-    //   name: "toys",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    // {
-    //   path: "/products/others",
-    //   name: "others",
-    //   component: () => import("@/pages/ProductsByCategory.vue"),
-    // },
-    {
-      path: "/products/bestSelling",
-      name: "bestSelling",
-      component: () => import("@/pages/user/Bestsellingpage.vue"),
-    },
-
-    ]
+      {
+        path: '/product/:slug',
+        name: 'ProductDetail',
+        component: ProductDetail,
+      },
+      {
+        path: '/products/bestSelling',
+        name: 'bestSelling',
+        component: Bestsellingpage,
+      },
+    ],
   },
-
-
 ]
 
 export default publicRoutes

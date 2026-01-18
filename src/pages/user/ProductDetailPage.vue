@@ -38,7 +38,7 @@
     </div>
 
     <!-- Product Content -->
-    <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-[-150px]">
       <!-- Breadcrumb -->
       <nav class="mb-6 text-sm">
         <ol class="flex items-center space-x-2 text-gray-500">
@@ -530,8 +530,17 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <ProductCard v-for="p in paginatedRecommendations" :key="p.slug || p.id" :product="p" />
+        <div class="relative overflow-hidden">
+          <div
+            class="flex gap-6 transition-transform duration-300 ease-in-out"
+            :style="{
+              transform: `translateX(-${(currentRecommendationPage - 1) * 100}%)`,
+            }"
+          >
+            <div v-for="p in recommended" :key="p.slug || p.id" class="w-64 shrink-0">
+              <ProductCard :product="p" />
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -693,28 +702,20 @@ watch(
   { immediate: true },
 )
 
-const itemsPerPage = ref(6)
+const itemsPerPage = 4
 const currentRecommendationPage = ref(1)
 
-const totalRecommendationPages = computed(() =>
-  Math.ceil(recommended.value.length / itemsPerPage.value),
-)
-
-const paginatedRecommendations = computed(() => {
-  const start = (currentRecommendationPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return recommended.value.slice(start, end)
-})
-
-const prevRecommendationPage = () => {
-  if (currentRecommendationPage.value > 1) {
-    currentRecommendationPage.value--
-  }
-}
+const totalRecommendationPages = computed(() => Math.ceil(recommended.value.length / itemsPerPage))
 
 const nextRecommendationPage = () => {
   if (currentRecommendationPage.value < totalRecommendationPages.value) {
     currentRecommendationPage.value++
+  }
+}
+
+const prevRecommendationPage = () => {
+  if (currentRecommendationPage.value > 1) {
+    currentRecommendationPage.value--
   }
 }
 

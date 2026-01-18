@@ -32,7 +32,7 @@
           <div
             v-for="pageIndex in totalPages"
             :key="pageIndex"
-            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0"
+            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full shrink-0"
           >
             <ProductCard
               v-for="product in productStore.products.slice(
@@ -69,7 +69,7 @@
       </div>
     </div>
 
-   <!-- RECENTLY VIEWED - ✅ Use validRecents -->
+    <!-- RECENTLY VIEWED - ✅ Use validRecents -->
     <div v-if="recentStore.validRecents.length > 0" class="w-full px-10 py-10">
       <h3 class="flex md:text-start text-center text-lg md:text-2xl font-bold text-gray-800 mb-8">
         Recently Viewed
@@ -83,7 +83,7 @@
           <div
             v-for="pageIndex in recentTotalPages"
             :key="pageIndex"
-            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0"
+            class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full shrink-0"
           >
             <ProductCard
               v-for="product in recentStore.validRecents.slice(
@@ -162,13 +162,13 @@ const showcase = ref({
   pawImage: Paw,
 })
 
-  watch(
-    () => productStore.products,
-    (products) => {
-      recentStore.syncWithProductStore(products)
-    },
-    { deep: true }
-  )
+watch(
+  () => productStore.products,
+  (products) => {
+    recentStore.syncWithProductStore(products)
+  },
+  { deep: true },
+)
 
 //  Load products and sync recent
 onMounted(async () => {
@@ -222,7 +222,7 @@ const recentPage = ref(0)
 const recentItemsPerPage = ref(getItemsPerPage())
 
 const recentTotalPages = computed(() =>
-  Math.ceil(recentStore.validRecents.length / recentItemsPerPage.value)
+  Math.ceil(recentStore.validRecents.length / recentItemsPerPage.value),
 )
 
 const nextRecent = () => {

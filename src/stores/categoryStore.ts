@@ -137,6 +137,7 @@ export const useCategoryStore = defineStore('category', () => {
     // api
     fetchPublicCategories,
     fetchCategoryBySlug,
+    fetchCategories,
 
     // cache management
     isCacheValid,

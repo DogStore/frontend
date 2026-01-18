@@ -1,6 +1,6 @@
 <template>
   <div
-    class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-60 md:w-full mx-auto cursor-pointer transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
+    class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-60 shrink-0 mx-auto cursor-pointer transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
     @click="goToProduct"
   >
     <!-- Badges Container - Top Left -->
@@ -8,7 +8,7 @@
       <!-- Promoted Badge -->
       <span
         v-if="product.isPromoted"
-        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 opacity-90"
+        class="bg--to-r from-orange-500 via-red-500 to-pink-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 opacity-90"
       >
         <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -71,21 +71,17 @@
             v-if="product.countryFlag"
             :src="product.countryFlag"
             alt="Country flag"
-            class="w-8 h-6 object-cover shadow border border-white rounded flex-shrink-0"
+            class="w-8 h-6 object-cover shadow border border-white rounded shrink-0"
           />
         </div>
-        <div class="flex gap-8 mt-1">
-          <!-- Original Price (if discount exists) -->
-          <span
-            v-if="productDiscount > 0"
-            class="text-gray-700 line-through text-sm whitespace-nowrap"
-          >
-            ${{ formattedOriginalPrice }}
-          </span>
-          <!-- Save percentage below -->
-          <span v-if="productDiscount > 0" class="text-green-600 font-semibold text-xs">
-            Save {{ productDiscount }}%
-          </span>
+        <div class="flex gap-8 mt-1 min-h-5">
+          <template v-if="productDiscount > 0">
+            <span class="text-gray-700 line-through text-sm whitespace-nowrap">
+              ${{ formattedOriginalPrice }}
+            </span>
+
+            <span class="text-green-600 font-semibold text-xs"> Save {{ productDiscount }}% </span>
+          </template>
         </div>
       </div>
     </div>

@@ -8,9 +8,7 @@
       class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col"
     >
       <!-- Header -->
-      <div
-        class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4 text-white flex-shrink-0"
-      >
+      <div class="bg-linear-to-r from-orange-500 to-orange-600 px-6 py-4 text-white shrink-0">
         <h2 class="text-xl font-bold">Add New Product</h2>
         <p class="text-sm opacity-90">Create and publish a new product to your store</p>
       </div>
@@ -319,7 +317,7 @@
       </div>
 
       <!-- Footer -->
-      <div class="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50 flex-shrink-0">
+      <div class="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50 shrink-0">
         <button
           @click="close"
           class="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition"
@@ -329,7 +327,7 @@
         <button
           @click="save"
           :disabled="!canSave"
-          class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-6 py-2.5 rounded-lg bg-linear-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Create Product
         </button>

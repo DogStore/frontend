@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-50 min-h-screen w-full overflow-x-hidden mt-[-13.5rem]">
+  <div class="bg-gray-50 min-h-screen w-full overflow-x-hidden -mt-54">
     <!-- Breadcrumb -->
-    <div class="mt-[-0.5rem]">
+    <div class="-mt-2">
       <div class="max-w-[1400px] mx-auto px-4 py-3">
         <nav class="flex items-center space-x-2 text-sm">
           <router-link to="/" class="text-gray-500 hover:text-orange-500 transition">
@@ -29,19 +29,27 @@
           </div>
 
           <!-- ACTIVE FILTERS CHIPS -->
-          <div v-if="selectedCategories.length" class="flex flex-wrap gap-2 mb-4 pb-4 border-b border-gray-200">
+          <div
+            v-if="selectedCategories.length"
+            class="flex flex-wrap gap-2 mb-4 pb-4 border-b border-gray-200"
+          >
             <span
               v-for="c in selectedCategories"
               :key="c"
               class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium animate-fadeIn"
             >
-              {{ categories.find(cat => cat.value === c)?.label || c }}
+              {{ categories.find((cat) => cat.value === c)?.label || c }}
               <button
                 @click="removeCategory(c)"
                 class="hover:bg-orange-200 rounded-full p-0.5 transition"
               >
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </span>
@@ -61,7 +69,12 @@
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -109,7 +122,9 @@
           <!-- RESULTS COUNT -->
           <div class="mt-6 pt-6 border-t border-gray-200">
             <p class="text-sm text-gray-600">
-              Showing <span class="font-semibold text-gray-900">{{ filteredProducts.length }}</span> products
+              Showing
+              <span class="font-semibold text-gray-900">{{ filteredProducts.length }}</span>
+              products
             </p>
           </div>
         </div>
@@ -129,19 +144,36 @@
               v-model="sortBy"
               class="px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm bg-white cursor-pointer appearance-none min-w-[200px]"
             >
-              <option value="best-selling"> Best Selling</option>
-              <option value="price-low"> Price: Low to High</option>
-              <option value="price-high"> Price: High to Low</option>
+              <option value="best-selling">Best Selling</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
             </select>
-            <svg class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            <svg
+              class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
 
         <!-- LOADING STATE -->
-        <div v-if="isLoading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-          <div v-for="i in 10" :key="i" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 animate-pulse">
+        <div
+          v-if="isLoading"
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5"
+        >
+          <div
+            v-for="i in 10"
+            :key="i"
+            class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 animate-pulse"
+          >
             <div class="aspect-square bg-gray-200 rounded-lg mb-4"></div>
             <div class="h-4 bg-gray-200 rounded mb-2"></div>
             <div class="h-4 bg-gray-200 rounded w-2/3 mb-3"></div>
@@ -152,7 +184,7 @@
         <!-- PRODUCTS GRID -->
         <div
           v-else-if="paginatedProducts.length > 0"
-          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5"
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5"
         >
           <ProductCard
             v-for="(product, index) in paginatedProducts"
@@ -168,11 +200,18 @@
         <div v-else class="text-center py-20 bg-white rounded-lg shadow-sm border border-gray-200">
           <div class="text-gray-300 mb-4">
             <svg class="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-2">No products found</h3>
-          <p class="text-gray-600 mb-6">Try adjusting your filters to find what you're looking for</p>
+          <p class="text-gray-600 mb-6">
+            Try adjusting your filters to find what you're looking for
+          </p>
           <button
             @click="clearFilters"
             class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium active:scale-95"
@@ -189,7 +228,12 @@
             class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             <span class="hidden sm:inline">Previous</span>
           </button>
@@ -200,9 +244,11 @@
               :key="p"
               @click="goToPage(p)"
               class="w-10 h-10 rounded-lg flex items-center justify-center font-medium transition"
-              :class="p === currentPage
-                ? 'bg-orange-500 text-white shadow-md'
-                : 'border border-gray-300 hover:bg-gray-100'"
+              :class="
+                p === currentPage
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'border border-gray-300 hover:bg-gray-100'
+              "
             >
               {{ p }}
             </button>
@@ -215,7 +261,12 @@
           >
             <span class="hidden sm:inline">Next</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
@@ -223,11 +274,16 @@
     </div>
 
     <!-- RECOMMENDED SECTION -->
-    <section v-if="recommendedProducts.length > 0" class="mt-16 py-12 bg-white border-t border-gray-200">
+    <section
+      v-if="recommendedProducts.length > 0"
+      class="mt-16 py-12 bg-white border-t border-gray-200"
+    >
       <div class="max-w-[1400px] mx-auto px-4">
         <div class="flex items-center justify-between mb-8">
           <div>
-            <h2 class="text-3xl text-start font-bold text-gray-900 mb-1">Your dog might also like</h2>
+            <h2 class="text-3xl text-start font-bold text-gray-900 mb-1">
+              Your dog might also like
+            </h2>
           </div>
         </div>
 
@@ -239,7 +295,12 @@
             class="absolute left-0 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white border-2 border-orange-300 shadow-lg flex items-center justify-center hover:bg-orange-500 hover:text-white transition active:scale-95"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
 
@@ -248,7 +309,7 @@
             ref="slider"
             @scroll="checkScroll"
             class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide pt-6 pb-6"
-            >
+          >
             <div
               v-for="(product, index) in recommendedProducts"
               :key="product.id"
@@ -270,7 +331,12 @@
             class="absolute right-0 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white border-2 border-orange-300 shadow-lg flex items-center justify-center hover:bg-orange-500 hover:text-white transition active:scale-95"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
@@ -292,7 +358,7 @@ const selectedCategories = ref<string[]>([])
 const priceRange = ref<{ min: number | null; max: number | null }>({ min: null, max: null })
 const sortBy = ref('best-selling')
 const currentPage = ref(1)
-const itemsPerPage = 10
+const itemsPerPage = 8
 const isCategoryOpen = ref(true)
 
 // SLIDER STATE
@@ -320,19 +386,18 @@ const filteredProducts = computed(() => {
   // Category filter
   if (selectedCategories.value.length) {
     products = products.filter((p: any) => {
-      const cat = typeof p.category === 'string'
-        ? p.category.toLowerCase()
-        : p.category?.name?.toLowerCase()
+      const cat =
+        typeof p.category === 'string' ? p.category.toLowerCase() : p.category?.name?.toLowerCase()
       return selectedCategories.value.includes(cat)
     })
   }
 
   // Price filter
   if (priceRange.value.min !== null) {
-    products = products.filter(p => p.price >= priceRange.value.min!)
+    products = products.filter((p) => p.price >= priceRange.value.min!)
   }
   if (priceRange.value.max !== null) {
-    products = products.filter(p => p.price <= priceRange.value.max!)
+    products = products.filter((p) => p.price <= priceRange.value.max!)
   }
 
   // Apply sort based on dropdown selection
@@ -378,7 +443,7 @@ const filteredProducts = computed(() => {
       // Combine: sold first, then unsold
       sortedProducts = [...sold, ...unsold]
       break
-      }
+  }
 
   return sortedProducts
 })
@@ -389,9 +454,7 @@ const paginatedProducts = computed(() => {
   return filteredProducts.value.slice(start, start + itemsPerPage)
 })
 
-const totalPages = computed(() =>
-  Math.ceil(filteredProducts.value.length / itemsPerPage)
-)
+const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage))
 
 const visiblePages = computed(() => {
   const pages = []
@@ -409,10 +472,11 @@ const visiblePages = computed(() => {
   return pages
 })
 
-const hasActiveFilters = computed(() =>
-  selectedCategories.value.length > 0 ||
-  priceRange.value.min !== null ||
-  priceRange.value.max !== null
+const hasActiveFilters = computed(
+  () =>
+    selectedCategories.value.length > 0 ||
+    priceRange.value.min !== null ||
+    priceRange.value.max !== null,
 )
 
 // RECOMMENDED PRODUCTS
@@ -423,9 +487,7 @@ const recommendedProducts = computed(() => {
   const others = productStore.products.filter((p: any) => !mainIds.has(p.id))
 
   // Prefer products with good ratings/sales, but show others if needed
-  const preferred = others.filter((p: any) =>
-    (p.rating ?? 0) >= 2 || (p.soldCount ?? 0) > 0
-  )
+  const preferred = others.filter((p: any) => (p.rating ?? 0) >= 2 || (p.soldCount ?? 0) > 0)
 
   const result = preferred.length > 0 ? preferred : others
 
@@ -440,9 +502,8 @@ const recommendedProducts = computed(() => {
 
 // METHODS
 const removeCategory = (category: string) => {
-  selectedCategories.value = selectedCategories.value.filter(c => c !== category)
+  selectedCategories.value = selectedCategories.value.filter((c) => c !== category)
 }
-
 
 const clearFilters = () => {
   selectedCategories.value = []

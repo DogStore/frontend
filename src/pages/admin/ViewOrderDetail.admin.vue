@@ -1,10 +1,10 @@
 <template>
   <div class="p-6 max-w-6xl mx-auto font-Nunito">
-
     <!-- BACK -->
     <button
       class="text-white mb-6 hover:bg-orange-600 bg-orange-500 px-4 py-2 rounded-lg transition font-semibold"
-      @click="$router.back()">
+      @click="$router.back()"
+    >
       ← Back to Orders
     </button>
 
@@ -65,7 +65,12 @@
     <div v-else-if="store.error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
       <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
         <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
       </div>
       <h3 class="text-lg font-semibold text-gray-900 mb-2">Failed to load order</h3>
@@ -80,23 +85,19 @@
 
     <!-- Order Content -->
     <div v-else-if="order" class="space-y-6">
-
       <!-- HEADER -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <h1 class="text-3xl font-bold mb-4 md:mb-0">
-          Order #{{ order.orderNumber }}
-        </h1>
+        <h1 class="text-3xl font-bold mb-4 md:mb-0">Order #{{ order.orderNumber }}</h1>
 
-        <span
-          :class="statusClass(order.status)"
-        >
+        <span :class="statusClass(order.status)">
           {{ order.status }}
         </span>
       </div>
 
       <!-- ORDER INFO -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+      >
         <div>
           <p class="text-gray-500 text-sm mb-1">Customer</p>
           <p class="font-semibold text-lg">{{ order.customerName || '—' }}</p>
@@ -116,15 +117,29 @@
             {{ formatDate(order.updatedAt) }}
           </p>
         </div>
-
       </div>
 
       <!-- SHIPPING -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h2 class="font-bold text-lg mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          <svg
+            class="w-5 h-5 text-orange-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
           </svg>
           Shipping Address
         </h2>
@@ -143,8 +158,18 @@
       <!-- ITEMS -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h2 class="font-bold text-lg mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          <svg
+            class="w-5 h-5 text-orange-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
           </svg>
           Order Items
         </h2>
@@ -181,9 +206,7 @@
                   </span>
                 </td>
 
-                <td class="py-4 text-right text-gray-600">
-                  ${{ item.price.toFixed(2) }}
-                </td>
+                <td class="py-4 text-right text-gray-600">${{ item.price.toFixed(2) }}</td>
 
                 <td class="py-4 text-right font-semibold">
                   ${{ (item.price * item.quantity).toFixed(2) }}
@@ -195,10 +218,22 @@
       </div>
 
       <!-- SUMMARY -->
-      <div class="bg-gradient-to-br from-orange-50 to-white p-6 rounded-xl shadow-sm border border-orange-100 max-w-md ml-auto">
+      <div
+        class="bg-linear-to-br from-orange-50 to-white p-6 rounded-xl shadow-sm border border-orange-100 max-w-md ml-auto"
+      >
         <h2 class="font-bold text-lg mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          <svg
+            class="w-5 h-5 text-orange-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+            />
           </svg>
           Order Summary
         </h2>
@@ -220,7 +255,12 @@
           >
             <span class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
               </svg>
               Discount ({{ order.appliedCoupon.code }})
             </span>
@@ -233,14 +273,18 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- Empty State (Order Not Found) -->
     <div v-else class="text-center py-16">
       <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
         </svg>
       </div>
       <h3 class="text-lg font-semibold text-gray-900 mb-2">Order not found</h3>
@@ -252,14 +296,13 @@
         Back to Orders
       </button>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from "vue"
-import { useRoute } from "vue-router"
-import { useAdminOrderStore } from "@/stores/adminOrderStore"
+import { onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAdminOrderStore } from '@/stores/adminOrderStore'
 
 const route = useRoute()
 const store = useAdminOrderStore()
@@ -271,33 +314,26 @@ onMounted(() => {
 const order = computed(() => store.selectedOrder)
 
 function formatDate(date?: string) {
-  if (!date) return "—"
+  if (!date) return '—'
   return new Date(date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 
-const subtotal = computed(() =>
-  order.value.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  )
+const subtotal = computed(
+  () => order.value?.items?.reduce((sum, item) => sum + item.price * item.quantity, 0) ?? 0,
 )
 
-const discount = computed(() =>
-  order.value.appliedCoupon?.discountAmount ?? 0
-)
+const discount = computed(() => order.value?.appliedCoupon?.discountAmount ?? 0)
 
-const finalTotal = computed(() =>
-  Math.max(subtotal.value - discount.value, 0)
-)
+const finalTotal = computed(() => Math.max(subtotal.value - discount.value, 0))
 
 function statusClass(status: string) {
-  const base = "inline-block px-4 py-2 rounded-lg text-sm font-semibold capitalize"
+  const base = 'inline-block px-4 py-2 rounded-lg text-sm font-semibold capitalize'
 
   return {
     pending: `${base} bg-orange-100 text-orange-700`,
