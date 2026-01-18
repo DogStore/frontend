@@ -1,52 +1,92 @@
 <template>
-  <div class="p-4 bg-white rounded-lg shadow-md">
-    <h3 class="text-lg font-semibold mb-2">Total Product Listed Analyst</h3>
-    <apexchart
-      type="pie"
-      :options="chartOptions"
-      :series="series"
-    ></apexchart>
+  <div class="relative h-64 flex items-center justify-center">
+    <canvas ref="chartCanvas"></canvas>
+
+    <!-- Legend -->
+    <div class="absolute top-0 right-0 space-y-2">
+      <div
+        v-for="(label, index) in data.labels"
+        :key="index"
+        class="flex items-center gap-2 text-sm"
+      >
+        <div
+          class="w-4 h-4 rounded"
+          :style="{ backgroundColor: data.colors[index] }"
+        ></div>
+        <span class="text-gray-700">{{ label }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { Chart, registerables } from 'chart.js'
 
-// Alias the component for template use
-const apexchart = VueApexCharts as any;
+Chart.register(...registerables)
 
-// Pie Chart Data (Mock Data for now)
-const series = ref([900, 300, 500, 200]); // Food, Clothes, Bags, Others
-const labels = ['Food', 'Clothes', 'Bags', 'Others'];
+const props = defineProps<{
+  data: {
+    labels: string[]
+    values: number[]
+    colors: string[]
+  }
+}>()
 
-const chartOptions = computed(() => ({
-  chart: {
+const chartCanvas = ref<HTMLCanvasElement | null>(null)
+let chartInstance: Chart | null = null
+
+const createChart = () => {
+  if (!chartCanvas.value) return
+
+  if (chartInstance) {
+    chartInstance.destroy()
+  }
+
+  chartInstance = new Chart(chartCanvas.value, {
     type: 'pie',
-  },
-  labels: labels,
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: 'bottom',
-        },
-      },
+    data: {
+      labels: props.data.labels,
+      datasets: [{
+        data: props.data.values,
+        backgroundColor: props.data.colors,
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
     },
-  ],
-  // Use Tailwind colors here (optional)
-  // colors: ['#f97316', '#ef4444', '#10b981', '#6366f1'],
-}));
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          padding: 12,
+          borderRadius: 8,
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          callbacks: {
+            label: function(context: { label: string; parsed: number; dataset: { data: any[]; }; }) {
+              const label = context.label || ''
+              const value = context.parsed || 0
+              const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0)
+              const percentage = ((value / total) * 100).toFixed(1)
+              return `${label}: ${value} (${percentage}%)`
+            }
+          }
+        }
+      }
+    }
+  })
+}
 
-// In a real app, you'd fetch this data from a service
-// import { getPieChartData } from '@/services/chartService.ts';
-// onMounted(async () => {
-//   const data = await getPieChartData();
-//   series.value = data.series;
-//   labels.value = data.labels;
-// });
+onMounted(() => {
+  createChart()
+})
+
+watch(() => props.data, () => {
+  createChart()
+}, { deep: true })
 </script>

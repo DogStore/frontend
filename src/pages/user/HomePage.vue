@@ -69,8 +69,8 @@
       </div>
     </div>
 
-    <!-- RECENTLY VIEWED -->
-    <div v-if="recent.recent.length > 0" class="w-full px-10 py-10">
+   <!-- RECENTLY VIEWED - ✅ Use validRecents -->
+    <div v-if="recentStore.validRecents.length > 0" class="w-full px-10 py-10">
       <h3 class="flex md:text-start text-center text-lg md:text-2xl font-bold text-gray-800 mb-8">
         Recently Viewed
       </h3>
@@ -86,7 +86,7 @@
             class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-6 w-full flex-shrink-0"
           >
             <ProductCard
-              v-for="product in recent.recent.slice(
+              v-for="product in recentStore.validRecents.slice(
                 (pageIndex - 1) * recentItemsPerPage,
                 pageIndex * recentItemsPerPage,
               )"
@@ -138,15 +138,17 @@ import { useCartStore } from '@/stores/cartStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useRecentStore } from '@/stores/recentStore'
 import { useProductStore } from '@/stores/productStore'
+import { watch } from 'vue'
 
 const cart = useCartStore()
 const favorite = useFavoriteStore()
-const recent = useRecentStore()
+const recentStore = useRecentStore()
+const productStore = useProductStore()
 
 // Load recent items on page load
-recent.loadFromStorage()
-cart.loadFromStorage()
-favorite.loadFromStorage()
+recentStore.loadFromStorage()
+cart.load()
+favorite.load()
 
 // Showcase
 const showcase = ref({
@@ -160,10 +162,19 @@ const showcase = ref({
   pawImage: Paw,
 })
 
-const productStore = useProductStore()
+  watch(
+    () => productStore.products,
+    (products) => {
+      recentStore.syncWithProductStore(products)
+    },
+    { deep: true }
+  )
 
-onMounted(() => {
-  productStore.fetchProducts()
+//  Load products and sync recent
+onMounted(async () => {
+  await productStore.fetchProducts()
+  //  Sync recent products with latest product data
+  recentStore.syncWithProductStore(productStore.products)
 })
 
 // Pagination for Feature
@@ -202,7 +213,7 @@ const prevPage = () => {
 
 // When clicking product card
 const openProductDetail = (product: Product) => {
-  recent.addRecent(product)
+  recentStore.addRecent(product)
   console.log('Open detail:', product.name)
 }
 
@@ -210,7 +221,9 @@ const openProductDetail = (product: Product) => {
 const recentPage = ref(0)
 const recentItemsPerPage = ref(getItemsPerPage())
 
-const recentTotalPages = computed(() => Math.ceil(recent.recent.length / recentItemsPerPage.value))
+const recentTotalPages = computed(() =>
+  Math.ceil(recentStore.validRecents.length / recentItemsPerPage.value)
+)
 
 const nextRecent = () => {
   if (recentPage.value < recentTotalPages.value - 1) recentPage.value++

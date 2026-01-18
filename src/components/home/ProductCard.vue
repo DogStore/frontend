@@ -1,19 +1,43 @@
 <template>
   <div
-    class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-60 md:w-full mx-auto cursor-pointer transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
+    class="product-card relative flex flex-col items-center bg-white border border-[#FFAA0C] rounded-md p-4 shadow-sm w-full mx-auto cursor-pointer transition-all duration-300 ease-[cubic-bezier(.25,.8,.25,1)] hover:-translate-y-1 hover:z-20 hover:shadow-2xl"
     @click="openDetail"
   >
-    <!-- County Flag -->
-    <img
-      v-if="product.countryFlag"
-      :src="product.countryFlag"
-      alt="Country flag"
-      class="absolute w-8.5 h-6 object-cover ml-[10.5rem] md:ml-[9.5rem] mt-[14.5rem] shadow border border-white"
-    />
+    <!-- Badges Container - Top Left -->
+    <div class="absolute top-2 left-2 z-10 flex flex-col-2 gap-1">
+      <!-- Promoted Badge -->
+      <span
+        v-if="product.isPromoted"
+        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500
+              text-white text-[10px] font-semibold
+              px-2 py-0.5 rounded-full
+              shadow-sm flex items-center gap-1
+              opacity-90"
+      >
+        <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+          />
+        </svg>
+        HOT
+      </span>
+
+      <span
+        v-if="productDiscount > 0"
+        class="bg-red-500 text-white text-[10px] font-semibold
+              px-2 py-0.5 rounded-full shadow-sm opacity-90"
+      >
+        -{{ productDiscount }}%
+      </span>
+    </div>
 
     <!-- IMAGE -->
     <div class="relative flex items-center justify-center h-[150px] w-full">
-      <img :src="product.images[0]" :alt="product.name" class="h-[120px] object-contain" />
+      <img
+        :src="product.images?.[0] || '/placeholder.jpg'"
+        :alt="product.name || 'Product'"
+        class="h-[120px] object-contain"
+      />
 
       <!-- Favorite Button -->
       <button
@@ -26,11 +50,11 @@
 
     <!-- PRODUCT NAME -->
     <h4 class="text-base font-Nunito font-bold text-gray-800 mb-2 text-center h-[38px]">
-      {{ product.name }}
+      {{ product.name || 'Unnamed Product' }}
     </h4>
 
     <!-- STARS -->
-    <div class="flex mr-10 gap-4 mt-1 mb-2">
+    <div class="flex gap-4 mt-1 mb-2">
       <img
         v-for="(type, index) in starArray"
         :key="index"
@@ -39,11 +63,33 @@
       />
     </div>
 
-    <!-- PRICE -->
-    <div class="mb-3 text-center font-Nunito">
-      <span class="text-base text-orange-500 font-bold mr-25 md:mr-24 lg:mr-22"
-        >Price: ${{ product.price.toFixed(2) }}</span
-      >
+    <!-- PRICE SECTION -->
+    <div class="w-full mb-3 text-center font-Nunito">
+      <div class="flex flex-col items-center gap-1">
+        <!-- Current Price and Original Price with Flag -->
+        <div class="flex items-center gap-2">
+          <span class="text-base text-orange-500 font-bold whitespace-nowrap">
+            Price: ${{ formattedPrice }}
+          </span>
+          <!-- Country Flag -->
+          <img
+            v-if="product.countryFlag"
+            :src="product.countryFlag"
+            alt="Country flag"
+            class="w-8 h-6 object-cover shadow border border-white rounded flex-shrink-0"
+          />
+        </div>
+        <div class="flex gap-8 mt-1">
+          <!-- Original Price (if discount exists) -->
+          <span v-if="productDiscount > 0" class="text-gray-700 line-through text-sm whitespace-nowrap">
+            ${{ formattedOriginalPrice }}
+          </span>
+          <!-- Save percentage below -->
+          <span v-if="productDiscount > 0" class="text-green-600 font-semibold text-xs">
+            Save {{ productDiscount }}%
+          </span>
+        </div>
+      </div>
     </div>
 
     <!-- ADD TO CART -->
@@ -88,17 +134,52 @@ const cart = useCartStore()
 const favorite = useFavoriteStore()
 const recent = useRecentStore()
 
-// COMPUTED
-const isFavorite = computed(() => favorite.favorites.some((p) => p.id === props.product.id))
+// HELPER: Get product ID (handles both id and _id)
+function getProductId(product: any): string {
+  return product.id || product._id || ''
+}
 
-const isInCart = computed(() => cart.cartItems.some((p) => p.id === props.product.id))
+// HELPER: Safe number formatting
+const formatPrice = (value: number | undefined | null): string => {
+  if (value === undefined || value === null || isNaN(Number(value))) {
+    return '0.00'
+  }
+  return Number(value).toFixed(2)
+}
+
+// COMPUTED - Safe Price Formatting
+const formattedPrice = computed(() => formatPrice(props.product.price))
+const formattedOriginalPrice = computed(() => formatPrice(props.product.originalPrice))
+
+// COMPUTED - Safe Discount
+const productDiscount = computed(() => {
+  const discount = props.product.discount
+  if (discount === undefined || discount === null || isNaN(Number(discount))) {
+    return 0
+  }
+  return Number(discount)
+})
+
+// COMPUTED - Check favorite status (handles both id and _id)
+const isFavorite = computed(() => {
+  const productId = getProductId(props.product)
+  return favorite.favorites.some((p) => getProductId(p) === productId)
+})
+
+// COMPUTED - Check cart status (handles both id and _id)
+const isInCart = computed(() => {
+  const productId = getProductId(props.product)
+  return cart.cartItems.some((p) => getProductId(p) === productId)
+})
 
 // ACTIONS
 function toggleFavorite() {
+  console.log('🔄 Toggling favorite for:', props.product.name, 'ID:', getProductId(props.product))
   favorite.toggleFavorite(props.product)
 }
 
 function addCart() {
+  console.log('➕ Adding to cart:', props.product.name, 'ID:', getProductId(props.product))
   cart.addToCart(props.product)
 }
 
@@ -107,9 +188,9 @@ function openDetail() {
   console.log('OPEN:', props.product.name)
 }
 
-// STARS
+// STARS - Safe rating
 const starArray = computed(() => {
-  const rating = props.product.rating
+  const rating = props.product.rating || 0
   return Array.from({ length: 5 }, (_, i) => {
     const full = i + 1 <= rating
     const half = !full && i + 0.5 <= rating

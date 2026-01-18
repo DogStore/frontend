@@ -1,7 +1,6 @@
 // src/stores/categoryStore.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
 import type { Category } from '@/types/category'
 import { adminApi } from '@/services/api'
 

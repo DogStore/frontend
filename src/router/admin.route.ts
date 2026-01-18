@@ -38,6 +38,13 @@ const adminRoutes: RouteRecordRaw[] = [
         name: 'View-Order',
         component: ViewOrderPageAdmin,
       },
+      {
+        path: "/admin/orders/:id",
+        name: "admin-order-detail",
+        component: () => import("@/pages/admin/ViewOrderDetail.admin.vue"),
+      },
+
+
     ],
   },
 ]
