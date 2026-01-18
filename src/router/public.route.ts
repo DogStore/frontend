@@ -26,11 +26,16 @@ const publicRoutes: RouteRecordRaw[] = [
         name: 'wishlist',
         component: WishlistPage,
       },
-    // {
-    //   path: "/cart",
-    //   name: "cart",
-    //   component: () => import("@/pages/CartPage.vue"),
-    // },
+      {
+        path: "/cart",
+        name: "cart",
+        component: () => import("@/pages/user/CartPage.vue"),
+      },
+      {
+        path: "/Checkout",
+        name: "checkout",
+        component: () => import("@/pages/user/CheckoutPage.vue"),
+      },
     // {
     //   path: "/products/foods",
     //   name: "foods",

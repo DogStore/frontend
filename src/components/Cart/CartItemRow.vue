@@ -10,7 +10,7 @@
       </button>
 
       <img
-        :src="item.image"
+        :src="item.images[0]"
         alt="product"
         class="h-16 w-16 rounded-lg object-cover"
       />

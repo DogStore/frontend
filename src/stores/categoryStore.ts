@@ -1,7 +1,6 @@
 // src/stores/categoryStore.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
 import type { Category } from '@/types/category'
 import { adminApi } from '@/services/api'
 
@@ -17,6 +16,7 @@ export const useCategoryStore = defineStore('category', () => {
         console.warn('Unexpected API response structure')
         categories.value = []
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error('Error fetching categories:', err)
       categories.value = []

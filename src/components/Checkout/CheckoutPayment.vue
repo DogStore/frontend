@@ -1,94 +1,153 @@
 <template>
-  <div class=" p-6 space-y-5">
-    <h2 class="text-xl font-semibold text-gray-800 mb-3">Payment</h2>
-    <p class="text-sm text-gray-600 mb-2">Choose your payment method*</p>
+  <div class="p-6 space-y-5 bg-white rounded-2xl shadow-sm">
+    <h2 class="text-xl font-semibold text-gray-800">Payment</h2>
+    <p class="text-sm text-gray-600">Choose your payment method*</p>
 
-    <div class="space-y-3">
-      <!-- Payment Options -->
-      <div
-        v-for="method in paymentMethods"
-        :key="method.id"
-        @click="selectedPayment = method.id"
-        class="flex items-center justify-between border-2 rounded-[12px] px-5 py-3 cursor-pointer transition hover:border-[#FF6600]"
-        :class="selectedPayment === method.id ? 'border-[#FF6600]' : 'border-[#FFAA0C]'"
-      >
-        <!-- Left side: Icon + Label -->
-        <div class="flex items-center gap-3">
-          <img
-            v-if="method.icon"
-            :src="method.icon"
-            :alt="method.label"
-            class="h-6 object-contain"
-          />
-          <span
-            class="font-semibold text-gray-700"
-            :class="method.colorClass"
-          >
-            {{ method.label }}
-          </span>
-        </div>
+    <!-- 2-column layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-6">
 
-        <!-- Right side: Custom radio -->
+      <!-- LEFT: Payment Methods -->
+      <div class="space-y-4">
         <div
-          class="w-5 h-5 border-2 rounded-full flex items-center justify-center"
-          :class="selectedPayment === method.id ? 'border-[#FFAA0C]' : 'border-[#FFAA0C]'"
+          v-for="method in paymentMethods"
+          :key="method.id"
+          @click="selectMethod(method.id)"
+          class="flex items-center justify-between border-2 rounded-xl px-5 py-4 cursor-pointer transition"
+          :class="checkout.payment?.method === method.id
+            ? 'border-[#FF6600] bg-orange-50'
+            : 'border-[#FFAA0C]'"
         >
-          <div
-            v-if="selectedPayment === method.id"
-            class="w-2.5 h-2.5 bg-[#FFAA0C] rounded-full"
-          ></div>
+          <div class="flex items-center gap-3">
+            <img :src="method.icon" class="h-6" />
+            <span class="font-semibold text-gray-700">
+              {{ method.label }}
+            </span>
+          </div>
+
+          <div class="w-5 h-5 border-2 rounded-full flex items-center justify-center border-[#FFAA0C]">
+            <div
+              v-if="checkout.payment?.method === method.id"
+              class="w-2.5 h-2.5 bg-[#FFAA0C] rounded-full"
+            />
+          </div>
         </div>
+
+        <p v-if="!checkout.payment" class="text-sm text-red-500">
+          Please select a payment method
+        </p>
       </div>
 
-      <p
-      v-if="!selectedPayment"
-      class="text-sm text-red-500 mt-2"
-      >
-      Please select a payment method
-      </p>
+      <!-- RIGHT: Payment Details -->
+      <div class="bg-white rounded-2xl border border-[#FFAA0C] p-6 min-h-[260px]">
+        <h3 class="font-semibold text-gray-800 mb-4">
+          Complete your payment details
+        </h3>
+
+        <!-- Empty -->
+        <div
+          v-if="!checkout.payment"
+          class="flex items-center justify-center h-[160px] text-gray-400 text-sm"
+        >
+          Select a payment method to continue
+        </div>
+
+        <!-- Cash -->
+        <div
+          v-else-if="checkout.payment.method === 'cash'"
+          class="flex items-center justify-center h-[160px]"
+        >
+          <p class="text-green-600 font-medium text-center">
+            You will pay by cash on delivery
+          </p>
+        </div>
+
+        <!-- PayPal -->
+        <div
+          v-else-if="checkout.payment.method === 'paypal'"
+          class="space-y-3"
+        >
+          <label class="font-medium text-gray-700">
+            PayPal Email*
+          </label>
+          <input
+            v-model="checkout.payment.details.paypalEmail"
+            type="email"
+            placeholder="example@email.com"
+            class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full
+                    outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+          />
+        </div>
+
+        <!-- Card -->
+        <div
+          v-else
+          class="space-y-4"
+        >
+          <input
+            v-model="checkout.payment.details.cardNumber"
+            placeholder="Card Number"
+            class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full
+                    outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+          />
+
+          <div class="grid grid-cols-2 gap-4">
+            <input
+              v-model="checkout.payment.details.expiry"
+              placeholder="MM/YY"
+              class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full
+                      outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+            />
+            <input
+              v-model="checkout.payment.details.cvc"
+              placeholder="CVC"
+              class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full
+                      outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+            />
+          </div>
+
+          <p v-if="!checkout.isPaymentValid" class="text-sm text-red-500">
+            Please complete payment details
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, watch } from 'vue'
+<script setup lang="ts">
+import { useCheckoutStore } from '@/stores/checkoutStore'
+import type { PaymentMethod } from '@/types/payment'
 
-const emit = defineEmits<{
-  (e: 'payment-valid', value: boolean): void
-}>()
+const checkout = useCheckoutStore()
 
-const selectedPayment = ref<string>('')
+function selectMethod(method: PaymentMethod) {
+  if (method === 'cash') {
+    checkout.setPaymentData({ method: 'cash', details: null })
+    return
+  }
 
-watch(
-  selectedPayment,
-  (val) => {
-    emit('payment-valid', !!val)
-  },
-  { immediate: true }
-)
+  if (method === 'paypal') {
+    checkout.setPaymentData({
+      method: 'paypal',
+      details: { paypalEmail: '' },
+    })
+    return
+  }
+
+  checkout.setPaymentData({
+    method,
+    details: {
+      cardNumber: '',
+      expiry: '',
+      cvc: '',
+    },
+  })
+}
 
 const paymentMethods = [
-  {
-    id: 'paypal',
-    icon: '/src/assets/CartImages/paypal.png',
-    colorClass: 'text-blue-600',
-  },
-  {
-    id: 'visa',
-    icon: '/src/assets/CartImages/visa.png',
-    colorClass: 'text-blue-800',
-  },
-  {
-    id: 'mastercard',
-    icon: '/src/assets/CartImages/mastercard.png',
-    colorClass: 'text-red-500',
-  },
-  {
-    id: 'cash',
-    label: 'By cash',
-    icon: '/src/assets/CartImages/Dollar.png',
-    colorClass: 'text-gray-700',
-  },
-]
+  { id: 'paypal', label: 'PayPal', icon: '/src/assets/CartImages/paypal.png' },
+  { id: 'visa', label: 'VISA', icon: '/src/assets/CartImages/visa.png' },
+  { id: 'mastercard', label: 'Mastercard', icon: '/src/assets/CartImages/mastercard.png' },
+  { id: 'cash', label: 'By cash', icon: '/src/assets/CartImages/Dollar.png' },
+] as const
 </script>
-
