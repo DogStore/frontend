@@ -10,12 +10,12 @@
         class="flex-1 border border-[#FF6600]
                 focus:ring-1 focus:ring-[#FF6600]
                 rounded-lg px-3 py-2 outline-none"
-        :disabled="cartStore.applyingCoupon || cartStore.totalItems === 0"
+        :disabled="cartStore.applyingCoupon || cartStore.cartCount === 0"
       />
 
       <button
         @click="apply"
-        :disabled="cartStore.applyingCoupon || cartStore.totalItems === 0"
+        :disabled="cartStore.applyingCoupon || cartStore.cartCount === 0"
         class="bg-[#FF6600] text-white px-4 py-2 rounded-lg
                 disabled:opacity-60 hover:bg-[#e65500]"
       >

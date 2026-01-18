@@ -5,15 +5,17 @@ import type { Product } from '@/types/product'
 import type { Coupon } from '@/types/coupon'
 import { userApi } from '@/services/api'
 
+/* ================= TYPES ================= */
+
 export interface CartItem extends Product {
   quantity: number
 }
 
-export const useCartStore = defineStore('cart', () => {
-  const cartItems = ref<CartItem[]>([])
-  const cartCount = ref(0)
+/* ================= STORE ================= */
 
-  /* ---------- COUPON STATE ---------- */
+export const useCartStore = defineStore('cart', () => {
+  /* ---------- STATE ---------- */
+  const cartItems = ref<CartItem[]>([])
   const appliedCoupon = ref<Coupon | null>(null)
   const couponError = ref<string | null>(null)
   const applyingCoupon = ref(false)
@@ -26,14 +28,9 @@ export const useCartStore = defineStore('cart', () => {
 
     cartItems.value = storedCart ? JSON.parse(storedCart) : []
     appliedCoupon.value = storedCoupon ? JSON.parse(storedCoupon) : null
-
-    cartCount.value = cartItems.value.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    )
   }
 
-  function saveCart() {
+  function saveToStorage() {
     localStorage.setItem('cart', JSON.stringify(cartItems.value))
 
     if (appliedCoupon.value) {
@@ -45,7 +42,9 @@ export const useCartStore = defineStore('cart', () => {
 
   /* ================= GETTERS ================= */
 
-  const totalItems = computed(() => cartCount.value)
+  const cartCount = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+  )
 
   const subtotal = computed(() =>
     cartItems.value.reduce(
@@ -55,16 +54,15 @@ export const useCartStore = defineStore('cart', () => {
   )
 
   const delivery = computed(() =>
-    totalItems.value === 0 ? 0 : subtotal.value > 50 ? 0 : 5
+    cartCount.value === 0 ? 0 : subtotal.value > 50 ? 0 : 5
   )
 
   const taxes = computed(() =>
-    totalItems.value === 0 ? 0 : subtotal.value * 0.05
+    cartCount.value === 0 ? 0 : subtotal.value * 0.05
   )
 
-  // DO NOT allow discount if cart is empty
   const discount = computed(() => {
-    if (!appliedCoupon.value || totalItems.value === 0) return 0
+    if (!appliedCoupon.value || cartCount.value === 0) return 0
 
     if (appliedCoupon.value.type === 'percent') {
       return (subtotal.value * appliedCoupon.value.value) / 100
@@ -74,7 +72,7 @@ export const useCartStore = defineStore('cart', () => {
   })
 
   const total = computed(() =>
-    totalItems.value === 0
+    cartCount.value === 0
       ? 0
       : subtotal.value + delivery.value + taxes.value - discount.value
   )
@@ -82,62 +80,53 @@ export const useCartStore = defineStore('cart', () => {
   /* ================= CART ACTIONS ================= */
 
   function addToCart(product: Product) {
-    const item = cartItems.value.find(p => p.id === product.id)
+    const existing = cartItems.value.find(i => i.id === product.id)
 
-    if (item) item.quantity += 1
-    else cartItems.value.push({ ...product, quantity: 1 })
+    if (existing) {
+      existing.quantity += 1
+    } else {
+      cartItems.value.push({ ...product, quantity: 1 })
+    }
 
-    cartCount.value = cartItems.value.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    )
-
-    saveCart()
+    saveToStorage()
   }
 
   function increaseQuantity(productId: string) {
-    const item = cartItems.value.find(p => p.id === productId)
+    const item = cartItems.value.find(i => i.id === productId)
     if (!item) return
 
     item.quantity += 1
-    saveCart()
+    saveToStorage()
   }
 
   function decreaseQuantity(productId: string) {
-    const item = cartItems.value.find(p => p.id === productId)
+    const item = cartItems.value.find(i => i.id === productId)
     if (!item || item.quantity <= 1) return
 
     item.quantity -= 1
-    saveCart()
+    saveToStorage()
   }
 
   function removeFromCart(productId: string) {
-    cartItems.value = cartItems.value.filter(p => p.id !== productId)
-
-    cartCount.value = cartItems.value.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    )
+    cartItems.value = cartItems.value.filter(i => i.id !== productId)
 
     // If cart empty → remove coupon
-    if (cartCount.value === 0) {
+    if (cartItems.value.length === 0) {
       appliedCoupon.value = null
       couponError.value = null
-      localStorage.removeItem('coupon')
     }
 
-    saveCart()
+    saveToStorage()
   }
 
   function clearCart() {
     cartItems.value = []
-    cartCount.value = 0
     appliedCoupon.value = null
     couponError.value = null
-    saveCart()
+    saveToStorage()
   }
 
-  /* ================= COUPON ACTION ================= */
+  /* ================= COUPON ACTIONS ================= */
 
   async function applyCoupon(code: string) {
     if (!code.trim() || subtotal.value <= 0) return
@@ -153,21 +142,21 @@ export const useCartStore = defineStore('cart', () => {
 
       if (!res.data.valid) {
         appliedCoupon.value = null
-        couponError.value = res.data.message
+        couponError.value = res.data.message || 'Invalid coupon'
         return
       }
 
       appliedCoupon.value = {
         code: res.data.coupon.code,
         title: res.data.coupon.title,
-        type: 'fixed',
+        type: 'fixed', // backend already calculated discount
         value: res.data.discountAmount,
         isActive: true,
         usageLimitPerUser: 1,
         usedCount: 0,
       } as Coupon
 
-      saveCart()
+      saveToStorage()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       appliedCoupon.value = null
@@ -181,11 +170,11 @@ export const useCartStore = defineStore('cart', () => {
   function removeCoupon() {
     appliedCoupon.value = null
     couponError.value = null
-    saveCart()
+    saveToStorage()
   }
 
-  /* ---------- AUTO CLEANUP WATCH ---------- */
-  watch(totalItems, (count) => {
+  /* ---------- AUTO CLEANUP ---------- */
+  watch(cartCount, (count) => {
     if (count === 0 && appliedCoupon.value) {
       appliedCoupon.value = null
       couponError.value = null
@@ -193,24 +182,25 @@ export const useCartStore = defineStore('cart', () => {
     }
   })
 
+  /* ---------- INIT ---------- */
   loadFromStorage()
 
   return {
-    // State
+    // state
     cartItems,
     appliedCoupon,
     couponError,
     applyingCoupon,
-    // Getters
+
+    // getters
     cartCount,
-    totalItems,
     subtotal,
     delivery,
     taxes,
     discount,
     total,
 
-    // Actions
+    // actions
     addToCart,
     increaseQuantity,
     decreaseQuantity,
@@ -218,6 +208,6 @@ export const useCartStore = defineStore('cart', () => {
     clearCart,
     applyCoupon,
     removeCoupon,
-    loadFromStorage,
+    loadFromStorage
   }
 })

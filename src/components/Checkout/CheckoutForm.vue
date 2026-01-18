@@ -6,17 +6,22 @@
 
     <!-- Name -->
     <div>
-      <label class="block font-medium text-gray-800 mb-1">Name*</label>
+      <label class="block font-medium text-gray-800 mb-1">
+        Name*
+      </label>
+
       <div class="grid grid-cols-2 gap-4">
         <input
           v-model.trim="checkout.customer.firstName"
           placeholder="First Name"
-          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
         />
         <input
           v-model.trim="checkout.customer.lastName"
           placeholder="Last Name"
-          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
         />
       </div>
     </div>
@@ -35,9 +40,14 @@
       >
         <select
           v-model="checkout.customer.phoneCode"
-          class="px-3 bg-white border-r border-[#FFAA0C] outline-none font-semibold text-gray-700"
+          class="px-3 bg-white border-r border-[#FFAA0C]
+                  outline-none font-semibold text-gray-700"
         >
-          <option v-for="c in countryCodes" :key="c.code" :value="c.code">
+          <option
+            v-for="c in countryCodes"
+            :key="c.code"
+            :value="c.code"
+          >
             {{ c.label }} ({{ c.code }})
           </option>
         </select>
@@ -61,21 +71,35 @@
 
     <!-- Address -->
     <div>
-      <label class="block font-medium text-gray-800 mb-1">Address*</label>
+      <label class="block font-medium text-gray-800 mb-1">
+        Address*
+      </label>
 
-      <div class="grid grid-cols-2 gap-4 ">
-        <input v-model.trim="checkout.customer.address.houseNo" placeholder="House No"
-          class=" border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
-                  outline-none focus:ring-1 focus:ring-[#FFAA0C]" />
-        <input v-model.trim="checkout.customer.address.street" placeholder="Street"
+      <div class="grid grid-cols-2 gap-4">
+        <input
+          v-model.trim="checkout.customer.address.title"
+          placeholder="House No"
           class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
-                  outline-none focus:ring-1 focus:ring-[#FFAA0C]" />
-        <input v-model.trim="checkout.customer.address.city" placeholder="City"
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+        <input
+          v-model.trim="checkout.customer.address.street"
+          placeholder="Street"
           class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
-                  outline-none focus:ring-1 focus:ring-[#FFAA0C]" />
-        <input v-model.trim="checkout.customer.address.country" placeholder="Country"
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+        <input
+          v-model.trim="checkout.customer.address.city"
+          placeholder="City"
           class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
-                  outline-none focus:ring-1 focus:ring-[#FFAA0C]" />
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
+        <input
+          v-model.trim="checkout.customer.address.country"
+          placeholder="Country"
+          class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
+                  outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+        />
         <input
           v-model="checkout.customer.address.postalCode"
           placeholder="Postal Code"
@@ -96,13 +120,16 @@
 
     <!-- Note -->
     <div>
-      <label class="block font-medium text-gray-800 mb-1">Note</label>
+      <label class="block font-medium text-gray-800 mb-1">
+        Note
+      </label>
+
       <textarea
         v-model="checkout.customer.note"
         rows="3"
+        placeholder="Text something to the deliverer"
         class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
                 outline-none focus:ring-1 focus:ring-[#FFAA0C] resize-none"
-        placeholder="Text something to the deliverer"
       />
     </div>
   </div>

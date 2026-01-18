@@ -5,7 +5,7 @@
     <div class="space-y-2">
       <div class="flex justify-between">
         <span>Items</span>
-        <span>{{ cartStore.totalItems }}</span>
+        <span>{{ cartStore.cartCount }}</span>
       </div>
 
       <div class="flex justify-between">
@@ -47,7 +47,7 @@
     <!-- Checkout Button -->
     <button
       @click="goToCheckout"
-      :disabled="cartStore.totalItems === 0"
+      :disabled="cartStore.cartCount === 0"
       class="w-full mt-5 bg-yellow-500 hover:bg-yellow-600
               text-white py-2 rounded-lg font-medium
               disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
@@ -65,7 +65,7 @@ const cartStore = useCartStore()
 const router = useRouter()
 
 function goToCheckout() {
-  if (cartStore.totalItems === 0) return
+  if (cartStore.cartCount === 0) return
   router.push('/checkout')
 }
 </script>

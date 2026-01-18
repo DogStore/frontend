@@ -9,7 +9,7 @@
         class="w-full max-w-6xl px-6 py-6
                 grid grid-cols-1 lg:grid-cols-3 gap-10"
       >
-        <!-- LEFT (2 columns) -->
+        <!-- LEFT -->
         <div class="lg:col-span-2 space-y-8">
           <!-- Customer Info -->
           <CheckoutForm />
@@ -18,19 +18,21 @@
           <CheckoutPayment />
         </div>
 
-        <!-- RIGHT (Order Summary) -->
+        <!-- RIGHT -->
         <div class="lg:col-span-1">
           <div class="sticky top-40">
             <CheckoutSummary
-              :canConfirm="checkout.canConfirm && !!user.token"
+              :canConfirm="checkout.canConfirm"
               @confirm="handleConfirm"
             />
-            <!-- <p
+
+            <!-- Login warning -->
+            <p
               v-if="!user.token"
               class="text-sm text-red-500 mt-3 text-center"
             >
-              Please log in to enable order confirmation.
-            </p> -->
+              Please log in to place your order.
+            </p>
           </div>
         </div>
       </div>
@@ -57,7 +59,7 @@ async function handleConfirm() {
   }
 
   try {
-    await checkout.submitOrder(user.token)
+    await checkout.submitOrder()
     alert('Order placed successfully!')
   } catch (err) {
     console.error(err)
