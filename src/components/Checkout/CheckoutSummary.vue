@@ -77,7 +77,7 @@
       :disabled="!canConfirm"
       class="w-full mt-5 bg-[#FFAA0C] hover:bg-[#FF6600]/80
               text-white py-2 rounded-lg font-medium
-              disabled:bg-gray-300 disabled:cursor-not-allowed"
+              disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
     >
       Confirm Order
     </button>

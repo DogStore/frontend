@@ -17,7 +17,7 @@
             : 'border-[#FFAA0C]'"
         >
           <div class="flex items-center gap-3">
-            <img :src="method.icon" class="h-6" />
+            <img :src="method.icon" class="h-6" alt="" />
             <span class="font-semibold text-gray-700">
               {{ method.label }}
             </span>
@@ -57,34 +57,33 @@
             PayPal Email*
           </label>
           <input
-            v-model="paypalEmail"
+            v-model.trim="paypalEmail"
             type="email"
             placeholder="example@email.com"
             class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full
-                    outline-none focus:ring-1 focus:ring-[#FFAA0C]"
+                   outline-none focus:ring-1 focus:ring-[#FFAA0C]"
           />
         </div>
 
         <!-- CARD -->
-        <div
-          v-else
-          class="space-y-4"
-        >
+        <div v-else class="space-y-4">
           <input
-            v-model="cardNumber"
+            v-model.trim="cardNumber"
             placeholder="Card Number"
+            inputmode="numeric"
             class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full"
           />
 
           <div class="grid grid-cols-2 gap-4">
             <input
-              v-model="expiry"
+              v-model.trim="expiry"
               placeholder="MM/YY"
               class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full"
             />
             <input
-              v-model="cvc"
+              v-model.trim="cvc"
               placeholder="CVC"
+              inputmode="numeric"
               class="border border-[#FFAA0C] rounded-lg px-3 py-2 w-full"
             />
           </div>
@@ -106,26 +105,32 @@ type PaymentMethod = 'cash' | 'paypal' | 'visa' | 'mastercard'
 
 const checkout = useCheckoutStore()
 
-/* LOCAL INPUT STATE (UI ONLY) */
+/* UI-ONLY INPUTS (NEVER SENT TO BACKEND) */
 const paypalEmail = ref('')
 const cardNumber = ref('')
 const expiry = ref('')
 const cvc = ref('')
 
-function selectMethod(method: PaymentMethod) {
-  checkout.setPaymentMethod(method)
-
-  // reset UI-only inputs
+function resetInputs() {
   paypalEmail.value = ''
   cardNumber.value = ''
   expiry.value = ''
   cvc.value = ''
 }
 
-const paymentMethods = [
+function selectMethod(method: PaymentMethod) {
+  checkout.setPaymentMethod(method)
+  resetInputs()
+}
+
+const paymentMethods: {
+  id: PaymentMethod
+  label: string
+  icon: string
+}[] = [
   { id: 'paypal', label: 'PayPal', icon: '/src/assets/CartImages/paypal.png' },
   { id: 'visa', label: 'VISA', icon: '/src/assets/CartImages/visa.png' },
   { id: 'mastercard', label: 'Mastercard', icon: '/src/assets/CartImages/mastercard.png' },
-  { id: 'cash', label: 'By cash', icon: '/src/assets/CartImages/Dollar.png' },
-] as const
+  { id: 'cash', label: 'By cash', icon: '/src/assets/CartImages/Dollar.png' }
+]
 </script>

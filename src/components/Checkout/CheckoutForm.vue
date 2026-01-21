@@ -78,7 +78,7 @@
       <div class="grid grid-cols-2 gap-4">
         <input
           v-model.trim="checkout.customer.address.title"
-          placeholder="House No"
+          placeholder="House, Building"
           class="border border-[#FFAA0C] rounded-[10px] px-3 py-2 w-full
                   outline-none focus:ring-1 focus:ring-[#FFAA0C]"
         />

@@ -1,9 +1,9 @@
-// src/stores/cartStore.ts
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import type { Product } from '@/types/product'
 import type { Coupon } from '@/types/coupon'
 import { userApi } from '@/services/api'
+import { useUserStore } from '@/stores/userStore'
 
 /* ================= TYPES ================= */
 
@@ -19,6 +19,8 @@ export const useCartStore = defineStore('cart', () => {
   const appliedCoupon = ref<Coupon | null>(null)
   const couponError = ref<string | null>(null)
   const applyingCoupon = ref(false)
+
+  const userStore = useUserStore()
 
   /* ---------- STORAGE ---------- */
 
@@ -110,7 +112,6 @@ export const useCartStore = defineStore('cart', () => {
   function removeFromCart(productId: string) {
     cartItems.value = cartItems.value.filter(i => i.id !== productId)
 
-    // If cart empty → remove coupon
     if (cartItems.value.length === 0) {
       appliedCoupon.value = null
       couponError.value = null
@@ -149,7 +150,7 @@ export const useCartStore = defineStore('cart', () => {
       appliedCoupon.value = {
         code: res.data.coupon.code,
         title: res.data.coupon.title,
-        type: 'fixed', // backend already calculated discount
+        type: 'fixed',
         value: res.data.discountAmount,
         isActive: true,
         usageLimitPerUser: 1,
@@ -182,6 +183,49 @@ export const useCartStore = defineStore('cart', () => {
     }
   })
 
+  /* ================= BACKEND SYNC ================= */
+
+  /**
+   * Sync local cart to backend by sending each item individually
+   * Uses POST /api/cart with productId + quantity
+   * Clears local cart on success
+   */
+  async function syncCartToBackend() {
+    if (!userStore.token || cartItems.value.length === 0) return
+
+    try {
+      for (const item of cartItems.value) {
+        await userApi.post('/carts', {
+          productId: item.id,
+          quantity: item.quantity
+        })
+      }
+
+      // ✅ DO NOTHING ELSE
+      // NO clearing here
+    } catch (err) {
+      console.error('Failed to sync cart', err)
+    }
+  }
+
+  function clearLocalCart() {
+    cartItems.value = []
+    appliedCoupon.value = null
+    couponError.value = null
+    localStorage.removeItem('cart')
+    localStorage.removeItem('coupon')
+  }
+
+  /* ---------- LOGIN WATCHER: sync cart when user logs in ---------- */
+  watch(
+    () => userStore.token,
+    async (token) => {
+      if (token) {
+        await syncCartToBackend()
+      }
+    }
+  )
+
   /* ---------- INIT ---------- */
   loadFromStorage()
 
@@ -208,6 +252,9 @@ export const useCartStore = defineStore('cart', () => {
     clearCart,
     applyCoupon,
     removeCoupon,
-    loadFromStorage
+    loadFromStorage,
+    clearLocalCart,
+    // backend sync
+    syncCartToBackend
   }
 })

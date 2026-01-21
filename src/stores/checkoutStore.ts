@@ -11,11 +11,14 @@ export const useCheckoutStore = defineStore('checkout', () => {
   const cartStore = useCartStore()
   const userStore = useUserStore()
 
-  /* ---------- STATE ---------- */
-
+  /* ================= STATE ================= */
   const customer = ref({
+    // OPTIONAL (UI only)
     firstName: '',
     lastName: '',
+    note: '',
+
+    // REQUIRED
     phoneCode: '+855',
     phone: '',
     address: {
@@ -23,41 +26,37 @@ export const useCheckoutStore = defineStore('checkout', () => {
       street: '',
       city: '',
       country: '',
-      postalCode: '',
-    } as ShippingAddress,
-    note: '',
+      postalCode: ''
+    } as ShippingAddress
   })
 
   const payment = ref<{ method: PaymentMethod }>({
-    method: 'cash',
+    method: 'cash'
   })
 
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  /* ---------- VALIDATION ---------- */
-
+  /* ================= VALIDATION ================= */
   const isPhoneValid = computed(() =>
     /^[0-9]{8,9}$/.test(customer.value.phone)
   )
 
   const isPostalCodeValid = computed(() =>
-    /^[0-9]{4,10}$/.test(customer.value.address.postalCode || '')
+    /^[0-9]+$/.test(customer.value.address.postalCode || '')
   )
 
   const isFormValid = computed(() =>
-    !!(
-      customer.value.firstName &&
-      customer.value.lastName &&
-      isPhoneValid.value &&
-      customer.value.address.street &&
-      customer.value.address.city &&
-      customer.value.address.country &&
-      isPostalCodeValid.value
-    )
+    isPhoneValid.value &&
+    customer.value.address.street &&
+    customer.value.address.city &&
+    customer.value.address.country &&
+    isPostalCodeValid.value
   )
 
-  const isPaymentValid = computed(() => !!payment.value.method)
+  const isPaymentValid = computed(() =>
+    !!payment.value.method
+  )
 
   const canConfirm = computed(() =>
     isFormValid.value &&
@@ -66,38 +65,36 @@ export const useCheckoutStore = defineStore('checkout', () => {
     !!userStore.token
   )
 
-  /* ---------- HELPERS ---------- */
-
+  /* ================= HELPERS ================= */
   function sanitizePhone() {
     customer.value.phone = customer.value.phone.replace(/\D/g, '')
   }
 
   function sanitizePostalCode() {
     customer.value.address.postalCode =
-      customer.value.address.postalCode?.replace(/\D/g, '') || ''
+      customer.value.address.postalCode?.replace(/\D/g, '')
   }
 
+  /* ================= PAYMENT ================= */
   function setPaymentMethod(method: PaymentMethod) {
     payment.value.method = method
   }
 
-  /* ---------- SUBMIT ORDER ---------- */
-
+  /* ================= SUBMIT ================= */
   async function submitOrder() {
-    if (!userStore.token) {
-      error.value = 'Please login to continue'
-      throw new Error('Not authenticated')
-    }
-
-    if (cartStore.cartCount === 0) {
-      error.value = 'Cart is empty'
-      throw new Error('Cart is empty')
-    }
+    if (!userStore.token) throw new Error('Login required')
+    if (!isFormValid.value) throw new Error('Invalid form')
 
     loading.value = true
     error.value = null
 
     try {
+
+      const items = cartStore.cartItems.map(item => ({
+      productId: item.id,
+      quantity: item.quantity
+      }))
+
       await userApi.post('/orders', {
         shippingAddress: customer.value.address,
         phone: `${customer.value.phoneCode}${customer.value.phone}`,
@@ -105,9 +102,12 @@ export const useCheckoutStore = defineStore('checkout', () => {
         appliedCoupon: cartStore.appliedCoupon
           ? { code: cartStore.appliedCoupon.code }
           : undefined,
+        items
       })
 
-      cartStore.clearCart()
+      // ✅ CLEAR CART AFTER ORDER CONFIRMATION
+      cartStore.clearLocalCart()
+
       resetCheckout()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -118,24 +118,20 @@ export const useCheckoutStore = defineStore('checkout', () => {
     }
   }
 
-  /* ---------- RESET ---------- */
-
   function resetCheckout() {
-    payment.value.method = 'cash'
-    customer.value = {
-      firstName: '',
-      lastName: '',
-      phoneCode: '+855',
-      phone: '',
-      address: {
-        title: '',
-        street: '',
-        city: '',
-        country: '',
-        postalCode: '',
-      },
-      note: '',
+    customer.value.firstName = ''
+    customer.value.lastName = ''
+    customer.value.note = ''
+    customer.value.phone = ''
+    customer.value.address = {
+      title: '',
+      street: '',
+      city: '',
+      country: '',
+      postalCode: ''
     }
+
+    payment.value.method = 'cash'
   }
 
   return {
@@ -150,11 +146,10 @@ export const useCheckoutStore = defineStore('checkout', () => {
     isPaymentValid,
     canConfirm,
 
+    setPaymentMethod,
+    resetCheckout,
     sanitizePhone,
     sanitizePostalCode,
-    setPaymentMethod,
-
-    submitOrder,
-    resetCheckout,
+    submitOrder
   }
 })

@@ -3,10 +3,10 @@
     <h1 class="text-[60px] font-bold">Your Cart</h1>
     <p class="text-gray-600">Check your items before making proceed</p>
 
-    <div class="absolute top-6 left-15 flex gap-2">
+    <div class="absolute top-6 left-15 flex gap-2 md:hidden hidden lg:flex">
       <img src="/src/assets/CartImages/image46.png" alt="pets" class="h-[160px]" />
     </div>
-    <div class="absolute top-7 right-35">
+    <div class="absolute top-7 right-35 md:hidden hidden lg:flex">
       <img src="/src/assets/CartImages/image47.png" alt="dog" class="h-[150px]" />
     </div>
   </div>
