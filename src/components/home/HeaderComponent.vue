@@ -165,13 +165,25 @@
               @click="showProfileMenu = !showProfileMenu"
               class="flex items-center gap-2 text-gray-700 hover:text-black"
             >
-              <!-- Avatar placeholder -->
-              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                <span class="text-gray-600 font-medium text-sm">
-                  {{ userStore.name ? userStore.name[0]?.toUpperCase() : 'U' }}
+              <!-- Loading state -->
+              <div v-if="imageLoading" class="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+              <!-- Avatar with picture -->
+              <div v-else-if="userStore.profilePicture && !imageError" class="flex items-center">
+                 <img
+                  :src="userStore.profilePicture"
+                  alt="Profile"
+                  class="w-10 h-10 rounded-full object-cover border border-gray-300"
+                  loading="lazy"
+                  @error="handleImageError"
+                />
+              </div>
+              <!-- Avatar without picture -->
+              <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300">
+                <span class="text-gray-700 font-medium text-sm">
+                  <!-- {{ userStore.name ? userStore.name[0]?.toUpperCase() : 'U' }} -->
+                  {{ getUserInitials() }}
                 </span>
               </div>
-              <span class="hidden lg:inline">Profile</span>
             </button>
             <div
               v-if="showProfileMenu"
@@ -373,11 +385,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useProductStore } from '@/stores/productStore'
 import { useUserStore } from '@/stores/userStore'
+import axios from 'axios'
 
 // Assets
 import foodIcon from '@/assets/HeaderImages/Food.png'
@@ -396,8 +409,84 @@ const isDropdownOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 const isMobileDropdownOpen = ref(false)
 const showProfileMenu = ref(false)
+const imageLoading = ref(false)
 
 const isLoggedIn = computed(() => !!userStore.token)
+const API_BASE = 'https://backend-kanu.onrender.com/api'
+
+// Add this function to fetch profile picture
+const fetchProfilePicture = async () => {
+  if (!userStore.token || userStore.profilePicture) {
+    return // Don't fetch if already have picture or no token
+  }
+
+  imageLoading.value = true
+  try {
+    const response = await axios.get(`${API_BASE}/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${userStore.token}`
+      }
+    })
+
+    const data = response.data.user || response.data // handle both structures
+
+    // Try common field names (in order of likelihood)
+    const pictureUrl =
+      data.userImage ||
+      data.profilePicture ||
+      data.avatar ||
+      data.photo ||
+      data.image ||
+      (data.user && data.user.userImage) ||
+      (data.user && data.user.profilePicture)
+
+    if (pictureUrl) {
+      userStore.updateProfilePicture(pictureUrl)
+      imageError.value = false
+    } else {
+      console.warn('No profile picture found in response')
+    }
+  } catch (err) {
+    console.error('Failed to fetch profile picture:', err)
+  } finally {
+    imageLoading.value = false
+  }
+}
+
+// Watch for login state changes
+watch(isLoggedIn, (loggedIn) => {
+  if (loggedIn) {
+    fetchProfilePicture()
+  } else {
+    userStore.updateProfilePicture('') // Clear on logout
+  }
+})
+
+// Fetch on component mount if already logged in
+onMounted(() => {
+  if (isLoggedIn.value && !userStore.profilePicture) {
+    fetchProfilePicture()
+  }
+})
+
+
+const imageError = ref(false)
+
+const getUserInitials = () => {
+  if (!userStore.name) return 'U'
+  return userStore.name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2)
+}
+
+const handleImageError = (event: Event) => {
+  imageError.value = true
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+}
 
 // Search
 const onSearch = async () => {
@@ -475,4 +564,5 @@ const logout = () => {
   showProfileMenu.value = false
   closeAll()
 }
+
 </script>
