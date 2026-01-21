@@ -36,6 +36,11 @@ const publicRoutes: RouteRecordRaw[] = [
         name: "checkout",
         component: () => import("@/pages/user/CheckoutPage.vue"),
       },
+      {
+        path: '/order-success',
+        name: 'OrderSuccess',
+        component: () => import('@/pages/user/OrderSuccess.vue')
+      }
     // {
     //   path: "/products/foods",
     //   name: "foods",

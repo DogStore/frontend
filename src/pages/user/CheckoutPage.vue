@@ -57,7 +57,7 @@ onMounted(() => {
 async function handleConfirm() {
   try {
     await checkout.submitOrder()
-    alert('Order placed successfully!')
+    router.replace('/order-success')
   } catch (err) {
     console.error(err)
     alert(checkout.error || 'Failed to place order')

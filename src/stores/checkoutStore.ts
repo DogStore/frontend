@@ -91,25 +91,24 @@ export const useCheckoutStore = defineStore('checkout', () => {
     error.value = null
 
     try {
-
-      const items = cartStore.cartItems.map(item => ({
-      productId: item.id,
-      quantity: item.quantity
-      }))
-
+      // 🔥 Backend should already have the cart
+      // No need to trust frontend quantities
       await userApi.post('/orders', {
         shippingAddress: customer.value.address,
         phone: `${customer.value.phoneCode}${customer.value.phone}`,
         paymentMethod: payment.value.method,
         appliedCoupon: cartStore.appliedCoupon
           ? { code: cartStore.appliedCoupon.code }
-          : undefined,
-        items
+          : undefined
       })
+
+      await userApi.delete('/carts')
 
       cartStore.clearLocalCart()
 
       resetCheckout()
+
+      return true
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Checkout failed'

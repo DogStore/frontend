@@ -237,13 +237,19 @@ export const useCartStore = defineStore('cart', () => {
   /* ================= BACKEND SYNC ================= */
 
   async function initCart() {
-    // Logged-in → fetch from backend
+    const storedCoupon = localStorage.getItem('coupon')
+
     if (userStore.token) {
       await fetchBackendCart()
+
+      appliedCoupon.value = storedCoupon
+        ? JSON.parse(storedCoupon)
+        : null
+
       return
     }
 
-    // Guest → load from localStorage
+    // guest
     loadFromStorage()
   }
 

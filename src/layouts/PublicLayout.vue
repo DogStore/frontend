@@ -20,7 +20,7 @@ const cartStore = useCartStore()
 
 const mainClass = computed(() => {
   // Pages that need compact spacing
-  if (route.path === '/cart' || route.path === '/checkout') {
+  if (route.path === '/cart' || route.path === '/checkout' || route.path === '/order-success') {
     return 'pt-35 sm:pt-35 lg:pt-35 pb-40'
   }
 
