@@ -16,12 +16,12 @@
     <div v-if="isOnCategoryRoute" class="container mx-auto px-4 md:px-6 py-4 md:py-8">
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-4 md:gap-6">
         <!-- SIDEBAR - Responsive: Hidden on mobile, visible on md+ -->
-        <div class="hidden md:block md:col-span-1 lg:col-span-3 pb-32">
+        <div class="hidden md:block md:col-span-1 lg:col-span-2 pb-32">
           <CategorySidebar />
         </div>
 
         <!-- Page content - Responsive: Full width on mobile -->
-        <div class="col-span-1 md:col-span-2 lg:col-span-9 pb-32">
+        <div class="col-span-1 md:col-span-2 lg:col-span-10 pb-32 ">
           <RouterView @update-cart="handleCartUpdate" />
         </div>
       </div>

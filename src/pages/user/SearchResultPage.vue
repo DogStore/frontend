@@ -113,7 +113,7 @@
       >
         <ProductCard
           v-for="product in sortedProducts"
-          :key="product.id || product._id"
+          :key="product.id || product.id"
           :product="product"
         />
       </transition-group>

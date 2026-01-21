@@ -1,5 +1,7 @@
 <template>
+
   <div class="w-full p-4 md:p-6 lg:p-12">
+    <div class="text-black text-3xl font-bold">Best Selling Products</div>
     <!-- SORT - Modern Header - Responsive -->
     <div
       class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8 pb-4 border-b border-gray-200"
@@ -23,8 +25,14 @@
 
     <!-- GRID - Responsive Layout (Mobile: 1, Tablet: 2, Desktop: 4) -->
     <div v-if="paginatedProducts.length" class="mb-12">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        <ProductCard v-for="p in paginatedProducts" :key="p.id" :product="p" />
+      <div class="flex flex-wrap gap-4 md:gap-6 justify-start">
+        <div
+          v-for="p in paginatedProducts"
+          :key="p.id"
+          class="w-[260px] shrink-0"
+        >
+          <ProductCard :product="p" />
+        </div>
       </div>
     </div>
 

@@ -186,7 +186,7 @@
                     >★</span
                   >
                 </div>
-                <span class="font-semibold text-gray-900">{{ product.averageRating || 0 }}</span>
+                <span class="font-semibold text-gray-900">{{ Math.round(product.averageRating).toFixed(2) || 0}}</span>
               </div>
               <a href="#reviews" class="text-orange-500 hover:text-orange-600 font-medium">
                 ({{ product.reviewCount || 0 }} reviews)
@@ -202,7 +202,7 @@
                   >${{ product.salePrice || product.price }}</span
                 >
                 <span v-if="product.discount > 0" class="text-2xl text-gray-400 line-through"
-                  >${{ product.regularPrice }}</span
+                  >{{ product.regularPrice }}</span
                 >
                 <span
                   v-if="product.discount > 0"
@@ -237,8 +237,15 @@
             <div class="space-y-3 pt-6">
               <button
                 @click="addToCart"
-                :disabled="product.stock === 0"
-                class="w-full bg-orange-500 text-white px-8 py-4 rounded-lg hover:bg-orange-600 font-semibold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                :disabled="product.stock === 0 || isInCart"
+                class="w-full px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center gap-2"
+                :class="
+                  isInCart
+                    ? 'bg-gray-400 text-white cursor-not-allowed'
+                    : product.stock === 0
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-orange-500 hover:bg-orange-600 text-white'
+                "
               >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -248,7 +255,10 @@
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+
+                <span v-if="isInCart">✔ Added to Cart</span>
+                <span v-else-if="product.stock === 0">Out of Stock</span>
+                <span v-else>Add to Cart</span>
               </button>
 
               <button
@@ -361,7 +371,7 @@
                 <!-- Left: Average Rating -->
                 <div class="text-center lg:text-left">
                   <div class="text-5xl font-bold text-gray-900 mb-2">
-                    {{ product.averageRating || 0 }}
+                    {{ Math.round(product.averageRating).toFixed(2) || 0}}
                   </div>
                   <div class="flex items-center justify-center lg:justify-start gap-1 mb-2">
                     <span
@@ -530,7 +540,7 @@
           </div>
         </div>
 
-        <div class="relative overflow-hidden">
+        <div class="relative overflow-x-auto md:overflow-hidden">
           <div
             class="flex gap-6 transition-transform duration-300 ease-in-out"
             :style="{
@@ -664,6 +674,14 @@ function toggleWishlist() {
   favoriteStore.toggleFavorite(product.value)
 }
 
+const isInCart = computed(() => {
+  if (!product.value) return false
+  const id = product.value.id
+  return cartStore.cartItems.some((i: any) => i.id === id || i.product === id)
+})
+
+
+
 function addToCart() {
   if (!product.value) return
   cartStore.addToCart(product.value)
@@ -746,9 +764,16 @@ const totalReviewPages = computed(() => {
 
 const paginatedReviews = computed(() => {
   const all = Array.isArray(product.value?.reviews) ? product.value.reviews : []
+
+  const sorted = [...all].sort(
+    (a: any, b: any) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )
+
   const start = (currentReviewPage.value - 1) * reviewsPerPage
-  return all.slice(start, start + reviewsPerPage)
+  return sorted.slice(start, start + reviewsPerPage)
 })
+
 
 function formatDate(iso?: string) {
   if (!iso) return ''

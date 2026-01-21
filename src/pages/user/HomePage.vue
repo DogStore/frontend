@@ -15,11 +15,12 @@
     <div class="w-full px-10 py-10">
       <div class="flex items-center justify-between mb-8">
         <h3 class="text-lg md:text-2xl font-bold text-gray-800">List of Products</h3>
-        <button
-          class="px-6 py-2 bg-[#FFAA0C] cursor-pointer text-white font-semibold rounded-md hover:bg-orange-500 transition"
+        <router-link
+          to="/category"
+          class="px-6 py-2 bg-[#FFAA0C] text-white font-semibold rounded-md hover:bg-orange-500 transition inline-block"
         >
           View All
-        </button>
+        </router-link>
       </div>
 
       <!-- Products Carousel -->
@@ -231,4 +232,5 @@ const nextRecent = () => {
 const prevRecent = () => {
   if (recentPage.value > 0) recentPage.value--
 }
+
 </script>

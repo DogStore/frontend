@@ -13,7 +13,7 @@ function getProductId(product: any): string {
 }
 
 export const useCartStore = defineStore('cart', () => {
-  const cartItems = ref<Product[]>([])
+  const cartItems = ref<any[]>([])
   const cartCount = ref(0)
   const isLoading = ref(false)
 
@@ -133,14 +133,15 @@ export const useCartStore = defineStore('cart', () => {
       return
     }
 
-    // Normalize the product when adding
-    const normalizedProduct = {
-      ...product,
-      id: productId, // Normalize to always use 'id'
-    }
+    cartItems.value.push({
+      product: productId,
+      name: product.name,
+      slug: product.slug,
+      image: product.images?.[0] || '',
+      price: product.price,
+      quantity: 1
+    })
 
-    // Optimistic update
-    cartItems.value.push(normalizedProduct)
     cartCount.value++
     console.log(' Added to cart:', product.name, 'ID:', productId)
     console.log(' Cart now has:', cartItems.value.length, 'items')
@@ -221,7 +222,7 @@ export const useCartStore = defineStore('cart', () => {
   /* ---------------- CHECK IF IN CART ---------------- */
   function isInCart(product: any): boolean {
     const productId = getProductId(product)
-    const result = cartItems.value.some(p => getProductId(p) === productId)
+    const result = cartItems.value.some(p => p.product === productId)
     console.log(' isInCart check:', productId, '→', result)
     return result
   }

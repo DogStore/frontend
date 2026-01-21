@@ -83,6 +83,26 @@
               alt="DOG Hub Logo"
             />
           </router-link>
+          <!-- Mobile Menu Toggle -->
+          <button
+            @click="isMobileMenuOpen = !isMobileMenuOpen"
+            class="sm:hidden p-2 hover:bg-orange-50 rounded-lg transition"
+            :aria-label="isMobileMenuOpen ? 'Close menu' : 'Open menu'"
+          >
+            <svg
+              v-if="!isMobileMenuOpen"
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+
         </div>
 
         <!-- SEARCH BAR -->
