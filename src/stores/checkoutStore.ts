@@ -58,11 +58,13 @@ export const useCheckoutStore = defineStore('checkout', () => {
     !!payment.value.method
   )
 
-  const canConfirm = computed(() =>
-    isFormValid.value &&
-    isPaymentValid.value &&
-    cartStore.cartCount > 0 &&
-    !!userStore.token
+  const canConfirm = computed<boolean>(() =>
+    Boolean(
+      isFormValid.value &&
+      isPaymentValid.value &&
+      cartStore.cartCount > 0 &&
+      userStore.token
+    )
   )
 
   /* ================= HELPERS ================= */
@@ -105,7 +107,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
         items
       })
 
-      // ✅ CLEAR CART AFTER ORDER CONFIRMATION
       cartStore.clearLocalCart()
 
       resetCheckout()

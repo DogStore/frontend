@@ -9,12 +9,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useCartStore } from '@/stores/cartStore'
 import HeaderComponent from '@/components/home/HeaderComponent.vue'
 import FooterComponent from '@/components/home/FooterComponent.vue'
 
 const route = useRoute()
+const cartStore = useCartStore()
 
 const mainClass = computed(() => {
   // Pages that need compact spacing
@@ -24,5 +26,9 @@ const mainClass = computed(() => {
 
   // Default (Home & other pages)
   return 'pt-[325px] sm:pt-[327px] lg:pt-[357px] mb-50 text-center'
+})
+
+onMounted(() => {
+  cartStore.initCart()
 })
 </script>

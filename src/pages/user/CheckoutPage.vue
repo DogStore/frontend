@@ -25,14 +25,6 @@
               :canConfirm="checkout.canConfirm"
               @confirm="handleConfirm"
             />
-
-            <!-- Login warning -->
-            <p
-              v-if="!user.token"
-              class="text-sm text-red-500 mt-3 text-center"
-            >
-              Please log in to place your order.
-            </p>
           </div>
         </div>
       </div>
@@ -41,6 +33,9 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
 import CheckoutHeader from '@/components/Checkout/CheckoutHeader.vue'
 import CheckoutForm from '@/components/Checkout/CheckoutForm.vue'
 import CheckoutPayment from '@/components/Checkout/CheckoutPayment.vue'
@@ -51,13 +46,15 @@ import { useUserStore } from '@/stores/userStore'
 
 const checkout = useCheckoutStore()
 const user = useUserStore()
+const router = useRouter()
+
+onMounted(() => {
+  if (!user.token) {
+    router.replace('/login')
+  }
+})
 
 async function handleConfirm() {
-  if (!user.token) {
-    alert('Please login to continue')
-    return
-  }
-
   try {
     await checkout.submitOrder()
     alert('Order placed successfully!')
@@ -67,3 +64,4 @@ async function handleConfirm() {
   }
 }
 </script>
+

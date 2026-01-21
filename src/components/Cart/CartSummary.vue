@@ -92,8 +92,9 @@ async function handleCheckout() {
   if (cartStore.cartCount === 0) return
 
   // If logged in → sync cart before checkout
-  if (userStore.token) {
-    await cartStore.syncCartToBackend()
+  if (!userStore.token) {
+    router.push('/login')
+    return
   }
 
   router.push('/checkout')

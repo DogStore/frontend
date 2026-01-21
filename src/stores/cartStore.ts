@@ -9,6 +9,10 @@ import { useUserStore } from '@/stores/userStore'
 
 export interface CartItem extends Product {
   quantity: number
+
+  // backend identifiers
+  cartItemId?: string    
+  productId?: string  
 }
 
 /* ================= STORE ================= */
@@ -25,6 +29,8 @@ export const useCartStore = defineStore('cart', () => {
   /* ---------- STORAGE ---------- */
 
   function loadFromStorage() {
+    if (userStore.token) return
+
     const storedCart = localStorage.getItem('cart')
     const storedCoupon = localStorage.getItem('coupon')
 
@@ -44,6 +50,8 @@ export const useCartStore = defineStore('cart', () => {
 
   /* ================= GETTERS ================= */
 
+  const isAuthenticated = computed(() => !!userStore.token)
+
   const cartCount = computed(() =>
     cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
   )
@@ -60,7 +68,7 @@ export const useCartStore = defineStore('cart', () => {
   )
 
   const taxes = computed(() =>
-    cartCount.value === 0 ? 0 : subtotal.value * 0.05
+    cartCount.value === 0 ? 0 : subtotal.value * 0.025
   )
 
   const discount = computed(() => {
@@ -81,44 +89,83 @@ export const useCartStore = defineStore('cart', () => {
 
   /* ================= CART ACTIONS ================= */
 
-  function addToCart(product: Product) {
-    const existing = cartItems.value.find(i => i.id === product.id)
+  async function addToCart(product: Product) {
+    //GUEST USER → localStorage ONLY
+    if (!isAuthenticated.value) {
+      const existing = cartItems.value.find(i => i.id === product.id)
 
-    if (existing) {
-      existing.quantity += 1
-    } else {
-      cartItems.value.push({ ...product, quantity: 1 })
+      if (existing) {
+        existing.quantity += 1
+      } else {
+        cartItems.value.push({ ...product, quantity: 1 })
+      }
+
+      saveToStorage()
+      return
     }
 
-    saveToStorage()
+    //LOGGED-IN USER → BACKEND ONLY
+    await userApi.post('/carts', {
+      productId: product.id,
+      quantity: 1
+    })
+
+    await fetchBackendCart()
   }
 
-  function increaseQuantity(productId: string) {
-    const item = cartItems.value.find(i => i.id === productId)
-    if (!item) return
+  async function increaseQuantity(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId) return
 
+      await userApi.put(`/carts/${item.cartItemId}`, {
+        quantity: item.quantity + 1
+      })
+
+      await fetchBackendCart()
+      return
+    }
+
+    // guest logic unchanged
+    const item = cartItems.value.find(i => i.id === id)
+    if (!item) return
     item.quantity += 1
     saveToStorage()
   }
 
-  function decreaseQuantity(productId: string) {
-    const item = cartItems.value.find(i => i.id === productId)
-    if (!item || item.quantity <= 1) return
+  async function decreaseQuantity(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId || item.quantity <= 1) return
 
+      await userApi.put(`/carts/${item.cartItemId}`, {
+        quantity: item.quantity - 1
+      })
+
+      await fetchBackendCart()
+      return
+    }
+
+    const item = cartItems.value.find(i => i.id === id)
+    if (!item || item.quantity <= 1) return
     item.quantity -= 1
     saveToStorage()
   }
 
-  function removeFromCart(productId: string) {
-    cartItems.value = cartItems.value.filter(i => i.id !== productId)
+  async function removeFromCart(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId) return
 
-    if (cartItems.value.length === 0) {
-      appliedCoupon.value = null
-      couponError.value = null
+      await userApi.delete(`/carts/${item.cartItemId}`)
+      await fetchBackendCart()
+      return
     }
 
+    cartItems.value = cartItems.value.filter(i => i.id !== id)
     saveToStorage()
   }
+
 
   function clearCart() {
     cartItems.value = []
@@ -175,36 +222,62 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   /* ---------- AUTO CLEANUP ---------- */
-  watch(cartCount, (count) => {
-    if (count === 0 && appliedCoupon.value) {
-      appliedCoupon.value = null
-      couponError.value = null
-      localStorage.removeItem('coupon')
+  watch(
+    () => userStore.token,
+    async (token) => {
+      if (token) {
+        cartItems.value = []
+
+        await syncCartToBackend()
+        await fetchBackendCart()
+      }
     }
-  })
+  )
 
   /* ================= BACKEND SYNC ================= */
 
-  /**
-   * Sync local cart to backend by sending each item individually
-   * Uses POST /api/cart with productId + quantity
-   * Clears local cart on success
-   */
+  async function initCart() {
+    // Logged-in → fetch from backend
+    if (userStore.token) {
+      await fetchBackendCart()
+      return
+    }
+
+    // Guest → load from localStorage
+    loadFromStorage()
+  }
+
+  async function fetchBackendCart() {
+    if (!userStore.token) return
+
+    const res = await userApi.get('/carts')
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cartItems.value = res.data.cart.items.map((item: any) => ({
+      id: item.product._id,          
+      productId: item.product._id,   
+      cartItemId: item._id,         
+      name: item.name,
+      slug: item.slug,
+      images: [item.image],
+      price: item.price,
+      quantity: item.quantity
+    }))
+  }
+
   async function syncCartToBackend() {
-    if (!userStore.token || cartItems.value.length === 0) return
+    // Guests cannot sync
+    if (!userStore.token) return
 
-    try {
-      for (const item of cartItems.value) {
-        await userApi.post('/carts', {
-          productId: item.id,
-          quantity: item.quantity
-        })
-      }
+    // If cart already exists in backend, do NOT sync again
+    const alreadySynced = cartItems.value.some(item => item.cartItemId)
+    if (alreadySynced) return
 
-      // ✅ DO NOTHING ELSE
-      // NO clearing here
-    } catch (err) {
-      console.error('Failed to sync cart', err)
+    for (const item of cartItems.value) {
+      await userApi.post('/carts', {
+        productId: item.productId ?? item.id,
+        quantity: item.quantity
+      })
     }
   }
 
@@ -222,12 +295,10 @@ export const useCartStore = defineStore('cart', () => {
     async (token) => {
       if (token) {
         await syncCartToBackend()
+        await fetchBackendCart() 
       }
     }
   )
-
-  /* ---------- INIT ---------- */
-  loadFromStorage()
 
   return {
     // state
@@ -245,6 +316,7 @@ export const useCartStore = defineStore('cart', () => {
     total,
 
     // actions
+    initCart,
     addToCart,
     increaseQuantity,
     decreaseQuantity,

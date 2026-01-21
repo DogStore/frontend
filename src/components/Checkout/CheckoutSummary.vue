@@ -62,10 +62,6 @@
         Your cart is empty
       </p>
 
-      <p v-else-if="!canConfirm">
-        Please login to place your order
-      </p>
-
       <p v-else-if="!checkout.isFormValid">
         Please complete customer information
       </p>
