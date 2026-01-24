@@ -200,7 +200,7 @@ import OrderTable from '@/components/admin/Order/OrderTable.vue'
 const store = useAdminOrderStore()
 
 const search = ref('')
-const statusFilter = ref<'all' | 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'canceled'>('all')
+const statusFilter = ref<'all' | 'pending' | 'paid' | 'canceled'>('all')
 
 onMounted(() => {
   store.loadOrders()

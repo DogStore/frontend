@@ -16,10 +16,6 @@ const isSidebarOpened = ref(true)
     </aside>
 
     <div class="flex flex-col flex-1">
-      <header class="bg-white border-b border-gray-200">
-        <NavBar :isSidebarOpened="isSidebarOpened" />
-      </header>
-
       <main class="flex-1 overflow-auto p-6 bg-gray-50">
         <RouterView />
       </main>

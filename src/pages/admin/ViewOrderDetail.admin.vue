@@ -99,8 +99,7 @@
         class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
       >
         <div>
-          <p class="text-gray-500 text-sm mb-1">Customer</p>
-          <p class="font-semibold text-lg">{{ order.customerName || '—' }}</p>
+          <p class="text-gray-500 text-sm mb-1">Phone Number</p>
           <p class="text-gray-600 text-sm">{{ order.phone || '—' }}</p>
         </div>
 

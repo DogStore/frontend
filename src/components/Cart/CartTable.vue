@@ -2,7 +2,7 @@
   <div class="bg-white rounded-2xl shadow p-6">
     <!-- Table Header -->
     <div
-      class="grid grid-cols-4 bg-[#FFA500] text-black font-bold text-[16px] rounded-lg py-3 px-4 text-center"
+      class="grid grid-cols-4 bg-[#FFA500] text-black font-bold text-[12px] md:text-[16px] rounded-lg py-3 px-4 text-center"
     >
       <span>Product</span>
       <span>Price</span>

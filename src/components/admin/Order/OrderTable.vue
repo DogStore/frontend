@@ -17,7 +17,7 @@
         <thead class="bg-gray-100 sticky top-0 z-10">
           <tr class="text-left text-sm font-semibold text-gray-700">
             <th class="px-4 py-3">Order ID</th>
-            <th class="px-4 py-3">Customer</th>
+            <th class="px-4 py-3">Phone Number</th>
             <th class="px-4 py-3">Date</th>
             <th class="px-4 py-3 text-center">Items</th>
             <th class="px-4 py-3">Total</th>
@@ -38,7 +38,7 @@
             </td>
 
             <td class="px-4 py-3">
-              {{ order.customerName || '—' }}
+              {{ order.phone || '—' }}
             </td>
 
             <td class="px-4 py-3 text-gray-500">
