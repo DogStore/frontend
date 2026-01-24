@@ -88,7 +88,7 @@
 
     <!-- ADD TO CART -->
     <button
-      @click.stop="addCart"
+      @click.stop="handleAddtoCart(product)"
       class="w-full px-4 py-2 rounded-md transition font-Nunito flex items-center justify-center gap-2 mt-auto"
       :class="
         isInCart
@@ -191,6 +191,9 @@ function goToProduct() {
     name: 'ProductDetail',
     params: { slug: props.product.slug },
   })
+}
+function handleAddtoCart(product: Product){
+  cart.addToCart(product);
 }
 
 // STARS

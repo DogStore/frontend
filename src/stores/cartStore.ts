@@ -1,242 +1,338 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Product } from '@/types/product'
-import {
-  getCart,
-  addToCartApi,
-  removeFromCartApi,
-} from '@/services/cart.service'
+import type { Coupon } from '@/types/coupon'
+import { userApi } from '@/services/api'
+import { useUserStore } from '@/stores/userStore'
 
-// Helper function to get product ID (handles both _id and id)
-function getProductId(product: any): string {
-  return product.id || product._id || product.productId || ''
+/* ================= TYPES ================= */
+
+export interface CartItem extends Product {
+  quantity: number
+
+  // backend identifiers
+  cartItemId?: string
+  productId?: string
 }
 
+/* ================= STORE ================= */
+
 export const useCartStore = defineStore('cart', () => {
-  const cartItems = ref<any[]>([])
-  const cartCount = ref(0)
-  const isLoading = ref(false)
+  /* ---------- STATE ---------- */
+  const cartItems = ref<CartItem[]>([])
+  const appliedCoupon = ref<Coupon | null>(null)
+  const couponError = ref<string | null>(null)
+  const applyingCoupon = ref(false)
 
-  const isLoggedIn = () => !!localStorage.getItem('authToken')
+  const userStore = useUserStore()
 
-  /* ---------------- LOAD ---------------- */
-  async function load() {
-    try {
-      isLoading.value = true
+  /* ---------- STORAGE ---------- */
 
-      //  Guest
-      if (!isLoggedIn()) {
-        const storedCart = localStorage.getItem('cart')
-        cartItems.value = storedCart ? JSON.parse(storedCart) : []
-        cartCount.value = cartItems.value.length
-        console.log(' Loaded cart from localStorage:', cartItems.value.length, 'items')
-        console.log(' LocalStorage cart IDs:', cartItems.value.map(p => ({
-          name: p.name,
-          id: getProductId(p)
-        })))
-        return
-      }
+  function loadFromStorage() {
+    if (userStore.token) return
 
-      //  Logged in
-      console.log(' Loading cart from API...')
-      const res = await getCart()
-      console.log(' RAW API Response:', JSON.stringify(res.data, null, 2))
+    const storedCart = localStorage.getItem('cart')
+    const storedCoupon = localStorage.getItem('coupon')
 
-      // Handle different API response structures
-      let items: any[] = []
-
-      if (res.data.cart) {
-        // If cart is an object with items array
-        if (Array.isArray(res.data.cart.items)) {
-          items = res.data.cart.items
-          console.log(' Found cart.items array:', items.length, 'items')
-        }
-        // If cart is directly an array
-        else if (Array.isArray(res.data.cart)) {
-          items = res.data.cart
-          console.log(' Found cart as array:', items.length, 'items')
-        }
-      }
-
-      console.log(' Items before normalization:', items)
-
-      // Normalize products - ensure each has an 'id' field
-      cartItems.value = items.map((item: any) => {
-        // Check if the item has a nested product object
-        const product = item.product || item.productId || item
-
-        // Get the ID from various possible locations
-        const productId = getProductId(product) || getProductId(item)
-
-        console.log(' Processing item:', {
-          itemStructure: Object.keys(item),
-          hasProduct: !!item.product,
-          hasProductId: !!item.productId,
-          extractedId: productId,
-          productName: product.name || item.name
-        })
-
-        return {
-          ...product,
-          id: productId, // Normalize to always use 'id'
-          _id: product._id || item._id, // Keep original _id if it exists
-          productId: item.productId // Keep productId reference if it exists
-        }
-      })
-
-      cartCount.value = cartItems.value.length
-      console.log(' Cart loaded:', cartItems.value.length, 'items')
-      console.log(' Normalized Cart IDs:', cartItems.value.map(c => ({
-        name: c.name,
-        id: c.id,
-        _id: c.id,
-        productId: c.id
-      })))
-    } catch (error) {
-      console.error(' Error loading cart:', error)
-      // Fallback to empty cart on error
-      cartItems.value = []
-      cartCount.value = 0
-    } finally {
-      isLoading.value = false
-    }
+    cartItems.value = storedCart ? JSON.parse(storedCart) : []
+    appliedCoupon.value = storedCoupon ? JSON.parse(storedCoupon) : null
   }
 
-  /* ---------------- LOCAL SAVE ---------------- */
-  function saveLocal() {
+  function saveToStorage() {
     localStorage.setItem('cart', JSON.stringify(cartItems.value))
-    localStorage.setItem('cartCount', String(cartCount.value))
-    console.log(' Cart saved to localStorage:', cartItems.value.length, 'items')
+
+    if (appliedCoupon.value) {
+      localStorage.setItem('coupon', JSON.stringify(appliedCoupon.value))
+    } else {
+      localStorage.removeItem('coupon')
+    }
   }
 
-  /* ---------------- ADD ---------------- */
-  async function addToCart(product: any) {
-    // Ensure cartItems is always an array
-    if (!Array.isArray(cartItems.value)) {
-      cartItems.value = []
+  /* ================= GETTERS ================= */
+
+  const isAuthenticated = computed(() => !!userStore.token)
+
+  const cartCount = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+  )
+
+  const subtotal = computed(() =>
+    cartItems.value.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    )
+  )
+
+  const delivery = computed(() =>
+    cartCount.value === 0 ? 0 : subtotal.value > 50 ? 0 : 5
+  )
+
+  const taxes = computed(() =>
+    cartCount.value === 0 ? 0 : subtotal.value * 0.025
+  )
+
+  const discount = computed(() => {
+    if (!appliedCoupon.value || cartCount.value === 0) return 0
+
+    if (appliedCoupon.value.type === 'percent') {
+      return (subtotal.value * appliedCoupon.value.value) / 100
     }
 
-    const productId = getProductId(product)
+    return appliedCoupon.value.value
+  })
 
-    if (!productId) {
-      console.error(' Product has no valid ID:', product)
+  const total = computed(() =>
+    cartCount.value === 0
+      ? 0
+      : subtotal.value + delivery.value + taxes.value - discount.value
+  )
+
+  /* ================= CART ACTIONS ================= */
+
+  async function addToCart(product: Product) {
+    //GUEST USER → localStorage ONLY
+    if (!isAuthenticated.value) {
+      const existing = cartItems.value.find(i => i.id === product.id)
+
+      if (existing) {
+        existing.quantity += 1
+      } else {
+        cartItems.value.push({ ...product, quantity: 1 })
+      }
+
+      saveToStorage()
       return
     }
 
-    console.log(' Checking if product exists in cart...')
-    console.log(' Looking for ID:', productId)
-    console.log(' Current cart IDs:', cartItems.value.map(p => getProductId(p)))
-
-    const exists = cartItems.value.some(p => getProductId(p) === productId)
-    if (exists) {
-      console.log(' Product already in cart:', product.name)
-      return
-    }
-
-    cartItems.value.push({
-      product: productId,
-      name: product.name,
-      slug: product.slug,
-      image: product.images?.[0] || '',
-      price: product.price,
+    //LOGGED-IN USER → BACKEND ONLY
+    await userApi.post('/carts', {
+      productId: product.id,
       quantity: 1
     })
 
-    cartCount.value++
-    console.log(' Added to cart:', product.name, 'ID:', productId)
-    console.log(' Cart now has:', cartItems.value.length, 'items')
+    await fetchBackendCart()
+  }
+
+  async function increaseQuantity(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId) return
+
+      await userApi.put(`/carts/${item.cartItemId}`, {
+        quantity: item.quantity + 1
+      })
+
+      await fetchBackendCart()
+      return
+    }
+
+    // guest logic unchanged
+    const item = cartItems.value.find(i => i.id === id)
+    if (!item) return
+    item.quantity += 1
+    saveToStorage()
+  }
+
+  async function decreaseQuantity(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId || item.quantity <= 1) return
+
+      await userApi.put(`/carts/${item.cartItemId}`, {
+        quantity: item.quantity - 1
+      })
+
+      await fetchBackendCart()
+      return
+    }
+
+    const item = cartItems.value.find(i => i.id === id)
+    if (!item || item.quantity <= 1) return
+    item.quantity -= 1
+    saveToStorage()
+  }
+
+  async function removeFromCart(id: string) {
+    if (isAuthenticated.value) {
+      const item = cartItems.value.find(i => i.id === id)
+      if (!item?.cartItemId) return
+
+      await userApi.delete(`/carts/${item.cartItemId}`)
+      await fetchBackendCart()
+      return
+    }
+
+    cartItems.value = cartItems.value.filter(i => i.id !== id)
+    saveToStorage()
+  }
+
+
+  function clearCart() {
+    cartItems.value = []
+    appliedCoupon.value = null
+    couponError.value = null
+    saveToStorage()
+  }
+
+  /* ================= COUPON ACTIONS ================= */
+
+  async function applyCoupon(code: string) {
+    if (!code.trim() || subtotal.value <= 0) return
+
+    applyingCoupon.value = true
+    couponError.value = null
 
     try {
-      if (isLoggedIn()) {
-        console.log(' Syncing add to API with ID:', productId)
-        await addToCartApi(productId)
-        console.log(' Add synced to API')
-        // Reload to ensure we have the correct server state
-        await load()
-      } else {
-        saveLocal()
+      const res = await userApi.post('/orders/validate-coupon', {
+        couponCode: code.trim().toUpperCase(),
+        cartTotal: subtotal.value,
+      })
+
+      if (!res.data.valid) {
+        appliedCoupon.value = null
+        couponError.value = res.data.message || 'Invalid coupon'
+        return
       }
-    } catch (error) {
-      console.error(' Error adding to cart:', error)
-      // Rollback on error
-      cartItems.value = cartItems.value.filter(p => getProductId(p) !== productId)
-      cartCount.value = cartItems.value.length
+
+      appliedCoupon.value = {
+        code: res.data.coupon.code,
+        title: res.data.coupon.title,
+        type: 'fixed',
+        value: res.data.discountAmount,
+        isActive: true,
+        usageLimitPerUser: 1,
+        usedCount: 0,
+      } as Coupon
+
+      saveToStorage()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      appliedCoupon.value = null
+      couponError.value =
+        err.response?.data?.message || 'Coupon validation failed'
+    } finally {
+      applyingCoupon.value = false
     }
   }
 
-  /* ---------------- REMOVE ---------------- */
-  async function removeFromCart(productIdOrProduct: string | any) {
-    // Ensure cartItems is always an array
-    if (!Array.isArray(cartItems.value)) {
-      cartItems.value = []
-      return
-    }
+  function removeCoupon() {
+    appliedCoupon.value = null
+    couponError.value = null
+    saveToStorage()
+  }
 
-    // Get the product ID (handles both string ID or product object)
-    const productId = typeof productIdOrProduct === 'string'
-      ? productIdOrProduct
-      : getProductId(productIdOrProduct)
+  /* ---------- AUTO CLEANUP ---------- */
+  watch(
+    () => userStore.token,
+    async (token) => {
+      if (token) {
+        cartItems.value = []
 
-    if (!productId) {
-      console.error(' Invalid product ID')
-      return
-    }
-
-    console.log(' Attempting to remove product ID:', productId)
-    console.log(' Current cart IDs:', cartItems.value.map(p => getProductId(p)))
-
-    // Store the item before removing for potential rollback
-    const previousItems = [...cartItems.value]
-
-    // Find and remove by comparing IDs
-    const initialLength = cartItems.value.length
-    cartItems.value = cartItems.value.filter(p => getProductId(p) !== productId)
-    const removed = initialLength !== cartItems.value.length
-
-    if (!removed) {
-      console.warn(' Product not found in cart:', productId)
-      return
-    }
-
-    cartCount.value = cartItems.value.length
-    console.log(' Cart after removal:', cartItems.value.length, 'items')
-
-    try {
-      if (isLoggedIn()) {
-        console.log(' Syncing remove to API with ID:', productId)
-        await removeFromCartApi(productId)
-        console.log(' Remove synced to API')
-      } else {
-        saveLocal()
+        await syncCartToBackend()
+        await fetchBackendCart()
       }
-    } catch (error) {
-      console.error(' Error removing from cart:', error)
-      // Rollback on error
-      cartItems.value = previousItems
-      cartCount.value = previousItems.length
-      console.log('↩️ Rolled back cart')
-      throw error
+    }
+  )
+
+  /* ================= BACKEND SYNC ================= */
+
+  async function initCart() {
+    const storedCoupon = localStorage.getItem('coupon')
+
+    if (userStore.token) {
+      await fetchBackendCart()
+
+      appliedCoupon.value = storedCoupon
+        ? JSON.parse(storedCoupon)
+        : null
+
+      return
+    }
+
+    // guest
+    loadFromStorage()
+  }
+
+  async function fetchBackendCart() {
+    if (!userStore.token) return
+
+    const res = await userApi.get('/carts')
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cartItems.value = res.data.cart.items.map((item: any) => ({
+      id: item.product._id,
+      productId: item.product._id,
+      cartItemId: item._id,
+      name: item.name,
+      slug: item.slug,
+      images: [item.image],
+      price: item.price,
+      quantity: item.quantity
+    }))
+  }
+
+  async function syncCartToBackend() {
+    // Guests cannot sync
+    if (!userStore.token) return
+
+    // If cart already exists in backend, do NOT sync again
+    const alreadySynced = cartItems.value.some(item => item.cartItemId)
+    if (alreadySynced) return
+
+    for (const item of cartItems.value) {
+      await userApi.post('/carts', {
+        productId: item.productId ?? item.id,
+        quantity: item.quantity
+      })
     }
   }
 
-  /* ---------------- CHECK IF IN CART ---------------- */
-  function isInCart(product: any): boolean {
-    const productId = getProductId(product)
-    const result = cartItems.value.some(p => p.product === productId)
-    console.log(' isInCart check:', productId, '→', result)
-    return result
+  function clearLocalCart() {
+    cartItems.value = []
+    appliedCoupon.value = null
+    couponError.value = null
+    localStorage.removeItem('cart')
+    localStorage.removeItem('coupon')
   }
 
-  /* ---------------- INIT ---------------- */
-  load()
+  /* ---------- LOGIN WATCHER: sync cart when user logs in ---------- */
+  watch(
+    () => userStore.token,
+    async (token) => {
+      if (token) {
+        await syncCartToBackend()
+        await fetchBackendCart()
+      }
+    }
+  )
 
   return {
+    // state
     cartItems,
+    appliedCoupon,
+    couponError,
+    applyingCoupon,
+
+    // getters
     cartCount,
-    isLoading,
+    subtotal,
+    delivery,
+    taxes,
+    discount,
+    total,
+
+    // actions
+    initCart,
     addToCart,
+    increaseQuantity,
+    decreaseQuantity,
     removeFromCart,
-    isInCart,
-    load,
+    clearCart,
+    applyCoupon,
+    removeCoupon,
+    loadFromStorage,
+    clearLocalCart,
+    // backend sync
+    syncCartToBackend
   }
 })

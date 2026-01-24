@@ -7,6 +7,9 @@ import PublicLayout from '@/layouts/PublicLayout.vue'
 import CategoryPage from '@/pages/user/CategoryPage.vue'
 import ProductDetail from '@/pages/user/ProductDetailPage.vue'
 import Bestsellingpage from '@/pages/user/BestsellingPage.vue'
+import CartPage from '@/pages/user/CartPage.vue'
+import CheckoutPage from '@/pages/user/CheckoutPage.vue'
+import OrderSuccess from '@/pages/user/OrderSuccess.vue'
 
 const publicRoutes: RouteRecordRaw[] = [
   {
@@ -44,7 +47,22 @@ const publicRoutes: RouteRecordRaw[] = [
         name: 'bestSelling',
         component: Bestsellingpage,
       },
-    ],
+      {
+        path: "/cart",
+        name: "cart",
+        component: CartPage,
+      },
+      {
+        path: "/Checkout",
+        name: "checkout",
+        component: CheckoutPage,
+      },
+      {
+        path: '/order-success',
+        name: 'OrderSuccess',
+        component: OrderSuccess,
+      }
+    ]
   },
 ]
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Product } from '../types/product'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'

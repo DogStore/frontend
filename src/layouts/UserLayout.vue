@@ -6,12 +6,25 @@
     </header>
 
     <!-- Main content area -->
-    <main class="container mx-auto px-4 py-8">
+    <main :class="mainClass">
       <RouterView />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-// Nothing needed here unless you add logic
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const mainClass = computed(() => {
+  // Pages that need compact spacing
+  if (route.path === '/cart' || route.path === '/checkout') {
+    return 'pt-35 sm:pt-35 lg:pt-35 pb-40'
+  }
+
+  // Default (Home & other pages)
+  return 'pt-[325px] sm:pt-[327px] lg:pt-[357px] mb-50 text-center'
+})
 </script>

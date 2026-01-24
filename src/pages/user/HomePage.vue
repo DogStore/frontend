@@ -148,7 +148,6 @@ const productStore = useProductStore()
 
 // Load recent items on page load
 recentStore.loadFromStorage()
-cart.load()
 favorite.load()
 
 // Showcase
