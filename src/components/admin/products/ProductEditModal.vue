@@ -524,7 +524,7 @@ const save = () => {
   // Text fields
   formData.append('name', form.value.name.trim())
   formData.append('description', form.value.description.trim())
-  formData.append('originalPrice', form.value.originalPrice.toString())
+  formData.append('regularPrice', form.value.originalPrice.toString())
   formData.append('discount', form.value.discount.toString())
   formData.append('category', form.value.category)
   formData.append('stock', form.value.stock.toString())

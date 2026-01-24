@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen">
     <CartHeader />
 
     <div class="container mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">

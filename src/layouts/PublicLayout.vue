@@ -65,7 +65,6 @@ onMounted(() => {
 const handleCartUpdate = (newValue: number) => {
   cartCount.value = newValue
 }
-const cartStore = useCartStore()
 
 const mainClass = computed(() => {
 

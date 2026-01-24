@@ -16,7 +16,7 @@ const showAddModal = ref(false)
 const searchQuery = ref('')
 
 onMounted(() => {
-  productStore.fetchAdminProducts() // fetchAdminProducts instead of fetchProducts() to show all status
+  productStore.fetchAdminProducts()
 })
 
 const handleEdit = (product: Product) => {
@@ -32,19 +32,31 @@ const handleDelete = (productId: string) => {
 const handleConfirmDelete = async () => {
   if (deleteProdutId.value) {
     await productStore.deleteProduct(deleteProdutId.value)
+
+    await productStore.fetchAdminProducts()
+
     showDeleteModal.value = false
   }
 }
 
+
 const handleSaveEdit = async (formData: FormData) => {
   await productStore.updateProduct(editingProduct.value!.id, formData)
+
+  await productStore.fetchAdminProducts()
+
   showEditModal.value = false
 }
+
 
 const handleAddProduct = async (formData: FormData) => {
   try {
     await productStore.createProduct(formData)
+
+    await productStore.fetchAdminProducts()
+
     showAddModal.value = false
+
   } catch (error: any) {
     console.error('Add product error:', error)
     alert('Failed to create product')

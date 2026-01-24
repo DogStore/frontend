@@ -245,16 +245,19 @@ export const useCartStore = defineStore('cart', () => {
     const res = await userApi.get('/carts')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    cartItems.value = res.data.cart.items.map((item: any) => ({
-      id: item.product._id,
-      productId: item.product._id,
-      cartItemId: item._id,
-      name: item.name,
-      slug: item.slug,
-      images: [item.image],
-      price: item.price,
-      quantity: item.quantity
-    }))
+    cartItems.value = res.data.cart.items
+      .filter((item: any) => item.product)
+      .map((item: any) => ({
+        id: item.product._id,
+        productId: item.product._id,
+        cartItemId: item._id,
+        name: item.name,
+        slug: item.slug,
+        images: [item.image],
+        price: item.price,
+        quantity: item.quantity
+      }))
+
   }
 
   async function syncCartToBackend() {
