@@ -29,9 +29,6 @@
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
           <option value="paid">Paid</option>
-          <option value="processing">Processing</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
           <option value="canceled">Canceled</option>
         </select>
 

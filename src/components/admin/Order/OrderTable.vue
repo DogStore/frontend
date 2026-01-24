@@ -98,9 +98,6 @@ function statusClass(status: string) {
   return {
     pending: `${base} bg-orange-100 text-orange-700`,
     paid: `${base} bg-green-100 text-green-700`,
-    processing: `${base} bg-gray-100 text-gray-700`,
-    shipped: `${base} bg-blue-100 text-blue-700`,
-    delivered: `${base} bg-purple-100 text-purple-700`,
     canceled: `${base} bg-red-100 text-red-700`,
   }[status] || `${base} bg-gray-100 text-gray-700`
 }

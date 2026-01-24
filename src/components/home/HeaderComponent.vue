@@ -168,18 +168,34 @@
               @click="showProfileMenu = !showProfileMenu"
               class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-100 rounded-lg transition"
             >
-              <div
-                class="w-7 h-7 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xs"
-              >
-                {{ userInitial }}
+              <!-- Loading state -->
+              <div v-if="imageLoading" class="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+              <!-- Avatar with picture -->
+              <div v-else-if="userStore.profilePicture && !imageError" class="flex items-center">
+                 <img
+                  :src="userStore.profilePicture"
+                  alt="Profile"
+                  class="w-10 h-10 rounded-full object-cover border border-gray-300"
+                  loading="lazy"
+                  @error="handleImageError"
+                />
               </div>
-              <span class="hidden lg:inline text-sm font-medium">{{ userName }}</span>
-              <svg
-                class="w-3 h-3 transition-transform"
-                :class="{ 'rotate-180': showProfileMenu }"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <!-- Avatar without picture -->
+              <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300">
+                <span class="text-gray-700 font-medium text-sm">
+                  <!-- {{ userStore.name ? userStore.name[0]?.toUpperCase() : 'U' }} -->
+                  {{ getUserInitials() }}
+                </span>
+              </div>
+            </button>
+            <div
+              v-if="showProfileMenu"
+              class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10"
+            >
+              <router-link
+                to="/user/profile"
+                class="block px-4 py-2 hover:bg-gray-100"
+                @click="showProfileMenu = false"
               >
                 <path
                   stroke-linecap="round"
@@ -187,8 +203,8 @@
                   stroke-width="2"
                   d="M19 9l-7 7-7-7"
                 />
-              </svg>
-            </button>
+              </router-link>
+            </div>
 
             <transition name="dropdown">
               <div
@@ -379,6 +395,13 @@ import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useProductStore } from '@/stores/productStore'
 import { useUserStore } from '@/stores/userStore'
+import axios from 'axios'
+
+// Assets
+import foodIcon from '@/assets/HeaderImages/Food.png'
+import clothesIcon from '@/assets/HeaderImages/Clothes.png'
+import toyIcon from '@/assets/HeaderImages/Toy.png'
+import moreIcon from '@/assets/HeaderImages/More.png'
 import { useToast } from 'vue-toast-notification'
 
 // Stores
@@ -396,6 +419,7 @@ const isMobileMenuOpen = ref(false)
 const isMobileDropdownOpen = ref(false)
 const showProfileMenu = ref(false)
 const isScrolled = ref(false)
+const imageLoading = ref(false)
 
 // Computed
 const isLoggedIn = computed(() => !!userStore.token)
@@ -415,6 +439,81 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   document.body.style.overflow = ''
 })
+const API_BASE = 'https://backend-kanu.onrender.com/api'
+
+// Add this function to fetch profile picture
+const fetchProfilePicture = async () => {
+  if (!userStore.token || userStore.profilePicture) {
+    return // Don't fetch if already have picture or no token
+  }
+
+  imageLoading.value = true
+  try {
+    const response = await axios.get(`${API_BASE}/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${userStore.token}`
+      }
+    })
+
+    const data = response.data.user || response.data // handle both structures
+
+    // Try common field names (in order of likelihood)
+    const pictureUrl =
+      data.userImage ||
+      data.profilePicture ||
+      data.avatar ||
+      data.photo ||
+      data.image ||
+      (data.user && data.user.userImage) ||
+      (data.user && data.user.profilePicture)
+
+    if (pictureUrl) {
+      userStore.updateProfilePicture(pictureUrl)
+      imageError.value = false
+    } else {
+      console.warn('No profile picture found in response')
+    }
+  } catch (err) {
+    console.error('Failed to fetch profile picture:', err)
+  } finally {
+    imageLoading.value = false
+  }
+}
+
+// Watch for login state changes
+watch(isLoggedIn, (loggedIn) => {
+  if (loggedIn) {
+    fetchProfilePicture()
+  } else {
+    userStore.updateProfilePicture('') // Clear on logout
+  }
+})
+
+// Fetch on component mount if already logged in
+onMounted(() => {
+  if (isLoggedIn.value && !userStore.profilePicture) {
+    fetchProfilePicture()
+  }
+})
+
+
+const imageError = ref(false)
+
+const getUserInitials = () => {
+  if (!userStore.name) return 'U'
+  return userStore.name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2)
+}
+
+const handleImageError = (event: Event) => {
+  imageError.value = true
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+}
 
 // Search
 const onSearch = async () => {

@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-full p-4 md:p-6 lg:p-12">
+  <div class="w-full p-4 md:p-6 lg:p-12 -mt-20 lg:-mt-10">
     <div class="text-black text-3xl font-bold">Best Selling Products</div>
     <!-- SORT - Modern Header - Responsive -->
     <div

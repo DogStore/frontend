@@ -306,12 +306,16 @@
             <label class="block text-sm font-medium mb-1">
               Country Name <span class="text-red-500">*</span>
             </label>
-            <input
+
+            <select
               v-model="form.countryName"
-              type="text"
-              placeholder="e.g. Cambodia"
               class="w-full rounded-lg border outline-none border-orange-300 px-4 py-2 focus:ring-1 focus:ring-orange-400 focus:border-orange-400 transition"
-            />
+            >
+              <option value="" disabled>Select country</option>
+              <option v-for="c in countries" :key="c" :value="c">
+                {{ c }}
+              </option>
+            </select>
           </div>
         </div>
       </div>
@@ -355,6 +359,14 @@ type ProductForm = {
   isActive: boolean
   countryName: string
 }
+
+const countries = [
+  'Cambodia',
+  'Australia',
+  'France',
+  'China',
+  'Japan',
+]
 
 const props = defineProps<{
   show: boolean

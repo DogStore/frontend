@@ -220,20 +220,6 @@ export const useCartStore = defineStore('cart', () => {
     couponError.value = null
     saveToStorage()
   }
-
-  /* ---------- AUTO CLEANUP ---------- */
-  watch(
-    () => userStore.token,
-    async (token) => {
-      if (token) {
-        cartItems.value = []
-
-        await syncCartToBackend()
-        await fetchBackendCart()
-      }
-    }
-  )
-
   /* ================= BACKEND SYNC ================= */
 
   async function initCart() {
