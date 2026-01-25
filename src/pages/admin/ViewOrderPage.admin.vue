@@ -239,10 +239,10 @@ function exportPDF() {
 
   autoTable(doc, {
     startY: 30,
-    head: [['Order ID', 'Customer', 'Date', 'Items', 'Total', 'Status']],
+    head: [['Order ID', 'Number', 'Date', 'Items', 'Total', 'Status']],
     body: filteredOrders.value.map(o => [
       o.orderNumber,
-      o.customerName || 'Guest',
+      o.phone || 'No Number',
       o.updatedAt
         ? new Date(o.updatedAt).toLocaleDateString()
         : '-',

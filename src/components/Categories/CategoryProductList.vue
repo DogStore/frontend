@@ -1,7 +1,7 @@
 <template>
 
   <div class="w-full p-4 md:p-6 lg:p-12 -mt-20 lg:-mt-10">
-    <div class="text-black text-3xl font-bold">Best Selling Products</div>
+    <div class="text-black text-3xl font-bold">All Products</div>
     <!-- SORT - Modern Header - Responsive -->
     <div
       class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8 pb-4 border-b border-gray-200"
