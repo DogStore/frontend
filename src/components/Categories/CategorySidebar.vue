@@ -95,7 +95,7 @@ const route = useRoute()
 const categoryStore = useCategoryStore()
 
 // Static 5 countries
-const staticCountries = ['Cambodia', 'Australia', 'French', 'China', 'Japan']
+const staticCountries = ['Cambodia', 'Australia', 'France', 'China', 'Japan']
 
 const countryOptions = computed<string[]>(() => {
   return staticCountries

@@ -396,12 +396,6 @@ import { useCartStore } from '@/stores/cartStore'
 import { useProductStore } from '@/stores/productStore'
 import { useUserStore } from '@/stores/userStore'
 import axios from 'axios'
-
-// Assets
-import foodIcon from '@/assets/HeaderImages/Food.png'
-import clothesIcon from '@/assets/HeaderImages/Clothes.png'
-import toyIcon from '@/assets/HeaderImages/Toy.png'
-import moreIcon from '@/assets/HeaderImages/More.png'
 import { useToast } from 'vue-toast-notification'
 
 // Stores
@@ -439,42 +433,37 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   document.body.style.overflow = ''
 })
+
+watch(
+  () => userStore.profilePicture,
+  () => {
+    imageError.value = false
+  }
+)
+
 const API_BASE = 'https://backend-kanu.onrender.com/api'
 
-// Add this function to fetch profile picture
 const fetchProfilePicture = async () => {
-  if (!userStore.token || userStore.profilePicture) {
-    return // Don't fetch if already have picture or no token
-  }
+  if (!userStore.token) return
 
   imageLoading.value = true
   try {
     const response = await axios.get(`${API_BASE}/users/profile`, {
-      headers: {
-        Authorization: `Bearer ${userStore.token}`
-      }
+      headers: { Authorization: `Bearer ${userStore.token}` }
     })
 
-    const data = response.data.user || response.data // handle both structures
+    const data = response.data.user || response.data
 
-    // Try common field names (in order of likelihood)
     const pictureUrl =
       data.userImage ||
       data.profilePicture ||
       data.avatar ||
       data.photo ||
-      data.image ||
-      (data.user && data.user.userImage) ||
-      (data.user && data.user.profilePicture)
+      data.image
 
     if (pictureUrl) {
-      userStore.updateProfilePicture(pictureUrl)
-      imageError.value = false
-    } else {
-      console.warn('No profile picture found in response')
+      userStore.updateProfilePicture(pictureUrl + '?t=' + Date.now())
     }
-  } catch (err) {
-    console.error('Failed to fetch profile picture:', err)
   } finally {
     imageLoading.value = false
   }
@@ -491,11 +480,10 @@ watch(isLoggedIn, (loggedIn) => {
 
 // Fetch on component mount if already logged in
 onMounted(() => {
-  if (isLoggedIn.value && !userStore.profilePicture) {
+  if (isLoggedIn.value) {
     fetchProfilePicture()
   }
 })
-
 
 const imageError = ref(false)
 

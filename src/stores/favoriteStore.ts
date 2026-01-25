@@ -11,7 +11,6 @@ export type FavoriteProduct = Product & {
   addedAt: number
 }
 
-// Helper function to get product ID (handles both _id and id)
 function getProductId(product: any): string {
   return product.id || product._id || ''
 }
@@ -61,13 +60,12 @@ export const useFavoriteStore = defineStore('favorite', () => {
         }
       }
 
-      // Normalize products - ensure each has an 'id' field
       favorites.value = wishlistItems.map((p: any) => {
         const productId = getProductId(p)
         return {
           ...p,
-          id: productId, // Normalize to always use 'id'
-          _id: p._id, // Keep original _id if it exists
+          id: productId,
+          _id: p._id,
           addedAt: Date.now(),
         }
       })
@@ -76,7 +74,6 @@ export const useFavoriteStore = defineStore('favorite', () => {
       console.log(' Favorite IDs:', favorites.value.map(f => ({ name: f.name, id: f.id, _id: f.id })))
     } catch (error) {
       console.error(' Error loading wishlist:', error)
-      // Fallback to empty array on error
       favorites.value = []
     } finally {
       isLoading.value = false
@@ -91,12 +88,10 @@ export const useFavoriteStore = defineStore('favorite', () => {
 
   /* ---------------- TOGGLE ---------------- */
   async function toggleFavorite(product: any) {
-    // Ensure favorites is always an array
     if (!Array.isArray(favorites.value)) {
       favorites.value = []
     }
 
-    // Get the product ID (handles both _id and id)
     const productId = getProductId(product)
 
     if (!productId) {
@@ -107,24 +102,20 @@ export const useFavoriteStore = defineStore('favorite', () => {
     console.log(' Looking for product with ID:', productId)
     console.log(' Current favorites IDs:', favorites.value.map(f => getProductId(f)))
 
-    // Find product by comparing IDs (handles both _id and id)
     const index = favorites.value.findIndex((p) => getProductId(p) === productId)
     const exists = index >= 0
 
     console.log(exists ? ' Removing from favorites:' : ' Adding to favorites:', product.name)
     console.log('Found at index:', index)
 
-    // Store previous state for rollback
     const previousFavorites = [...favorites.value]
 
-    //  Optimistic UI
     if (exists) {
       favorites.value.splice(index, 1)
     } else {
-      // Normalize the product when adding
       favorites.value.unshift({
         ...product,
-        id: productId, // Normalize to always use 'id'
+        id: productId,
         addedAt: Date.now(),
       })
     }
@@ -133,7 +124,6 @@ export const useFavoriteStore = defineStore('favorite', () => {
 
     try {
       if (isLoggedIn()) {
-        //  Sync with backend
         console.log(' Syncing to API with ID:', productId)
         if (exists) {
           await removeFromWishlist(productId)
@@ -143,12 +133,10 @@ export const useFavoriteStore = defineStore('favorite', () => {
           console.log(' Add synced to API')
         }
       } else {
-        //  Guest → local only
         saveLocal()
       }
     } catch (err) {
       console.error(' Error toggling favorite:', err)
-      // Rollback if API fails
       favorites.value = previousFavorites
       console.log(' Rolled back favorites')
       throw err

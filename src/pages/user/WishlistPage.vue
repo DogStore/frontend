@@ -19,7 +19,6 @@
         v-if="recentFavorites.length === 0"
         class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <!-- Heart Icon with Dog -->
         <div class="mb-6 relative">
           <svg class="w-32 h-32 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -61,7 +60,6 @@
         />
       </div>
 
-      <!-- ===== FILTER TITLE (DROPDOWN HEADER) ===== -->
       <div class="flex justify-center mb-8 relative md:mr-152 lg:mr-320">
         <button
           @click="toggleFilter"
@@ -76,7 +74,6 @@
           </span>
         </button>
 
-        <!-- DROPDOWN -->
         <transition name="fade-slide">
           <div
             v-if="showFilter"
@@ -107,7 +104,6 @@
         />
       </transition-group>
 
-      <!-- EMPTY FILTER RESULT -->
       <div
         v-if="filteredFavorites.length === 0 && favoriteStore.favorites.length > 0"
         class="text-center py-16 text-gray-400"
@@ -146,9 +142,7 @@ const filterLabel = computed(() => {
   return filters.find(f => f.value === filter.value)?.label ?? "Last month";
 });
 
-// ===== HELPER: Get unique key for product (handles both id and _id) =====
 function getProductKey(product: any): string {
-  // Try multiple ID sources to ensure we always have a unique key
   return product.id || product._id || `product-${product.name}-${product.addedAt}`;
 }
 

@@ -26,7 +26,6 @@ export const userApi = axios.create(baseConfig)
   })
 })
 
-// Add request interceptor to userApi to inject token
 userApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken')
@@ -38,7 +37,6 @@ userApi.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-// Optional: response interceptor for both
 ;[publicApi, adminApi].forEach((api) => {
   api.interceptors.response.use(
     res => res,

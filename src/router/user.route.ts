@@ -7,7 +7,6 @@ const userRoutes: RouteRecordRaw[] = [
     path: '/user',
     component: UserLayout,
     meta: { requiresAuth: true, role: 'user' },
-    // src/router/user.routes.ts
     children: [
       {
         path: 'profile',

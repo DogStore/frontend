@@ -25,13 +25,10 @@ export const useRecentStore = defineStore('recent', () => {
   }
 
   function addRecent(product: Product) {
-    // Remove if already exists (to move it to front)
     recent.value = recent.value.filter((p) => p.id !== product.id)
 
-    // Add to beginning
     recent.value.unshift(product)
 
-    // Keep only max items
     if (recent.value.length > maxRecent) {
       recent.value = recent.value.slice(0, maxRecent)
     }
@@ -39,12 +36,10 @@ export const useRecentStore = defineStore('recent', () => {
     save()
   }
 
-  // ✅ Filter out inactive/deleted products
   const validRecents = computed(() => {
     return recent.value.filter(product => product.isActive === true)
   })
 
-  // ✅ Sync with product store to get latest data
   function syncWithProductStore(allProducts: Product[]) {
     recent.value = recent.value
       .map(r => allProducts.find(p => p.id === r.id))
@@ -53,21 +48,19 @@ export const useRecentStore = defineStore('recent', () => {
     save()
   }
 
-  // ✅ Clear all recent products
   function clearRecents() {
     recent.value = []
     localStorage.removeItem('recent')
   }
 
-  // Load on initialization
   loadFromStorage()
 
   return {
     recent,
-    validRecents, // ✅ Use this in components
+    validRecents,
     addRecent,
     loadFromStorage,
-    syncWithProductStore, // ✅ Call this after loading products
+    syncWithProductStore,
     clearRecents
   }
 })

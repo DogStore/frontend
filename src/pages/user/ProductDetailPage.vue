@@ -508,57 +508,54 @@
       >
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold">You Might Also Like</h2>
-          <div class="flex gap-2">
-            <button
-              @click="prevRecommendationPage"
-              :disabled="currentRecommendationPage === 1"
-              class="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              @click="nextRecommendationPage"
-              :disabled="currentRecommendationPage === totalRecommendationPages"
-              class="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
         </div>
 
-        <div class="relative overflow-x-auto md:overflow-hidden">
-          <div
-            class="flex gap-6 transition-transform duration-300 ease-in-out"
-            :style="{
-              transform: `translateX(-${(currentRecommendationPage - 1) * 100}%)`,
-            }"
+        <div class="relative">
+          <!-- LEFT ARROW -->
+          <button
+            v-show="canScrollLeft"
+            @click="scroll(-1)"
+            class="absolute left-0 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white border-2 border-orange-300 shadow-lg flex items-center justify-center hover:bg-orange-500 hover:text-white transition active:scale-95"
           >
-            <div v-for="p in recommended" :key="p.slug || p.id" class="w-64 shrink-0">
-              <ProductCard :product="p" />
-            </div>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- SLIDER -->
+          <div
+            ref="slider"
+            @scroll="checkScroll"
+            class="grid grid-flow-col auto-cols-[260px] gap-6 overflow-x-auto scroll-smooth scrollbar-hide py-6"
+          >
+            <ProductCard
+              v-for="(p, index) in recommended"
+              :key="p.slug || p.id"
+              :product="p"
+              class="animate-fadeIn"
+              :style="{ animationDelay: `${index * 50}ms` }"
+            />
           </div>
+
+          <!-- RIGHT ARROW -->
+          <button
+            v-show="canScrollRight"
+            @click="scroll(1)"
+            class="absolute right-0 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white border-2 border-orange-300 shadow-lg flex items-center justify-center hover:bg-orange-500 hover:text-white transition active:scale-95"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </section>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductCard from '@/components/home/ProductCard.vue'
 import { useProductStore } from '@/stores/productStore'
@@ -580,16 +577,11 @@ const loadProduct = async (slug: string) => {
     const fetchedProduct = await productStore.fetchProductBySlug(slug)
     product.value = fetchedProduct
 
-    // Reviews should come from the backend - no need to merge with localStorage
-    // The backend already returns reviews in the product object
     if (product.value) {
-      // Ensure reviews array exists
       if (!Array.isArray(product.value.reviews)) {
         product.value.reviews = []
       }
 
-      // Review stats are already calculated by backend (avgRating, reviewCount)
-      // But if they're missing, calculate them from the reviews array
       if (product.value.reviews.length > 0 && !product.value.averageRating) {
         const sum = product.value.reviews.reduce(
           (s: number, r: any) => s + (Number(r.rating) || 0),
@@ -720,23 +712,6 @@ watch(
   { immediate: true },
 )
 
-const itemsPerPage = 4
-const currentRecommendationPage = ref(1)
-
-const totalRecommendationPages = computed(() => Math.ceil(recommended.value.length / itemsPerPage))
-
-const nextRecommendationPage = () => {
-  if (currentRecommendationPage.value < totalRecommendationPages.value) {
-    currentRecommendationPage.value++
-  }
-}
-
-const prevRecommendationPage = () => {
-  if (currentRecommendationPage.value > 1) {
-    currentRecommendationPage.value--
-  }
-}
-
 // Tab system
 const tabs = ref([
   { id: 'details', label: 'Product Detail' },
@@ -745,14 +720,6 @@ const tabs = ref([
 
 const activeTab = ref('details')
 
-const getSelectedVariantPrice = () => {
-  if (!product.value || !selectedVariant.value) return product.value?.price || 0
-
-  const selected = product.value.variants?.find((v: any) => v.label === selectedVariant.value)
-  return selected?.price || product.value.price
-}
-
-// Review state & helpers (used by template)
 const showReviewForm = ref(false)
 const currentReviewPage = ref(1)
 const reviewsPerPage = 5
@@ -799,13 +766,10 @@ function getRatingCount(rating: number) {
 function handleReviewSubmitted(newReview: any) {
   if (!product.value) return
 
-  // Ensure reviews array exists
   if (!Array.isArray(product.value.reviews)) product.value.reviews = []
 
-  // Add the new review to the beginning of the array
   product.value.reviews.unshift(newReview)
 
-  // Recalculate review count and average rating
   product.value.reviewCount = product.value.reviews.length
 
   const sum = product.value.reviews.reduce((s: number, r: any) => s + (Number(r.rating) || 0), 0)
@@ -813,16 +777,42 @@ function handleReviewSubmitted(newReview: any) {
     ? Math.round((sum / product.value.reviews.length) * 10) / 10
     : 0
 
-  // Hide the form and reset to first page
   showReviewForm.value = false
   currentReviewPage.value = 1
 
-  // Optionally reload the product from backend to get updated avgRating
-  // This ensures the product data matches the backend exactly
   if (route.params.slug && typeof route.params.slug === 'string') {
     setTimeout(() => {
       loadProduct(route.params.slug as string)
     }, 1000)
   }
 }
+
+const slider = ref<HTMLElement | null>(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+
+const scroll = (dir: number) => {
+  if (!slider.value) return
+  const scrollAmount = 320
+  slider.value.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' })
+  setTimeout(checkScroll, 200)
+}
+
+const checkScroll = () => {
+  if (!slider.value) return
+  const el = slider.value
+  canScrollLeft.value = el.scrollLeft > 10
+  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 10
+}
+
+onMounted(() => {
+  setTimeout(checkScroll, 300)
+  window.addEventListener('resize', checkScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScroll)
+})
+
+
 </script>

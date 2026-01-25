@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Product } from '../types/product'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -9,13 +8,11 @@ export const useProductStore = defineStore('product', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  //  map backend → frontend
   function mapBackendProduct(p: any): Product {
     const regular = p.regularPrice ?? 0
     const discount = p.discount ?? 0
     const images = Array.isArray(p.images) ? p.images : []
 
-    // Handle category - it can be either a string or an object
     const categoryValue =
       typeof p.category === 'object' && p.category !== null
         ? p.category._id || p.category.slug || p.category.name
@@ -50,7 +47,6 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  // Fetch ALL products for admin dashboard
   const fetchAdminProducts = async () => {
     loading.value = true
     error.value = null
@@ -76,7 +72,7 @@ export const useProductStore = defineStore('product', () => {
   // Update Product
   const updateProduct = async (id: string, productData: FormData) => {
     const response = await adminApi.put(`/admin/products/${id}`, productData)
-    const mappedProduct = mapBackendProduct(response.data.product) // ✅ MAP IT!
+    const mappedProduct = mapBackendProduct(response.data.product)
     const index = products.value.findIndex((p) => p.id === id)
     if (index !== -1) {
       products.value[index] = mappedProduct
@@ -104,7 +100,6 @@ export const useProductStore = defineStore('product', () => {
 
     try {
       const res = await publicApi.get('/products')
-      // Filter to show only active products on frontend
       products.value = res.data.products
         .filter((p: any) => p.isActive === true)
         .map(mapBackendProduct)
@@ -149,7 +144,6 @@ export const useProductStore = defineStore('product', () => {
 
     try {
       const res = await publicApi.get(`/products/${slug}`)
-      // Return the mapped product for immediate use
       return mapBackendProduct(res.data.product || res.data)
     } catch (err) {
       error.value = 'Failed to load product'
@@ -169,7 +163,6 @@ export const useProductStore = defineStore('product', () => {
       const res = await publicApi.get('/products/search/query', {
         params: { q: query },
       })
-      //Filter to show only active products in search
       products.value = res.data.products
         .filter((p: any) => p.isActive === true)
         .map(mapBackendProduct)

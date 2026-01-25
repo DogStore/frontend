@@ -1,4 +1,3 @@
-// src/services/coupon.service.ts
 import { adminApi } from '@/services/api'
 
 export const fetchAdminCoupons = async () => {

@@ -5,6 +5,7 @@ import 'vue-tel-input/vue-tel-input.css'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useUserProfileStore } from '@/stores/userProfileStore'
 import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/userStore'
 
 interface Country {
   name: string
@@ -15,6 +16,7 @@ interface Country {
 /* ---------------- Store ---------------- */
 const profileStore = useUserProfileStore()
 const { user, loading, error } = storeToRefs(profileStore)
+const userStore = useUserStore()
 
 /* ---------------- State ---------------- */
 const editMode = ref(false)
@@ -49,38 +51,17 @@ const onFileSelected = async (event: Event) => {
 
   const file = input.files[0]
 
-  if (file.size > 2 * 1024 * 1024) {
-    error.value = 'Image too large (max 2MB)'
-    return
-  }
-
-  if (!file.type.startsWith('image/')) {
-    error.value = 'Please upload an image file'
-    return
-  }
-
   previewImage.value = URL.createObjectURL(file)
-  await profileStore.uploadPhoto(file)
-  previewImage.value = null
+
+  profileStore.setPendingImage(file)
 }
+
 
 const validatePhone = () => {
-  if (!user.value.phone.trim()) return true
+  if (!user.value.phone) return true
 
-  const parsed = parsePhoneNumberFromString(user.value.phone, 'KH')
-  if (parsed && parsed.isValid()) {
-    phoneValid.value = true
-    return true
-  }
-
-  phoneValid.value = false
-  phoneError.value = 'Invalid phone number'
-  return false
-}
-
-const onPhoneInput = (obj: any) => {
-  user.value.phone = obj?.number?.international || ''
-  validatePhone()
+  const parsed = parsePhoneNumberFromString(user.value.phone)
+  return !!parsed?.isValid()
 }
 
 const saveProfile = async () => {
@@ -88,11 +69,18 @@ const saveProfile = async () => {
   if (!validatePhone()) return
 
   try {
+    if (profileStore.pendingImage) {
+      await profileStore.uploadPhoto(profileStore.pendingImage)
+    }
+
     await profileStore.saveProfile()
+    await profileStore.fetchProfile()
+
     editMode.value = false
     alert('Profile updated successfully!')
   } catch {}
 }
+
 
 const cancelChanges = () => {
   editMode.value = false
@@ -118,7 +106,6 @@ onMounted(() => profileStore.fetchProfile())
           <div class="lg:col-span-3 bg-[#FFF8F0] p-6 flex flex-col items-center justify-center border-4 border-[#FFAA0C] rounded-tl-lg rounded-bl-lg relative group" style="border-width: 0.7px;">
             <!-- Profile Picture -->
             <div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white shadow-md mb-4">
-              <!-- Show uploaded/preview image if exists -->
               <img
                 v-if="hasImage"
                 :src="previewImage ?? user.userImage ?? undefined"
@@ -135,8 +122,6 @@ onMounted(() => profileStore.fetchProfile())
                 </span>
               </div>
 
-
-              <!-- Hover overlay for realism -->
               <div v-if="user.userImage === null" class="absolute inset-0 bg-gray-100 bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <span class="text-gray-700 text-sm font-medium">
                   {{ previewImage || user.userImage ? 'Change Photo' : 'Upload Photo' }}
@@ -145,9 +130,23 @@ onMounted(() => profileStore.fetchProfile())
             </div>
 
             <!-- Upload Button -->
-            <label for="file-upload" class="px-4 py-2 bg-white border border-blue-300 text-blue-600 rounded-md text-sm hover:bg-blue-50 transition cursor-pointer">
-              {{ previewImage || user.userImage ? 'Change Photo' : 'Upload Photo' }}
+            <label
+              v-if="editMode"
+              for="file-upload"
+              class="px-4 py-2 bg-white border border-blue-300 text-blue-600 rounded-md text-sm hover:bg-blue-50 transition cursor-pointer"
+            >
+              Change Photo
             </label>
+
+            <input
+              v-if="editMode"
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="onFileSelected"
+            />
+
             <input id="file-upload" type="file" accept="image/*" class="hidden" @change="onFileSelected" />
 
             <!-- Additional Info -->
@@ -277,7 +276,6 @@ onMounted(() => profileStore.fetchProfile())
                         v-model="user.phone"
                         default-country="kh"
                         mode="international"
-                        @on-input="onPhoneInput"
                         :dropdownOptions="{
                           showFlags: true,
                           showDialCodeInList: true,
@@ -288,7 +286,7 @@ onMounted(() => profileStore.fetchProfile())
                           placeholder: 'Enter phone number',
                           styleClasses: 'w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition'
                         }"
-                      ></vue-tel-input>
+                      />
                     </div>
 
                     <div v-else class="px-4 py-3 bg-gray-100 rounded-md border border-gray-200 text-gray-800">

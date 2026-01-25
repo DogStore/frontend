@@ -313,7 +313,7 @@
             <div
               v-for="(product, index) in recommendedProducts"
               :key="product.id"
-              class="w-56 shrink-0"
+              class="w-[250px] shrink-0 flex"
             >
               <ProductCard
                 :product="product"
@@ -411,40 +411,36 @@ const filteredProducts = computed(() => {
       sortedProducts.sort((a, b) => b.price - a.price)
       break
     case 'best-selling':
-    default:
-      // Separate sold and unsold
-      const sold = sortedProducts.filter((p: any) => (p.soldCount ?? 0) > 0)
-      const unsold = sortedProducts.filter((p: any) => (p.soldCount ?? 0) === 0)
+    default: {
+      const getRating = (p: any) => {
+        if (!Array.isArray(p.reviews) || p.reviews.length === 0) return 0
+        return (
+          p.reviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 0), 0) /
+          p.reviews.length
+        )
+      }
 
-      // Sort sold by: sales count first, then rating if sales are equal
+      const sold = sortedProducts.filter((p: any) => Number(p.soldCount ?? 0) > 0)
+      const unsold = sortedProducts.filter((p: any) => Number(p.soldCount ?? 0) === 0)
+
       sold.sort((a: any, b: any) => {
-        // First: Sort by sold count (higher first)
-        if ((b.soldCount ?? 0) !== (a.soldCount ?? 0)) {
-          return (b.soldCount ?? 0) - (a.soldCount ?? 0)
-        }
-        // Second: If sold count is equal, sort by rating (higher first)
-        return (b.rating ?? 0) - (a.rating ?? 0)
+        const soldDiff = Number(b.soldCount ?? 0) - Number(a.soldCount ?? 0)
+        if (soldDiff !== 0) return soldDiff
+
+        return getRating(b) - getRating(a)
       })
 
-      // Sort unsold by: rating → newest → alphabetically
       unsold.sort((a: any, b: any) => {
-        // First: Rating
-        if ((b.rating ?? 0) !== (a.rating ?? 0)) {
-          return (b.rating ?? 0) - (a.rating ?? 0)
-        }
-        // Second: Newest
-        if (a.addedAt && b.addedAt) {
-          return (b.addedAt ?? 0) - (a.addedAt ?? 0)
-        }
-        // Third: Alphabetically
-        return a.name.localeCompare(b.name)
+        const ratingDiff = getRating(b) - getRating(a)
+        if (ratingDiff !== 0) return ratingDiff
+
+        return (b.addedAt ?? 0) - (a.addedAt ?? 0)
       })
 
-      // Combine: sold first, then unsold
       sortedProducts = [...sold, ...unsold]
       break
+    }
   }
-
   return sortedProducts
 })
 

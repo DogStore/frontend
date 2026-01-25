@@ -1,4 +1,3 @@
-// src/stores/userStore.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -39,11 +38,9 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('user')
   }
 
-   // Update profile picture separately
   const updateProfilePicture = (newPictureUrl: string) => {
     profilePicture.value = newPictureUrl
 
-    // Update localStorage
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
       const user = JSON.parse(storedUser)
@@ -52,7 +49,6 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // Initialize from localStorage on app start
   const initializeFromStorage = () => {
     const storedToken = localStorage.getItem('authToken')
     const storedRole = localStorage.getItem('userRole')
@@ -72,6 +68,23 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const updateUser = (data: {
+    name?: string
+    email?: string
+    profilePicture?: string
+  }) => {
+    if (data.name !== undefined) name.value = data.name
+    if (data.email !== undefined) email.value = data.email
+    if (data.profilePicture !== undefined) profilePicture.value = data.profilePicture
+
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      const user = JSON.parse(storedUser)
+      Object.assign(user, data)
+      localStorage.setItem('user', JSON.stringify(user))
+    }
+  }
+
   return {
     token,
     role,
@@ -82,6 +95,7 @@ export const useUserStore = defineStore('user', () => {
     setAuth,
     logout,
     updateProfilePicture,
-    initializeFromStorage
+    initializeFromStorage,
+    updateUser
   }
 })

@@ -42,8 +42,6 @@ export const useAdminOrderStore = defineStore("adminOrder", () => {
   // Update status
   async function changeStatus(id: string, status: Order["status"]) {
     await updateOrderStatus(id, status);
-
-    // update locally instead of refetch
     const order = orders.value.find(o => o._id === id);
     if (order) order.status = status;
 

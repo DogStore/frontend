@@ -35,12 +35,12 @@
 
           <!-- BUTTON + PAW -->
           <div class="flex flex-col items-center mt-6 lg:-ml-152 lg:-mt-26">
-            <button
-              @click="$emit('shopNow')"
-              class="px-8 py-3 bg-[#FFAA0C] text-white font-Nunito rounded-md text-xl sm:text-2xl hover:bg-orange-500 transition mb-4"
+            <router-link
+              to="/products/bestSelling"
+              class="inline-block px-8 py-3 bg-[#FFAA0C] text-white font-Nunito rounded-md text-xl sm:text-2xl hover:bg-orange-500 transition mb-4"
             >
               {{ buttonText }}
-            </button>
+            </router-link>
 
             <div v-if="pawImage" class="w-10 h-10 sm:w-12 sm:h-12">
               <img :src="pawImage" class="w-full h-full object-contain" />

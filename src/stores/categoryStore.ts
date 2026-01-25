@@ -105,18 +105,10 @@ export const useCategoryStore = defineStore('category', () => {
     sortType.value = ''
   }
 
-  /**
-   * Manually refresh categories from server
-   * Useful when you know the backend data has been updated
-   */
   function refreshCategories() {
     fetchPublicCategories(true)
   }
 
-  /**
-   * Manually refresh specific category
-   * Useful when you know the backend data has been updated
-   */
   function refreshCategory(slug: string) {
     fetchCategoryBySlug(slug, true)
   }

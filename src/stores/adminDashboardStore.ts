@@ -57,20 +57,15 @@ export const useAdminDashboardStore = defineStore('adminDashboard', () => {
         adminApi.get('/admin/dashboard/products')
       ])
 
-      // Stats
       stats.value = statsRes.data.stats
       lastUpdated.value = statsRes.data.lastUpdated
 
-      // Sales
       salesData.value = salesRes.data.sales
 
-      // Users
       userGrowth.value = usersRes.data.users.growth
 
-      // Products
       categoryStats.value = productsRes.data.products.categoryStats
 
-      // Calculate total products sold from orders
       productsSold.value = salesRes.data.sales.reduce(
         (sum: number, day: SalesData) => sum + day.orders,
         0

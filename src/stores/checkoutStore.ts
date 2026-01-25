@@ -13,12 +13,10 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   /* ================= STATE ================= */
   const customer = ref({
-    // OPTIONAL (UI only)
     firstName: '',
     lastName: '',
     note: '',
 
-    // REQUIRED
     phoneCode: '+855',
     phone: '',
     address: {
@@ -91,8 +89,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     error.value = null
 
     try {
-      // 🔥 Backend should already have the cart
-      // No need to trust frontend quantities
       await userApi.post('/orders', {
         shippingAddress: customer.value.address,
         phone: `${customer.value.phoneCode}${customer.value.phone}`,
@@ -109,7 +105,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
       resetCheckout()
 
       return true
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Checkout failed'
       throw err

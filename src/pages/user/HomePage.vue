@@ -70,7 +70,6 @@
       </div>
     </div>
 
-    <!-- RECENTLY VIEWED - ✅ Use validRecents -->
     <div v-if="recentStore.validRecents.length > 0" class="w-full px-10 py-10">
       <h3 class="flex md:text-start text-center text-lg md:text-2xl font-bold text-gray-800 mb-8">
         Recently Viewed
@@ -126,31 +125,25 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import ShowCase from '@/components/home/ShowCase.vue'
 import ProductCard from '@/components/home/ProductCard.vue'
-
-//Show case images
 import Dog from '@/assets/ShowcaseImages/Dog.png'
 import Bone from '@/assets/ShowcaseImages/Bone.png'
 import Paw from '@/assets/ShowcaseImages/Pawprint.png'
 
 import type { Product } from '@/types/product'
 
-// Pinia Stores
 import { useCartStore } from '@/stores/cartStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useRecentStore } from '@/stores/recentStore'
 import { useProductStore } from '@/stores/productStore'
 import { watch } from 'vue'
 
-const cart = useCartStore()
 const favorite = useFavoriteStore()
 const recentStore = useRecentStore()
 const productStore = useProductStore()
 
-// Load recent items on page load
 recentStore.loadFromStorage()
 favorite.load()
 
-// Showcase
 const showcase = ref({
   title: 'Your dog, <br> Our priority',
   description:

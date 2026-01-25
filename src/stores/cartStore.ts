@@ -205,7 +205,6 @@ export const useCartStore = defineStore('cart', () => {
       } as Coupon
 
       saveToStorage()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       appliedCoupon.value = null
       couponError.value =
@@ -244,7 +243,6 @@ export const useCartStore = defineStore('cart', () => {
 
     const res = await userApi.get('/carts')
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     cartItems.value = res.data.cart.items
       .filter((item: any) => item.product)
       .map((item: any) => ({
@@ -264,7 +262,6 @@ export const useCartStore = defineStore('cart', () => {
     // Guests cannot sync
     if (!userStore.token) return
 
-    // If cart already exists in backend, do NOT sync again
     const alreadySynced = cartItems.value.some(item => item.cartItemId)
     if (alreadySynced) return
 
@@ -284,7 +281,6 @@ export const useCartStore = defineStore('cart', () => {
     localStorage.removeItem('coupon')
   }
 
-  /* ---------- LOGIN WATCHER: sync cart when user logs in ---------- */
   watch(
     () => userStore.token,
     async (token) => {

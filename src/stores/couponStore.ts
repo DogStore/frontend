@@ -1,4 +1,3 @@
-// src/stores/couponStore.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Coupon } from '@/types/coupon'
@@ -16,7 +15,6 @@ export const useCouponStore = defineStore('coupon', () => {
     try {
       const res = await adminApi.get('/admin/coupons')
       coupons.value = res.data.coupons
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       error.value = 'Failed to load coupons'
     } finally {

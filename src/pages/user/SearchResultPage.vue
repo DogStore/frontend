@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6 py-8 font-Nunito mt-[-12rem]">
+  <div class="px-6 py-8 font-Nunito -mt-48">
     <!-- Search Header -->
     <div class="mb-8">
       <h2 class="text-2xl font-bold mb-2">
