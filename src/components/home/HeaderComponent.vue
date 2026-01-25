@@ -32,7 +32,7 @@
 
           <!-- RIGHT: Social -->
           <div class="flex items-center space-x-4">
-            <router-link to="/about" class="hover:text-orange-500 transition">About Us</router-link>
+            <router-link to="/aboutUs" class="hover:text-orange-500 transition">About Us</router-link>
             <a
               href="https://instagram.com"
               target="_blank"

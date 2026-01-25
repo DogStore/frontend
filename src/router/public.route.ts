@@ -10,6 +10,7 @@ import Bestsellingpage from '@/pages/user/BestsellingPage.vue'
 import CartPage from '@/pages/user/CartPage.vue'
 import CheckoutPage from '@/pages/user/CheckoutPage.vue'
 import OrderSuccess from '@/pages/user/OrderSuccess.vue'
+import AboutUs from '@/pages/user/AboutUs.vue'
 
 const publicRoutes: RouteRecordRaw[] = [
   {
@@ -61,6 +62,11 @@ const publicRoutes: RouteRecordRaw[] = [
         path: '/order-success',
         name: 'OrderSuccess',
         component: OrderSuccess,
+      },
+      {
+        path: '/aboutUs',
+        name: 'aboutUs',
+        component: AboutUs,
       }
     ]
   },
