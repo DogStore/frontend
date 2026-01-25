@@ -8,7 +8,7 @@
       class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700"
     >
       <span class="font-semibold">Login Required:</span> You must be logged in to submit a review.
-      <router-link to="/auth" class="font-semibold underline hover:text-blue-900">
+      <router-link to="/login" class="font-semibold underline hover:text-blue-900">
         Click here to login
       </router-link>
     </div>
