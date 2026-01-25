@@ -32,6 +32,68 @@ const countries: Country[] = [
   { name: 'Vietnam', code: 'VN', flag: '🇻🇳' }
 ]
 
+const countryMap: Record<string, string> = {
+  KH: 'Cambodia',
+  US: 'United States',
+  FR: 'France',
+  VN: 'Vietnam'
+}
+
+const detectCountryFromPhone = (phone: string) => {
+  if (phone.startsWith('+855')) return 'Cambodia'
+  if (phone.startsWith('+33')) return 'France'
+  if (phone.startsWith('+1')) return 'United States'
+  if (phone.startsWith('+84')) return 'Vietnam'
+  return null
+}
+
+const getPhoneCountry = () => {
+  if (!user.value.phone) return null
+
+  const parsed = parsePhoneNumberFromString(user.value.phone)
+  return parsed?.country || null
+}
+
+const getAddressCountry = () => {
+  if (!user.value.address) return null
+
+  const addr = user.value.address.toLowerCase()
+
+  for (const [code, name] of Object.entries(countryMap)) {
+    if (addr.includes(name.toLowerCase())) {
+      return code
+    }
+  }
+
+  return null
+}
+
+const countryMismatch = computed(() => {
+  const selected = user.value.country?.code
+  if (!selected) return false
+
+  const phoneCountry = getPhoneCountry()
+  const addressCountry = getAddressCountry()
+
+  if (phoneCountry && phoneCountry !== selected) return true
+  if (addressCountry && addressCountry !== selected) return true
+
+  return false
+})
+
+
+const detectCountryFromAddress = (address: string) => {
+  const parts = address.split(',')
+  return parts[2]?.trim() || null
+}
+
+const onlyNumber = (e: KeyboardEvent) => {
+  if (!/[0-9+ ]/.test(e.key)) {
+    e.preventDefault()
+  }
+}
+
+
 /* ---------------- Computed ---------------- */
 const getUserInitial = computed(() => {
   return user.value.fullName?.charAt(0).toUpperCase() || 'U'
@@ -41,6 +103,26 @@ const hasImage = computed(() => !!previewImage.value || !!user.value.userImage)
 
 
 /* ---------------- Methods ---------------- */
+
+const validateCrossFields = () => {
+  const phoneCountry = detectCountryFromPhone(user.value.phone)
+  const addressCountry = detectCountryFromAddress(user.value.address)
+  const selectedCountry = user.value.country.name
+
+  if (phoneCountry && phoneCountry !== selectedCountry) {
+    error.value = `Phone number country (${phoneCountry}) does not match selected country (${selectedCountry})`
+    return false
+  }
+
+  if (addressCountry && addressCountry !== selectedCountry) {
+    error.value = `Address country (${addressCountry}) does not match selected country (${selectedCountry})`
+    return false
+  }
+
+  return true
+}
+
+
 const startEdit = () => {
   editMode.value = true
 }
@@ -66,7 +148,9 @@ const validatePhone = () => {
 
 const saveProfile = async () => {
   error.value = ''
+
   if (!validatePhone()) return
+  if (!validateCrossFields()) return
 
   try {
     if (profileStore.pendingImage) {
@@ -78,7 +162,9 @@ const saveProfile = async () => {
 
     editMode.value = false
     alert('Profile updated successfully!')
-  } catch {}
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 
@@ -276,17 +362,26 @@ onMounted(() => profileStore.fetchProfile())
                         v-model="user.phone"
                         default-country="kh"
                         mode="international"
+
                         :dropdownOptions="{
                           showFlags: true,
                           showDialCodeInList: true,
                           showDialCodeInSelection: true,
                           showSearchBox: true
                         }"
+
                         :inputOptions="{
                           placeholder: 'Enter phone number',
+                          maxlength: 15,
+                          inputmode: 'numeric',
+                          pattern: '[0-9]*',
                           styleClasses: 'w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition'
                         }"
+
+                        @input="validatePhone"
+                        @keypress="onlyNumber"
                       />
+
                     </div>
 
                     <div v-else class="px-4 py-3 bg-gray-100 rounded-md border border-gray-200 text-gray-800">
@@ -323,23 +418,58 @@ onMounted(() => profileStore.fetchProfile())
 
             <!-- Divider -->
             <hr class="my-8 border-gray-200">
-
             <div>
+              <!-- Country Mismatch Warning -->
+              <div
+                v-if="countryMismatch"
+                class="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded-md flex items-start"
+              >
+                <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.59c.75 1.334-.213 2.987-1.742 2.987H3.483c-1.53 0-2.492-1.653-1.743-2.987L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 002 0V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                <div>
+                  <p class="font-semibold">Country mismatch detected</p>
+                  <p class="text-sm">
+                    Your phone number or address does not match your selected country.
+                    Please double-check your information.
+                  </p>
+                </div>
+              </div>
+
               <!-- Action Buttons -->
               <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                 <div v-if="editMode" class="flex space-x-4">
-                  <button @click="cancelChanges" class="px-6 py-3 border border-orange-300 text-gray-700 font-medium rounded-md hover:bg-red-50 transition">
+                  <button
+                    @click="cancelChanges"
+                    class="px-6 py-3 border border-orange-300 text-gray-700 font-medium rounded-md hover:bg-red-50 transition"
+                  >
                     CANCEL
                   </button>
-                  <button @click="saveProfile" :disabled="loading" class="px-6 py-3 bg-[#FFAA0C] text-white font-medium rounded-md hover:bg-orange-400 disabled:opacity-50 transition">
+
+                  <button
+                    @click="saveProfile"
+                    :disabled="loading"
+                    class="px-6 py-3 bg-[#FFAA0C] text-white font-medium rounded-md hover:bg-orange-400 disabled:opacity-50 transition"
+                  >
                     {{ loading ? 'SAVING...' : 'SAVE' }}
                   </button>
                 </div>
-                <button v-else @click="startEdit" class="px-6 py-3 bg-[#FFAA0C] text-white font-medium rounded-md hover:bg-orange-400 transition">
+
+                <button
+                  v-else
+                  @click="startEdit"
+                  class="px-6 py-3 bg-[#FFAA0C] text-white font-medium rounded-md hover:bg-orange-400 transition"
+                >
                   EDIT PROFILE
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       </div>
