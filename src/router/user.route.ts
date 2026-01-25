@@ -15,6 +15,11 @@ const userRoutes: RouteRecordRaw[] = [
         component: () => import('@/pages/user/ProfilePage.vue'),
       },
       { path: '', redirect: 'profile' },
+      {
+        path: "aboutUs",
+        name: "aboutUs",
+        component: () => import("@/pages/user/AboutUs.vue"),
+      },
     ],
   },
 ]

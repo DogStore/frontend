@@ -22,10 +22,14 @@
 
         <!-- RIGHT -->
         <div class="flex items-center space-x-4 lg:space-x-10">
-          <a href="#" class="hidden sm:flex items-center hover:text-orange-500">
+          <router-link
+            to="/user/aboutUs"
+            class="hidden sm:flex items-center hover:text-orange-500"
+            active-class="text-orange-500"
+          >
             <img src="@/assets/HeaderImages/About.png" class="w-6 mr-2" />
-            About Us
-          </a>
+            <span class="block px-4 py-2 hover:bg-gray-100 hover:rounded-lg">About Us</span>
+          </router-link>
 
           <div class="flex items-center space-x-4 lg:space-x-8">
             <a href="#" class="flex items-center hover:text-orange-500" title="Instagram">
@@ -33,15 +37,15 @@
                 src="@/assets/HeaderImages/Instagram Circle.png"
                 class="w-5 lg:w-6 mr-1 lg:mr-2"
               />
-              <span class="hidden lg:inline">Instagram</span>
+              <span class="block px-4 py-2 hover:bg-gray-100 hover:rounded-lg">Instagram</span>
             </a>
             <a href="#" class="flex items-center hover:text-orange-500" title="Facebook">
               <img src="@/assets/HeaderImages/Facebook f.png" class="w-5 lg:w-6 mr-1 lg:mr-2" />
-              <span class="hidden lg:inline">Facebook</span>
+              <span class="block px-4 py-2 hover:bg-gray-100 hover:rounded-lg">Facebook</span>
             </a>
             <a href="#" class="flex items-center hover:text-orange-500" title="X">
               <img src="@/assets/HeaderImages/X.png" class="w-5 lg:w-6 mr-1 lg:mr-2" />
-              <span class="hidden lg:inline">X</span>
+              <span class="block px-4 py-2 hover:bg-gray-100 hover:rounded-lg">X</span>
             </a>
           </div>
         </div>

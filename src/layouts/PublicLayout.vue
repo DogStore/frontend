@@ -1,8 +1,10 @@
 <!-- src/layouts/PublicLayout.vue -->
 <template>
-  <HeaderComponent :cartCount="cartCount" />
+  <div>
+    <HeaderComponent :cartCount="cartCount" />
+  </div>
 
-  <main class="pt-[325px] sm:pt-[327px] lg:pt-[357px] mb-50 text-center">
+  <main class="pt-[320px] sm:pt-[327px] lg:pt-[357px] mb-50 text-center">
     <RouterView @update-cart="handleCartUpdate" />
   </main>
 
