@@ -55,8 +55,8 @@ const handleLogin = async () => {
       password: password.value,
     })
 
-    const { token, _id, name: userName, email: userEmail, role } = response.data
-    userStore.setAuth({ token, _id, name: userName, email: userEmail, role })
+    const { token, _id, name: userName, email: userEmail, role, profilePicture } = response.data
+    userStore.setAuth({ token, _id, name: userName, email: userEmail, role, profilePicture })
 
     if (role === 'admin') {
       router.push('/admin/dashboard')
@@ -88,8 +88,8 @@ const handleSignup = async () => {
       password: password.value,
     })
 
-    const { token, _id, name: userName, email: userEmail, role } = response.data
-    userStore.setAuth({ token, _id, name: userName, email: userEmail, role })
+    const { token, _id, name: userName, email: userEmail, role, profilePicture } = response.data
+    userStore.setAuth({ token, _id, name: userName, email: userEmail, role, profilePicture })
 
     router.push('/')
   } catch (err: any) {

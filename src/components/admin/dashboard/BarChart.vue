@@ -49,7 +49,7 @@ const createChart = () => {
         tooltip: {
           backgroundColor: '#1F2937',
           padding: 12,
-          borderRadius: 8,
+          cornerRadius: 8,
           titleColor: '#fff',
           bodyColor: '#fff'
         }

@@ -53,7 +53,7 @@
               class="hover:text-orange-500"
               aria-label="Facebook"
             >
-              <img src="@/assets/HeaderImages/Facebook f.png" class="w-4 h-4" alt="Facebook" />
+              <img src="@/assets/HeaderImages/Facebook.png" class="w-4 h-4" alt="Facebook" />
             </a>
             <a
               href="https://x.com"
