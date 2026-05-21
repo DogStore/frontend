@@ -1,73 +1,90 @@
-# .
+# DogHub Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the frontend application for DogHub, a pet marketplace built with Vue 3, Vite, Pinia, and Tailwind CSS.
 
-## Recommended IDE Setup
+## Overview
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+The frontend includes:
 
-## Recommended Browser Setup
+- user authentication and profile views
+- product browsing, search, and category pages
+- shopping cart and wishlist functionality
+- checkout flow and order review
+- admin dashboard pages for managing products, categories, coupons, and orders
+- responsive UI with modern Vue 3 composition API patterns
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Screenshots
 
-## Type Support for `.vue` Imports in TS
+### User View
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+![User View](src/assets/Readme/userView.png)
 
-## Customize configuration
+### Admin Dashboard
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+![Admin Dashboard](src/assets/Readme/adminDashboard.png)
 
-## Project Setup
+## Prerequisites
+
+- Node.js 20.x or later
+- npm 10.x or later
+
+## Setup
+
+Install dependencies:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Run the app in development mode:
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Open the URL shown in the terminal (typically `http://localhost:5173`).
+
+## Build
+
+Create a production build:
 
 ```sh
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Preview the production build locally:
+
+```sh
+npm run preview
+```
+
+## Scripts
+
+- `npm run dev` — start the local development server
+- `npm run build` — build the production bundle
+- `npm run preview` — preview the production build
+- `npm run test:unit` — run unit tests with Vitest
+- `npm run test:e2e` — run Playwright end-to-end tests
+- `npm run lint` — run ESLint and automatically fix issues
+- `npm run format` — format code with Prettier
+
+## Testing
+
+Run unit tests:
 
 ```sh
 npm run test:unit
 ```
 
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
+Run end-to-end tests:
 
 ```sh
-# Install browsers for the first run
 npx playwright install
-
-# When testing on CI, must build the project first
-npm run build
-
-# Runs the end-to-end tests
 npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Notes
 
-```sh
-npm run lint
-```
+- The backend API should be running separately in the `Backend/` folder.
+- Screenshots are stored in `src/assets/Readme/`.
+- If you use VS Code, install the Vue extension and enable Volar for best TypeScript support.
